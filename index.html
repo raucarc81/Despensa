@@ -348,6 +348,27 @@
   </style>
 </head>
 <body>
+<!-- Capturador de errores JS — muestra cualquier fallo en pantalla -->
+<script>
+window.onerror = function(msg, src, line, col, err) {
+  var el = document.getElementById('pre-load-err');
+  if (el) {
+    el.style.display = 'block';
+    el.textContent = '❌ JS Error: ' + msg + ' (línea ' + line + ')';
+  }
+  var pl = document.getElementById('pre-load');
+  if (pl) pl.style.background = 'linear-gradient(160deg,#1a0a0a,#3a1a1a)';
+  console.error('[Despensa Error]', msg, src, line, col, err);
+};
+window.addEventListener('unhandledrejection', function(e) {
+  var el = document.getElementById('pre-load-err');
+  if (el) {
+    el.style.display = 'block';
+    el.textContent = '❌ Promise Error: ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason));
+  }
+  console.error('[Despensa Promise]', e.reason);
+});
+</script>
 <div id="root"></div>
 <!-- Visible antes de que React arranque -->
 <div id="pre-load">
