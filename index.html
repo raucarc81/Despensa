@@ -346,45 +346,14 @@
       .sheet { border-radius: 22px; margin: 14px; max-height: 80vh; }
     }
   </style>
+<script>
+window.onerror=function(m,s,l){var e=document.getElementById('pre-load-err');if(e){e.style.display='block';e.textContent='Error JS: '+m+' (l'+l+')';}var p=document.getElementById('pre-load');if(p)p.style.background='linear-gradient(160deg,#1a0a0a,#3a1a1a)';};
+window.addEventListener('unhandledrejection',function(e){var el=document.getElementById('pre-load-err');if(el){el.style.display='block';el.textContent='Promise Error: '+(e.reason&&e.reason.message?e.reason.message:String(e.reason));}});
+</script>
 </head>
 <body>
 <!-- Capturador de errores JS — muestra cualquier fallo en pantalla -->
 <script>
-window.onerror = function(msg, src, line, col, err) {
-  var el = document.getElementById('pre-load-err');
-  if (el) {
-    el.style.display = 'block';
-    el.textContent = '❌ JS Error: ' + msg + ' (línea ' + line + ')';
-  }
-  var pl = document.getElementById('pre-load');
-  if (pl) pl.style.background = 'linear-gradient(160deg,#1a0a0a,#3a1a1a)';
-  console.error('[Despensa Error]', msg, src, line, col, err);
-};
-window.addEventListener('unhandledrejection', function(e) {
-  var el = document.getElementById('pre-load-err');
-  if (el) {
-    el.style.display = 'block';
-    el.textContent = '❌ Promise Error: ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason));
-  }
-  console.error('[Despensa Promise]', e.reason);
-});
-</script>
-<div id="root"></div>
-<!-- Visible antes de que React arranque -->
-<div id="pre-load">
-  <div style="font-size:60px;margin-bottom:12px">&#x1F6D2;</div>
-  <div style="font-size:21px;font-weight:900;letter-spacing:-0.5px">La Despensa</div>
-  <div style="margin-top:20px;width:36px;height:36px;border:3px solid rgba(255,255,255,0.15);border-top-color:#4CAF50;border-radius:50%;animation:spin 0.75s linear infinite"></div>
-  <div style="margin-top:12px;color:rgba(255,255,255,0.4);font-size:13px;font-weight:600">Conectando...</div>
-  <div id="pre-load-err" style="display:none;margin-top:14px;background:rgba(198,40,40,0.25);border:1px solid rgba(198,40,40,0.5);border-radius:10px;padding:10px 16px;font-size:13px;max-width:300px;text-align:center;color:#EF9A9A"></div>
-</div>
-<style>
-  #pre-load{position:fixed;inset:0;background:linear-gradient(160deg,#0a1a0a 0%,#172e17 50%,#0a2020 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;color:#fff;font-family:Nunito,sans-serif;transition:opacity 0.35s;}
-  #pre-load.done{opacity:0;pointer-events:none;}
-</style>
-
-<script>
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 const {
   useState,
   useEffect,
@@ -518,13 +487,12 @@ function genUID() {
 function Toasts({
   list
 }) {
-  return /*#__PURE__*/_jsx("div", {
-    className: "tbox",
-    children: list.map(t => /*#__PURE__*/_jsx("div", {
-      className: `toast ${t.type}`,
-      children: t.msg
-    }, t.id))
-  });
+  return /*#__PURE__*/React.createElement("div", {
+    className: "tbox"
+  }, list.map(t => /*#__PURE__*/React.createElement("div", {
+    key: t.id,
+    className: `toast ${t.type}`
+  }, t.msg)));
 }
 
 /* ── Modal sheet ── */
@@ -535,19 +503,16 @@ function Sheet({
   children
 }) {
   if (!show) return null;
-  return /*#__PURE__*/_jsx("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "ovl",
-    onClick: e => e.target === e.currentTarget && onClose(),
-    children: /*#__PURE__*/_jsxs("div", {
-      className: "sheet",
-      children: [/*#__PURE__*/_jsx("div", {
-        className: "drag"
-      }), title && /*#__PURE__*/_jsx("div", {
-        className: "m-ttl",
-        children: title
-      }), children]
-    })
-  });
+    onClick: e => e.target === e.currentTarget && onClose()
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sheet"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "drag"
+  }), title && /*#__PURE__*/React.createElement("div", {
+    className: "m-ttl"
+  }, title), children));
 }
 
 /* ── Add Category Modal ── */
@@ -557,48 +522,39 @@ function AddCatModal({
 }) {
   const [name, setName] = useState('');
   const [emoji, setEmoji] = useState('🛒');
-  return /*#__PURE__*/_jsxs(Sheet, {
+  return /*#__PURE__*/React.createElement(Sheet, {
     show: true,
     onClose: onClose,
-    title: "Nueva categoría",
-    children: [/*#__PURE__*/_jsxs("div", {
-      className: "fg",
-      children: [/*#__PURE__*/_jsx("label", {
-        className: "fl",
-        children: "Nombre"
-      }), /*#__PURE__*/_jsx("input", {
-        className: "fi",
-        placeholder: "Ej: Mascotas",
-        value: name,
-        onChange: e => setName(e.target.value),
-        autoFocus: true
-      })]
-    }), /*#__PURE__*/_jsxs("div", {
-      className: "fg",
-      children: [/*#__PURE__*/_jsx("label", {
-        className: "fl",
-        children: "Icono"
-      }), /*#__PURE__*/_jsx("div", {
-        className: "emoji-grid",
-        children: EMOJIS.map(e => /*#__PURE__*/_jsx("button", {
-          className: `ep${emoji === e ? ' sel' : ''}`,
-          onClick: () => setEmoji(e),
-          children: e
-        }, e))
-      })]
-    }), /*#__PURE__*/_jsxs("div", {
-      className: "m-acts",
-      children: [/*#__PURE__*/_jsx("button", {
-        className: "btn btn-s",
-        onClick: onClose,
-        children: "Cancelar"
-      }), /*#__PURE__*/_jsx("button", {
-        className: "btn btn-p",
-        onClick: () => name.trim() && onSave(name.trim(), emoji),
-        children: "Crear"
-      })]
-    })]
-  });
+    title: "Nueva categoría"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "fg"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fl"
+  }, "Nombre"), /*#__PURE__*/React.createElement("input", {
+    className: "fi",
+    placeholder: "Ej: Mascotas",
+    value: name,
+    onChange: e => setName(e.target.value),
+    autoFocus: true
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "fg"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fl"
+  }, "Icono"), /*#__PURE__*/React.createElement("div", {
+    className: "emoji-grid"
+  }, EMOJIS.map(e => /*#__PURE__*/React.createElement("button", {
+    key: e,
+    className: `ep${emoji === e ? ' sel' : ''}`,
+    onClick: () => setEmoji(e)
+  }, e)))), /*#__PURE__*/React.createElement("div", {
+    className: "m-acts"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-s",
+    onClick: onClose
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-p",
+    onClick: () => name.trim() && onSave(name.trim(), emoji)
+  }, "Crear")));
 }
 
 /* ── Add Subcat Modal ── */
@@ -610,49 +566,40 @@ function AddScModal({
 }) {
   const [name, setName] = useState('');
   const [catId, setCatId] = useState(defaultCatId || categories[0]?.id || '');
-  return /*#__PURE__*/_jsxs(Sheet, {
+  return /*#__PURE__*/React.createElement(Sheet, {
     show: true,
     onClose: onClose,
-    title: "Nueva subcategoría",
-    children: [/*#__PURE__*/_jsxs("div", {
-      className: "fg",
-      children: [/*#__PURE__*/_jsx("label", {
-        className: "fl",
-        children: "Nombre"
-      }), /*#__PURE__*/_jsx("input", {
-        className: "fi",
-        placeholder: "Ej: Postres frescos",
-        value: name,
-        onChange: e => setName(e.target.value),
-        autoFocus: true
-      })]
-    }), /*#__PURE__*/_jsxs("div", {
-      className: "fg",
-      children: [/*#__PURE__*/_jsx("label", {
-        className: "fl",
-        children: "Categoría"
-      }), /*#__PURE__*/_jsx("select", {
-        className: "fsel",
-        value: catId,
-        onChange: e => setCatId(e.target.value),
-        children: categories.map(c => /*#__PURE__*/_jsxs("option", {
-          value: c.id,
-          children: [c.emoji, " ", c.name]
-        }, c.id))
-      })]
-    }), /*#__PURE__*/_jsxs("div", {
-      className: "m-acts",
-      children: [/*#__PURE__*/_jsx("button", {
-        className: "btn btn-s",
-        onClick: onClose,
-        children: "Cancelar"
-      }), /*#__PURE__*/_jsx("button", {
-        className: "btn btn-p",
-        onClick: () => name.trim() && onSave(name.trim(), catId),
-        children: "Crear"
-      })]
-    })]
-  });
+    title: "Nueva subcategoría"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "fg"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fl"
+  }, "Nombre"), /*#__PURE__*/React.createElement("input", {
+    className: "fi",
+    placeholder: "Ej: Postres frescos",
+    value: name,
+    onChange: e => setName(e.target.value),
+    autoFocus: true
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "fg"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fl"
+  }, "Categoría"), /*#__PURE__*/React.createElement("select", {
+    className: "fsel",
+    value: catId,
+    onChange: e => setCatId(e.target.value)
+  }, categories.map(c => /*#__PURE__*/React.createElement("option", {
+    key: c.id,
+    value: c.id
+  }, c.emoji, " ", c.name)))), /*#__PURE__*/React.createElement("div", {
+    className: "m-acts"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-s",
+    onClick: onClose
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-p",
+    onClick: () => name.trim() && onSave(name.trim(), catId)
+  }, "Crear")));
 }
 
 /* ── Add/Edit Product Modal ── */
@@ -669,93 +616,77 @@ function ProductModal({
   const [thr, setThr] = useState(String(product?.minThreshold ?? 1));
   const [sup, setSup] = useState(product?.supermarket || '');
   const [scId, setScId] = useState(product?.subcategoryId || subcategory?.id || subcategories[0]?.id || '');
-  return /*#__PURE__*/_jsxs(Sheet, {
+  return /*#__PURE__*/React.createElement(Sheet, {
     show: true,
     onClose: onClose,
-    title: isEdit ? 'Editar producto' : 'Nuevo producto',
-    children: [/*#__PURE__*/_jsxs("div", {
-      className: "fg",
-      children: [/*#__PURE__*/_jsx("label", {
-        className: "fl",
-        children: "Nombre del producto"
-      }), /*#__PURE__*/_jsx("input", {
-        className: "fi",
-        placeholder: "Ej: Pechuga de pollo",
-        value: name,
-        onChange: e => setName(e.target.value),
-        autoFocus: true
-      })]
-    }), !isEdit && /*#__PURE__*/_jsxs("div", {
-      className: "fg",
-      children: [/*#__PURE__*/_jsx("label", {
-        className: "fl",
-        children: "Subcategoría"
-      }), /*#__PURE__*/_jsx("select", {
-        className: "fsel",
-        value: scId,
-        onChange: e => setScId(e.target.value),
-        children: subcategories.map(s => {
-          const cat = categories.find(c => c.id === s.categoryId);
-          return /*#__PURE__*/_jsxs("option", {
-            value: s.id,
-            children: [cat?.emoji, " ", cat?.name, " → ", s.name]
-          }, s.id);
-        })
-      })]
-    }), /*#__PURE__*/_jsxs("div", {
-      className: "f-row",
-      children: [/*#__PURE__*/_jsxs("div", {
-        className: "fg",
-        children: [/*#__PURE__*/_jsx("label", {
-          className: "fl",
-          children: "Mínimo para avisar"
-        }), /*#__PURE__*/_jsx("input", {
-          className: "fi",
-          type: "number",
-          min: "0",
-          placeholder: "1",
-          value: thr,
-          onChange: e => setThr(e.target.value)
-        })]
-      }), /*#__PURE__*/_jsxs("div", {
-        className: "fg",
-        children: [/*#__PURE__*/_jsx("label", {
-          className: "fl",
-          children: "Supermercado"
-        }), /*#__PURE__*/_jsxs("select", {
-          className: "fsel",
-          value: sup,
-          onChange: e => setSup(e.target.value),
-          children: [/*#__PURE__*/_jsx("option", {
-            value: "",
-            children: "Sin especificar"
-          }), SUPERS.map(s => /*#__PURE__*/_jsx("option", {
-            value: s,
-            children: s
-          }, s))]
-        })]
-      })]
-    }), /*#__PURE__*/_jsxs("div", {
-      className: "m-acts",
-      children: [/*#__PURE__*/_jsx("button", {
-        className: "btn btn-s",
-        onClick: onClose,
-        children: "Cancelar"
-      }), /*#__PURE__*/_jsx("button", {
-        className: "btn btn-p",
-        onClick: () => {
-          if (!name.trim()) return;
-          onSave({
-            name: name.trim(),
-            minThreshold: Math.max(0, parseInt(thr) || 0),
-            supermarket: sup,
-            subcategoryId: scId
-          });
-        },
-        children: isEdit ? 'Guardar' : 'Crear'
-      })]
-    })]
-  });
+    title: isEdit ? 'Editar producto' : 'Nuevo producto'
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "fg"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fl"
+  }, "Nombre del producto"), /*#__PURE__*/React.createElement("input", {
+    className: "fi",
+    placeholder: "Ej: Pechuga de pollo",
+    value: name,
+    onChange: e => setName(e.target.value),
+    autoFocus: true
+  })), !isEdit && /*#__PURE__*/React.createElement("div", {
+    className: "fg"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fl"
+  }, "Subcategoría"), /*#__PURE__*/React.createElement("select", {
+    className: "fsel",
+    value: scId,
+    onChange: e => setScId(e.target.value)
+  }, subcategories.map(s => {
+    const cat = categories.find(c => c.id === s.categoryId);
+    return /*#__PURE__*/React.createElement("option", {
+      key: s.id,
+      value: s.id
+    }, cat?.emoji, " ", cat?.name, " → ", s.name);
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "f-row"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "fg"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fl"
+  }, "Mínimo para avisar"), /*#__PURE__*/React.createElement("input", {
+    className: "fi",
+    type: "number",
+    min: "0",
+    placeholder: "1",
+    value: thr,
+    onChange: e => setThr(e.target.value)
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "fg"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fl"
+  }, "Supermercado"), /*#__PURE__*/React.createElement("select", {
+    className: "fsel",
+    value: sup,
+    onChange: e => setSup(e.target.value)
+  }, /*#__PURE__*/React.createElement("option", {
+    value: ""
+  }, "Sin especificar"), SUPERS.map(s => /*#__PURE__*/React.createElement("option", {
+    key: s,
+    value: s
+  }, s))))), /*#__PURE__*/React.createElement("div", {
+    className: "m-acts"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-s",
+    onClick: onClose
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-p",
+    onClick: () => {
+      if (!name.trim()) return;
+      onSave({
+        name: name.trim(),
+        minThreshold: Math.max(0, parseInt(thr) || 0),
+        supermarket: sup,
+        subcategoryId: scId
+      });
+    }
+  }, isEdit ? 'Guardar' : 'Crear')));
 }
 
 /* ── Complete Purchase Modal ── */
@@ -765,72 +696,62 @@ function CompleteModal({
   onClose
 }) {
   const [qty, setQty] = useState('');
-  return /*#__PURE__*/_jsxs(Sheet, {
+  return /*#__PURE__*/React.createElement(Sheet, {
     show: true,
     onClose: onClose,
-    title: "✅ Completar compra",
-    children: [/*#__PURE__*/_jsxs("div", {
-      style: {
-        textAlign: 'center',
-        marginBottom: '18px'
-      },
-      children: [/*#__PURE__*/_jsx("div", {
-        style: {
-          color: 'rgba(255,255,255,0.6)',
-          fontSize: '13px'
-        },
-        children: "Producto comprado:"
-      }), /*#__PURE__*/_jsx("div", {
-        style: {
-          color: '#fff',
-          fontSize: '19px',
-          fontWeight: '900',
-          marginTop: '4px'
-        },
-        children: product?.name
-      }), product?.supermarket && /*#__PURE__*/_jsxs("div", {
-        style: {
-          color: 'var(--g-pale)',
-          fontSize: '12px',
-          marginTop: '3px'
-        },
-        children: ["📍 ", product.supermarket]
-      })]
-    }), /*#__PURE__*/_jsxs("div", {
-      className: "fg",
-      children: [/*#__PURE__*/_jsx("label", {
-        className: "fl",
-        children: "¿Cuántas unidades has traído a casa?"
-      }), /*#__PURE__*/_jsx("input", {
-        className: "fi",
-        type: "number",
-        min: "1",
-        placeholder: "Ej: 3",
-        value: qty,
-        onChange: e => setQty(e.target.value),
-        autoFocus: true,
-        style: {
-          fontSize: '26px',
-          textAlign: 'center',
-          fontWeight: '900'
-        }
-      })]
-    }), /*#__PURE__*/_jsxs("div", {
-      className: "m-acts",
-      children: [/*#__PURE__*/_jsx("button", {
-        className: "btn btn-s",
-        onClick: onClose,
-        children: "Cancelar"
-      }), /*#__PURE__*/_jsx("button", {
-        className: "btn btn-p",
-        onClick: () => {
-          const n = parseInt(qty);
-          if (n > 0) onComplete(product.id, n);
-        },
-        children: "Confirmar"
-      })]
-    })]
-  });
+    title: "✅ Completar compra"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: 'center',
+      marginBottom: '18px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'rgba(255,255,255,0.6)',
+      fontSize: '13px'
+    }
+  }, "Producto comprado:"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: '#fff',
+      fontSize: '19px',
+      fontWeight: '900',
+      marginTop: '4px'
+    }
+  }, product?.name), product?.supermarket && /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'var(--g-pale)',
+      fontSize: '12px',
+      marginTop: '3px'
+    }
+  }, "📍 ", product.supermarket)), /*#__PURE__*/React.createElement("div", {
+    className: "fg"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fl"
+  }, "¿Cuántas unidades has traído a casa?"), /*#__PURE__*/React.createElement("input", {
+    className: "fi",
+    type: "number",
+    min: "1",
+    placeholder: "Ej: 3",
+    value: qty,
+    onChange: e => setQty(e.target.value),
+    autoFocus: true,
+    style: {
+      fontSize: '26px',
+      textAlign: 'center',
+      fontWeight: '900'
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "m-acts"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-s",
+    onClick: onClose
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-p",
+    onClick: () => {
+      const n = parseInt(qty);
+      if (n > 0) onComplete(product.id, n);
+    }
+  }, "Confirmar")));
 }
 
 /* ── Confirm Delete Modal ── */
@@ -839,31 +760,26 @@ function ConfirmModal({
   onOk,
   onClose
 }) {
-  return /*#__PURE__*/_jsxs(Sheet, {
+  return /*#__PURE__*/React.createElement(Sheet, {
     show: true,
     onClose: onClose,
-    title: "¿Eliminar?",
-    children: [/*#__PURE__*/_jsx("div", {
-      style: {
-        textAlign: 'center',
-        color: 'rgba(255,255,255,0.65)',
-        fontSize: '14px',
-        marginBottom: '22px'
-      },
-      children: message
-    }), /*#__PURE__*/_jsxs("div", {
-      className: "m-acts",
-      children: [/*#__PURE__*/_jsx("button", {
-        className: "btn btn-s",
-        onClick: onClose,
-        children: "Cancelar"
-      }), /*#__PURE__*/_jsx("button", {
-        className: "btn btn-d",
-        onClick: onOk,
-        children: "Eliminar"
-      })]
-    })]
-  });
+    title: "¿Eliminar?"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: 'center',
+      color: 'rgba(255,255,255,0.65)',
+      fontSize: '14px',
+      marginBottom: '22px'
+    }
+  }, message), /*#__PURE__*/React.createElement("div", {
+    className: "m-acts"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-s",
+    onClick: onClose
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-d",
+    onClick: onOk
+  }, "Eliminar")));
 }
 
 /* ── Product Card ── */
@@ -885,92 +801,73 @@ function PCard({
     setTimeout(() => document.addEventListener('click', h), 0);
     return () => document.removeEventListener('click', h);
   }, [menu]);
-  return /*#__PURE__*/_jsxs("div", {
-    className: `pc${inCart ? ' incart' : ''}`,
-    children: [inCart && /*#__PURE__*/_jsx("div", {
-      className: "pc-cart-ico",
-      onClick: onOpenComplete,
-      title: "Ver en carrito / Completar",
-      children: "🛒"
-    }), /*#__PURE__*/_jsxs("div", {
-      className: "pc-info",
-      children: [/*#__PURE__*/_jsx("div", {
-        className: "pc-name",
-        children: product.name
-      }), /*#__PURE__*/_jsxs("div", {
-        className: "pc-meta",
-        children: [product.supermarket && /*#__PURE__*/_jsx("span", {
-          className: "pc-super",
-          children: product.supermarket
-        }), /*#__PURE__*/_jsxs("span", {
-          className: "pc-min",
-          children: ["mín.", product.minThreshold]
-        }), inCart && product.inCartBy && /*#__PURE__*/_jsxs("span", {
-          className: "pc-who",
-          children: ["· ", product.inCartBy]
-        })]
-      })]
-    }), /*#__PURE__*/_jsxs("div", {
-      className: "pc-ctrl",
-      children: [/*#__PURE__*/_jsx("button", {
-        className: "qbtn qbtn-m",
-        onClick: () => onUpdateQty(product.id, product.quantity - 1),
-        disabled: zero,
-        children: "−"
-      }), /*#__PURE__*/_jsx("div", {
-        className: `qnum${zero ? ' zero' : low ? ' low' : ''}`,
-        children: product.quantity
-      }), /*#__PURE__*/_jsx("button", {
-        className: "qbtn qbtn-p",
-        onClick: () => onUpdateQty(product.id, product.quantity + 1),
-        children: "+"
-      })]
-    }), /*#__PURE__*/_jsxs("div", {
-      style: {
-        position: 'relative'
-      },
-      children: [/*#__PURE__*/_jsx("button", {
-        className: "kb",
-        onClick: e => {
-          e.stopPropagation();
-          setMenu(m => !m);
-        },
-        children: "⋮"
-      }), menu && /*#__PURE__*/_jsxs("div", {
-        className: "ctxm",
-        onClick: e => e.stopPropagation(),
-        children: [/*#__PURE__*/_jsx("div", {
-          className: "ctxi",
-          onClick: () => {
-            onEdit(product);
-            setMenu(false);
-          },
-          children: "✏️ Editar"
-        }), !inCart ? /*#__PURE__*/_jsx("div", {
-          className: "ctxi",
-          onClick: () => {
-            onForceCart(product.id);
-            setMenu(false);
-          },
-          children: "🛒 Al carrito"
-        }) : /*#__PURE__*/_jsx("div", {
-          className: "ctxi",
-          onClick: () => {
-            onOpenComplete();
-            setMenu(false);
-          },
-          children: "✅ Completar"
-        }), /*#__PURE__*/_jsx("div", {
-          className: "ctxi del",
-          onClick: () => {
-            onDelete(product.id);
-            setMenu(false);
-          },
-          children: "🗑 Eliminar"
-        })]
-      })]
-    })]
-  });
+  return /*#__PURE__*/React.createElement("div", {
+    className: `pc${inCart ? ' incart' : ''}`
+  }, inCart && /*#__PURE__*/React.createElement("div", {
+    className: "pc-cart-ico",
+    onClick: onOpenComplete,
+    title: "Ver en carrito / Completar"
+  }, "🛒"), /*#__PURE__*/React.createElement("div", {
+    className: "pc-info"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "pc-name"
+  }, product.name), /*#__PURE__*/React.createElement("div", {
+    className: "pc-meta"
+  }, product.supermarket && /*#__PURE__*/React.createElement("span", {
+    className: "pc-super"
+  }, product.supermarket), /*#__PURE__*/React.createElement("span", {
+    className: "pc-min"
+  }, "mín.", product.minThreshold), inCart && product.inCartBy && /*#__PURE__*/React.createElement("span", {
+    className: "pc-who"
+  }, "· ", product.inCartBy))), /*#__PURE__*/React.createElement("div", {
+    className: "pc-ctrl"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "qbtn qbtn-m",
+    onClick: () => onUpdateQty(product.id, product.quantity - 1),
+    disabled: zero
+  }, "−"), /*#__PURE__*/React.createElement("div", {
+    className: `qnum${zero ? ' zero' : low ? ' low' : ''}`
+  }, product.quantity), /*#__PURE__*/React.createElement("button", {
+    className: "qbtn qbtn-p",
+    onClick: () => onUpdateQty(product.id, product.quantity + 1)
+  }, "+")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'relative'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "kb",
+    onClick: e => {
+      e.stopPropagation();
+      setMenu(m => !m);
+    }
+  }, "⋮"), menu && /*#__PURE__*/React.createElement("div", {
+    className: "ctxm",
+    onClick: e => e.stopPropagation()
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "ctxi",
+    onClick: () => {
+      onEdit(product);
+      setMenu(false);
+    }
+  }, "✏️ Editar"), !inCart ? /*#__PURE__*/React.createElement("div", {
+    className: "ctxi",
+    onClick: () => {
+      onForceCart(product.id);
+      setMenu(false);
+    }
+  }, "🛒 Al carrito") : /*#__PURE__*/React.createElement("div", {
+    className: "ctxi",
+    onClick: () => {
+      onOpenComplete();
+      setMenu(false);
+    }
+  }, "✅ Completar"), /*#__PURE__*/React.createElement("div", {
+    className: "ctxi del",
+    onClick: () => {
+      onDelete(product.id);
+      setMenu(false);
+    }
+  }, "🗑 Eliminar"))));
 }
 
 /* ── Subcategory Section ── */
@@ -987,46 +884,37 @@ function ScSection({
   onForceCart
 }) {
   const cartN = products.filter(p => p.inCart).length;
-  return /*#__PURE__*/_jsxs("div", {
-    className: "sc",
-    children: [/*#__PURE__*/_jsxs("div", {
-      className: "sc-hdr",
-      onClick: onToggle,
-      children: [/*#__PURE__*/_jsxs("div", {
-        className: "sc-title",
-        children: [sc.name, /*#__PURE__*/_jsx("span", {
-          className: `sc-cnt${cartN > 0 ? ' cart' : ''}`,
-          children: cartN > 0 ? `🛒${cartN}` : products.length
-        })]
-      }), /*#__PURE__*/_jsx("span", {
-        className: `sc-arrow${isOpen ? ' open' : ''}`,
-        children: "▶"
-      })]
-    }), isOpen && /*#__PURE__*/_jsxs("div", {
-      className: "sc-body",
-      children: [products.length === 0 && /*#__PURE__*/_jsx("div", {
-        style: {
-          padding: '10px 14px',
-          color: 'rgba(255,255,255,0.3)',
-          fontSize: '12px'
-        },
-        children: "Sin productos — añade el primero abajo"
-      }), products.map(p => /*#__PURE__*/_jsx(PCard, {
-        product: p,
-        onUpdateQty: onUpdateQty,
-        onEdit: onEdit,
-        onDelete: onDelete,
-        onOpenComplete: () => onOpenComplete(p),
-        onForceCart: onForceCart
-      }, p.id)), /*#__PURE__*/_jsxs("div", {
-        className: "sc-add",
-        onClick: onAddProduct,
-        children: [/*#__PURE__*/_jsx("span", {
-          children: "＋"
-        }), "Añadir producto"]
-      })]
-    })]
-  });
+  return /*#__PURE__*/React.createElement("div", {
+    className: "sc"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sc-hdr",
+    onClick: onToggle
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sc-title"
+  }, sc.name, /*#__PURE__*/React.createElement("span", {
+    className: `sc-cnt${cartN > 0 ? ' cart' : ''}`
+  }, cartN > 0 ? `🛒${cartN}` : products.length)), /*#__PURE__*/React.createElement("span", {
+    className: `sc-arrow${isOpen ? ' open' : ''}`
+  }, "▶")), isOpen && /*#__PURE__*/React.createElement("div", {
+    className: "sc-body"
+  }, products.length === 0 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '10px 14px',
+      color: 'rgba(255,255,255,0.3)',
+      fontSize: '12px'
+    }
+  }, "Sin productos — añade el primero abajo"), products.map(p => /*#__PURE__*/React.createElement(PCard, {
+    key: p.id,
+    product: p,
+    onUpdateQty: onUpdateQty,
+    onEdit: onEdit,
+    onDelete: onDelete,
+    onOpenComplete: () => onOpenComplete(p),
+    onForceCart: onForceCart
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "sc-add",
+    onClick: onAddProduct
+  }, /*#__PURE__*/React.createElement("span", null, "＋"), "Añadir producto")));
 }
 
 /* ── Inventory View ── */
@@ -1054,43 +942,38 @@ function InventoryView({
     });
     return m;
   }, [products]);
-  if (!activeCatId) return /*#__PURE__*/_jsx("div", {
+  if (!activeCatId) return /*#__PURE__*/React.createElement("div", {
     className: "scroll",
     style: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center'
-    },
-    children: /*#__PURE__*/_jsxs("div", {
-      className: "empty",
-      children: [/*#__PURE__*/_jsx("div", {
-        className: "empty-ico",
-        children: "🛒"
-      }), /*#__PURE__*/_jsx("div", {
-        className: "empty-t",
-        children: "Selecciona una categoría"
-      })]
-    })
-  });
-  return /*#__PURE__*/_jsxs("div", {
-    className: "scroll",
-    children: [scs.map(sc => /*#__PURE__*/_jsx(ScSection, {
-      sc: sc,
-      products: bysc[sc.id] || [],
-      isOpen: openScs.has(sc.id),
-      onToggle: () => onToggleSc(sc.id),
-      onAddProduct: () => onAddProduct(sc),
-      onUpdateQty: onUpdateQty,
-      onEdit: onEdit,
-      onDelete: onDelete,
-      onOpenComplete: onOpenComplete,
-      onForceCart: onForceCart
-    }, sc.id)), /*#__PURE__*/_jsx("div", {
-      className: "add-sc-btn",
-      onClick: () => onAddSc(activeCatId),
-      children: "＋ Nueva subcategoría"
-    })]
-  });
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "empty"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "empty-ico"
+  }, "🛒"), /*#__PURE__*/React.createElement("div", {
+    className: "empty-t"
+  }, "Selecciona una categoría")));
+  return /*#__PURE__*/React.createElement("div", {
+    className: "scroll"
+  }, scs.map(sc => /*#__PURE__*/React.createElement(ScSection, {
+    key: sc.id,
+    sc: sc,
+    products: bysc[sc.id] || [],
+    isOpen: openScs.has(sc.id),
+    onToggle: () => onToggleSc(sc.id),
+    onAddProduct: () => onAddProduct(sc),
+    onUpdateQty: onUpdateQty,
+    onEdit: onEdit,
+    onDelete: onDelete,
+    onOpenComplete: onOpenComplete,
+    onForceCart: onForceCart
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "add-sc-btn",
+    onClick: () => onAddSc(activeCatId)
+  }, "＋ Nueva subcategoría"));
 }
 
 /* ── Cart View ── */
@@ -1119,78 +1002,60 @@ function CartView({
   };
   const Item = ({
     p
-  }) => /*#__PURE__*/_jsxs("div", {
-    className: "ci",
-    children: [/*#__PURE__*/_jsxs("div", {
-      className: "ci-info",
-      children: [/*#__PURE__*/_jsx("div", {
-        className: "ci-name",
-        children: p.name
-      }), /*#__PURE__*/_jsx("div", {
-        className: "ci-bread",
-        children: crumb(p)
-      }), p.inCartBy && /*#__PURE__*/_jsxs("div", {
-        className: "ci-who",
-        children: ["Añadido por ", p.inCartBy]
-      })]
-    }), p.supermarket && view === 'all' && /*#__PURE__*/_jsx("span", {
-      className: "ci-super",
-      children: p.supermarket
-    }), /*#__PURE__*/_jsxs("div", {
-      className: "ci-acts",
-      children: [/*#__PURE__*/_jsx("button", {
-        className: "ca-btn ca-ok",
-        onClick: () => onComplete(p),
-        children: "✓"
-      }), /*#__PURE__*/_jsx("button", {
-        className: "ca-btn ca-rm",
-        onClick: () => onRemove(p.id),
-        children: "✕"
-      })]
-    })]
-  });
-  return /*#__PURE__*/_jsxs("div", {
-    className: "scroll",
-    children: [/*#__PURE__*/_jsxs("div", {
-      className: "cart-hdr",
-      children: [/*#__PURE__*/_jsxs("div", {
-        className: "cart-ttl",
-        children: ["🛒 Carrito (", cartItems.length, ")"]
-      }), /*#__PURE__*/_jsxs("div", {
-        className: "cart-tog",
-        children: [/*#__PURE__*/_jsx("button", {
-          className: `ctog-btn${view === 'all' ? ' on' : ''}`,
-          onClick: () => setView('all'),
-          children: "Todo"
-        }), /*#__PURE__*/_jsx("button", {
-          className: `ctog-btn${view === 'by' ? ' on' : ''}`,
-          onClick: () => setView('by'),
-          children: "Por tienda"
-        })]
-      })]
-    }), cartItems.length === 0 ? /*#__PURE__*/_jsxs("div", {
-      className: "empty",
-      children: [/*#__PURE__*/_jsx("div", {
-        className: "empty-ico",
-        children: "🎉"
-      }), /*#__PURE__*/_jsx("div", {
-        className: "empty-t",
-        children: "¡Despensa al completo!"
-      }), /*#__PURE__*/_jsx("div", {
-        className: "empty-s",
-        children: "El carrito está vacío"
-      })]
-    }) : view === 'all' ? cartItems.map(p => /*#__PURE__*/_jsx(Item, {
-      p: p
-    }, p.id)) : byStore.map(([store, items]) => /*#__PURE__*/_jsxs("div", {
-      children: [/*#__PURE__*/_jsxs("div", {
-        className: "csec-lbl",
-        children: ["📍 ", store]
-      }), items.map(p => /*#__PURE__*/_jsx(Item, {
-        p: p
-      }, p.id))]
-    }, store))]
-  });
+  }) => /*#__PURE__*/React.createElement("div", {
+    className: "ci"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "ci-info"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "ci-name"
+  }, p.name), /*#__PURE__*/React.createElement("div", {
+    className: "ci-bread"
+  }, crumb(p)), p.inCartBy && /*#__PURE__*/React.createElement("div", {
+    className: "ci-who"
+  }, "Añadido por ", p.inCartBy)), p.supermarket && view === 'all' && /*#__PURE__*/React.createElement("span", {
+    className: "ci-super"
+  }, p.supermarket), /*#__PURE__*/React.createElement("div", {
+    className: "ci-acts"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "ca-btn ca-ok",
+    onClick: () => onComplete(p)
+  }, "✓"), /*#__PURE__*/React.createElement("button", {
+    className: "ca-btn ca-rm",
+    onClick: () => onRemove(p.id)
+  }, "✕")));
+  return /*#__PURE__*/React.createElement("div", {
+    className: "scroll"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "cart-hdr"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "cart-ttl"
+  }, "🛒 Carrito (", cartItems.length, ")"), /*#__PURE__*/React.createElement("div", {
+    className: "cart-tog"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: `ctog-btn${view === 'all' ? ' on' : ''}`,
+    onClick: () => setView('all')
+  }, "Todo"), /*#__PURE__*/React.createElement("button", {
+    className: `ctog-btn${view === 'by' ? ' on' : ''}`,
+    onClick: () => setView('by')
+  }, "Por tienda"))), cartItems.length === 0 ? /*#__PURE__*/React.createElement("div", {
+    className: "empty"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "empty-ico"
+  }, "🎉"), /*#__PURE__*/React.createElement("div", {
+    className: "empty-t"
+  }, "¡Despensa al completo!"), /*#__PURE__*/React.createElement("div", {
+    className: "empty-s"
+  }, "El carrito está vacío")) : view === 'all' ? cartItems.map(p => /*#__PURE__*/React.createElement(Item, {
+    key: p.id,
+    p: p
+  })) : byStore.map(([store, items]) => /*#__PURE__*/React.createElement("div", {
+    key: store
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "csec-lbl"
+  }, "📍 ", store), items.map(p => /*#__PURE__*/React.createElement(Item, {
+    key: p.id,
+    p: p
+  })))));
 }
 
 /* ── Welcome Screen ── */
@@ -1208,41 +1073,34 @@ function Welcome({
     saveUserLS(u);
     onDone(u);
   };
-  return /*#__PURE__*/_jsxs("div", {
-    className: "wlc",
-    children: [/*#__PURE__*/_jsx("div", {
-      className: "wlc-logo",
-      children: "🛒"
-    }), /*#__PURE__*/_jsx("div", {
-      className: "wlc-ttl",
-      children: "La Despensa"
-    }), /*#__PURE__*/_jsx("div", {
-      className: "wlc-sub",
-      children: "La compra, sin dramas."
-    }), /*#__PURE__*/_jsxs("div", {
-      className: "wlc-card",
-      children: [/*#__PURE__*/_jsx("label", {
-        className: "wlc-lbl",
-        children: "¿Cómo te llamas?"
-      }), /*#__PURE__*/_jsx("input", {
-        className: "wlc-inp",
-        placeholder: "Tu nombre",
-        value: name,
-        onChange: e => setName(e.target.value),
-        onKeyPress: e => e.key === 'Enter' && go(),
-        autoFocus: true
-      }), /*#__PURE__*/_jsx("button", {
-        className: "btn btn-p",
-        style: {
-          width: '100%',
-          padding: '14px',
-          fontSize: '16px'
-        },
-        onClick: go,
-        children: "Entrar →"
-      })]
-    })]
-  });
+  return /*#__PURE__*/React.createElement("div", {
+    className: "wlc"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "wlc-logo"
+  }, "🛒"), /*#__PURE__*/React.createElement("div", {
+    className: "wlc-ttl"
+  }, "La Despensa"), /*#__PURE__*/React.createElement("div", {
+    className: "wlc-sub"
+  }, "La compra, sin dramas."), /*#__PURE__*/React.createElement("div", {
+    className: "wlc-card"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "wlc-lbl"
+  }, "¿Cómo te llamas?"), /*#__PURE__*/React.createElement("input", {
+    className: "wlc-inp",
+    placeholder: "Tu nombre",
+    value: name,
+    onChange: e => setName(e.target.value),
+    onKeyPress: e => e.key === 'Enter' && go(),
+    autoFocus: true
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-p",
+    style: {
+      width: '100%',
+      padding: '14px',
+      fontSize: '16px'
+    },
+    onClick: go
+  }, "Entrar →")));
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -1483,13 +1341,11 @@ function App() {
   const cartN = cartItems.length;
 
   /* ── Render ── */
-  const Bg = () => /*#__PURE__*/_jsxs(_Fragment, {
-    children: [/*#__PURE__*/_jsx("div", {
-      className: "bg-grad"
-    }), /*#__PURE__*/_jsx("div", {
-      className: "bg-img"
-    })]
-  });
+  const Bg = () => /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "bg-grad"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "bg-img"
+  }));
 
   /* Ocultar el pre-loader nativo en el primer render de React */
   useEffect(() => {
@@ -1498,206 +1354,182 @@ function App() {
   }, []);
 
   /* Si Firebase no pudo iniciarse, mostrar error claro */
-  if (!db) return /*#__PURE__*/_jsxs("div", {
-    className: "app",
-    children: [/*#__PURE__*/_jsx(Bg, {}), /*#__PURE__*/_jsxs("div", {
-      className: "ldg",
-      style: {
-        gap: '10px',
-        padding: '24px',
-        textAlign: 'center'
-      },
-      children: [/*#__PURE__*/_jsx("div", {
-        style: {
-          fontSize: '48px'
-        },
-        children: "⚠️"
-      }), /*#__PURE__*/_jsx("div", {
-        style: {
-          color: '#fff',
-          fontSize: '17px',
-          fontWeight: '900'
-        },
-        children: "No se pudo conectar con Firebase"
-      }), /*#__PURE__*/_jsx("div", {
-        style: {
-          color: 'rgba(255,255,255,0.6)',
-          fontSize: '13px',
-          maxWidth: '300px',
-          lineHeight: '1.5'
-        },
-        children: _fbError || 'Error desconocido'
-      }), /*#__PURE__*/_jsx("div", {
-        style: {
-          color: 'rgba(255,255,255,0.4)',
-          fontSize: '12px',
-          marginTop: '8px'
-        },
-        children: "Comprueba que el Realtime Database está activado en Firebase Console y que la databaseURL es correcta."
-      })]
-    })]
-  });
-  if (!user) return /*#__PURE__*/_jsxs("div", {
-    className: "app",
-    children: [/*#__PURE__*/_jsx(Bg, {}), /*#__PURE__*/_jsx(Welcome, {
-      onDone: u => {
-        setUser(u);
-      }
-    })]
-  });
-  if (!ready) return /*#__PURE__*/_jsxs("div", {
-    className: "app",
-    children: [/*#__PURE__*/_jsx(Bg, {}), /*#__PURE__*/_jsxs("div", {
-      className: "ldg",
-      children: [/*#__PURE__*/_jsx("div", {
-        className: "spin"
-      }), /*#__PURE__*/_jsx("div", {
-        className: "ldg-txt",
-        children: "Cargando despensa…"
-      })]
-    })]
-  });
-  return /*#__PURE__*/_jsxs("div", {
-    className: "app",
-    children: [/*#__PURE__*/_jsx(Bg, {}), /*#__PURE__*/_jsxs("div", {
-      className: "hdr",
-      children: [/*#__PURE__*/_jsxs("div", {
-        className: "hdr-left",
-        children: [/*#__PURE__*/_jsx("div", {
-          className: "hdr-logo",
-          children: "🛒"
-        }), /*#__PURE__*/_jsxs("div", {
-          children: [/*#__PURE__*/_jsx("div", {
-            className: "hdr-title",
-            children: "La Despensa"
-          }), /*#__PURE__*/_jsxs("div", {
-            className: "hdr-sub",
-            children: ["Hola, ", user.name, " 👋"]
-          })]
-        })]
-      }), /*#__PURE__*/_jsx("div", {
-        className: "hdr-right",
-        children: /*#__PURE__*/_jsxs("div", {
-          className: `hdr-btn${mainView === 'cart' ? ' on' : ''}`,
-          onClick: () => setMainView(v => v === 'cart' ? 'inv' : 'cart'),
-          children: ["🛒", cartN > 0 && /*#__PURE__*/_jsx("span", {
-            className: "bdg",
-            children: cartN
-          })]
-        })
-      })]
-    }), mainView === 'inv' && /*#__PURE__*/_jsx("div", {
-      className: "cat-nav",
-      children: /*#__PURE__*/_jsxs("div", {
-        className: "cat-nav-inner",
-        children: [cats.map(c => /*#__PURE__*/_jsxs("button", {
-          className: `cat-tab${activeCat === c.id ? ' active' : ''}`,
-          onClick: () => setActiveCat(c.id),
-          children: [/*#__PURE__*/_jsx("span", {
-            children: c.emoji
-          }), /*#__PURE__*/_jsx("span", {
-            children: c.name
-          })]
-        }, c.id)), /*#__PURE__*/_jsx("button", {
-          className: "cat-tab cat-tab-add",
-          onClick: () => setMAddCat(true),
-          children: "＋"
-        })]
-      })
-    }), mainView === 'inv' ? /*#__PURE__*/_jsx(InventoryView, {
-      categories: cats,
-      subcategories: scs,
-      products: prods,
-      activeCatId: activeCat,
-      openScs: openScs,
-      onToggleSc: id => setOpenScs(p => {
-        const n = new Set(p);
-        n.has(id) ? n.delete(id) : n.add(id);
-        return n;
-      }),
-      onAddProduct: setMAddProd,
-      onUpdateQty: handleQty,
-      onEdit: setMEditProd,
-      onDelete: handleDeleteProd,
-      onOpenComplete: setMComplete,
-      onForceCart: handleForceCart,
-      onAddSc: setMAddSc
-    }) : /*#__PURE__*/_jsx(CartView, {
-      cartItems: cartItems,
-      categories: cats,
-      subcategories: scs,
-      view: cartView,
-      setView: setCartView,
-      onComplete: setMComplete,
-      onRemove: handleRemoveCart
-    }), /*#__PURE__*/_jsxs("div", {
-      className: "bnav",
-      children: [/*#__PURE__*/_jsxs("div", {
-        className: `bnav-btn${mainView === 'inv' ? ' on' : ''}`,
-        onClick: () => setMainView('inv'),
-        children: [/*#__PURE__*/_jsx("div", {
-          className: "bnav-ico",
-          children: "🏠"
-        }), /*#__PURE__*/_jsx("span", {
-          children: "Despensa"
-        })]
-      }), /*#__PURE__*/_jsxs("div", {
-        className: `bnav-btn${mainView === 'cart' ? ' on' : ''}`,
-        onClick: () => setMainView('cart'),
-        children: [/*#__PURE__*/_jsxs("div", {
-          className: "bnav-ico",
-          children: ["🛒", cartN > 0 && /*#__PURE__*/_jsx("span", {
-            className: "bdg",
-            style: {
-              fontSize: '9px',
-              top: '-1px',
-              right: '-5px'
-            },
-            children: cartN
-          })]
-        }), /*#__PURE__*/_jsx("span", {
-          children: "Carrito"
-        })]
-      })]
-    }), /*#__PURE__*/_jsx(Toasts, {
-      list: toasts
-    }), mAddCat && /*#__PURE__*/_jsx(AddCatModal, {
-      onSave: handleAddCat,
-      onClose: () => setMAddCat(false)
-    }), mAddSc !== null && /*#__PURE__*/_jsx(AddScModal, {
-      categories: cats,
-      defaultCatId: mAddSc,
-      onSave: handleAddSc,
-      onClose: () => setMAddSc(null)
-    }), mAddProd !== null && /*#__PURE__*/_jsx(ProductModal, {
-      subcategory: mAddProd,
-      categories: cats,
-      subcategories: scs,
-      onSave: handleAddProd,
-      onClose: () => setMAddProd(null)
-    }), mEditProd !== null && /*#__PURE__*/_jsx(ProductModal, {
-      product: mEditProd,
-      categories: cats,
-      subcategories: scs,
-      onSave: handleEditProd,
-      onClose: () => setMEditProd(null)
-    }), mComplete !== null && /*#__PURE__*/_jsx(CompleteModal, {
-      product: mComplete,
-      onComplete: handleComplete,
-      onClose: () => setMComplete(null)
-    }), mConfirm !== null && /*#__PURE__*/_jsx(ConfirmModal, {
-      message: mConfirm.msg,
-      onOk: mConfirm.fn,
-      onClose: () => setMConfirm(null)
-    })]
-  });
+  if (!db) return /*#__PURE__*/React.createElement("div", {
+    className: "app"
+  }, /*#__PURE__*/React.createElement(Bg, null), /*#__PURE__*/React.createElement("div", {
+    className: "ldg",
+    style: {
+      gap: '10px',
+      padding: '24px',
+      textAlign: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: '48px'
+    }
+  }, "⚠️"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: '#fff',
+      fontSize: '17px',
+      fontWeight: '900'
+    }
+  }, "No se pudo conectar con Firebase"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'rgba(255,255,255,0.6)',
+      fontSize: '13px',
+      maxWidth: '300px',
+      lineHeight: '1.5'
+    }
+  }, _fbError || 'Error desconocido'), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'rgba(255,255,255,0.4)',
+      fontSize: '12px',
+      marginTop: '8px'
+    }
+  }, "Comprueba que el Realtime Database está activado en Firebase Console y que la databaseURL es correcta.")));
+  if (!user) return /*#__PURE__*/React.createElement("div", {
+    className: "app"
+  }, /*#__PURE__*/React.createElement(Bg, null), /*#__PURE__*/React.createElement(Welcome, {
+    onDone: u => {
+      setUser(u);
+    }
+  }));
+  if (!ready) return /*#__PURE__*/React.createElement("div", {
+    className: "app"
+  }, /*#__PURE__*/React.createElement(Bg, null), /*#__PURE__*/React.createElement("div", {
+    className: "ldg"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "spin"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "ldg-txt"
+  }, "Cargando despensa…")));
+  return /*#__PURE__*/React.createElement("div", {
+    className: "app"
+  }, /*#__PURE__*/React.createElement(Bg, null), /*#__PURE__*/React.createElement("div", {
+    className: "hdr"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hdr-left"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hdr-logo"
+  }, "🛒"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "hdr-title"
+  }, "La Despensa"), /*#__PURE__*/React.createElement("div", {
+    className: "hdr-sub"
+  }, "Hola, ", user.name, " 👋"))), /*#__PURE__*/React.createElement("div", {
+    className: "hdr-right"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: `hdr-btn${mainView === 'cart' ? ' on' : ''}`,
+    onClick: () => setMainView(v => v === 'cart' ? 'inv' : 'cart')
+  }, "🛒", cartN > 0 && /*#__PURE__*/React.createElement("span", {
+    className: "bdg"
+  }, cartN)))), mainView === 'inv' && /*#__PURE__*/React.createElement("div", {
+    className: "cat-nav"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "cat-nav-inner"
+  }, cats.map(c => /*#__PURE__*/React.createElement("button", {
+    key: c.id,
+    className: `cat-tab${activeCat === c.id ? ' active' : ''}`,
+    onClick: () => setActiveCat(c.id)
+  }, /*#__PURE__*/React.createElement("span", null, c.emoji), /*#__PURE__*/React.createElement("span", null, c.name))), /*#__PURE__*/React.createElement("button", {
+    className: "cat-tab cat-tab-add",
+    onClick: () => setMAddCat(true)
+  }, "＋"))), mainView === 'inv' ? /*#__PURE__*/React.createElement(InventoryView, {
+    categories: cats,
+    subcategories: scs,
+    products: prods,
+    activeCatId: activeCat,
+    openScs: openScs,
+    onToggleSc: id => setOpenScs(p => {
+      const n = new Set(p);
+      n.has(id) ? n.delete(id) : n.add(id);
+      return n;
+    }),
+    onAddProduct: setMAddProd,
+    onUpdateQty: handleQty,
+    onEdit: setMEditProd,
+    onDelete: handleDeleteProd,
+    onOpenComplete: setMComplete,
+    onForceCart: handleForceCart,
+    onAddSc: setMAddSc
+  }) : /*#__PURE__*/React.createElement(CartView, {
+    cartItems: cartItems,
+    categories: cats,
+    subcategories: scs,
+    view: cartView,
+    setView: setCartView,
+    onComplete: setMComplete,
+    onRemove: handleRemoveCart
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "bnav"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: `bnav-btn${mainView === 'inv' ? ' on' : ''}`,
+    onClick: () => setMainView('inv')
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bnav-ico"
+  }, "🏠"), /*#__PURE__*/React.createElement("span", null, "Despensa")), /*#__PURE__*/React.createElement("div", {
+    className: `bnav-btn${mainView === 'cart' ? ' on' : ''}`,
+    onClick: () => setMainView('cart')
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bnav-ico"
+  }, "🛒", cartN > 0 && /*#__PURE__*/React.createElement("span", {
+    className: "bdg",
+    style: {
+      fontSize: '9px',
+      top: '-1px',
+      right: '-5px'
+    }
+  }, cartN)), /*#__PURE__*/React.createElement("span", null, "Carrito"))), /*#__PURE__*/React.createElement(Toasts, {
+    list: toasts
+  }), mAddCat && /*#__PURE__*/React.createElement(AddCatModal, {
+    onSave: handleAddCat,
+    onClose: () => setMAddCat(false)
+  }), mAddSc !== null && /*#__PURE__*/React.createElement(AddScModal, {
+    categories: cats,
+    defaultCatId: mAddSc,
+    onSave: handleAddSc,
+    onClose: () => setMAddSc(null)
+  }), mAddProd !== null && /*#__PURE__*/React.createElement(ProductModal, {
+    subcategory: mAddProd,
+    categories: cats,
+    subcategories: scs,
+    onSave: handleAddProd,
+    onClose: () => setMAddProd(null)
+  }), mEditProd !== null && /*#__PURE__*/React.createElement(ProductModal, {
+    product: mEditProd,
+    categories: cats,
+    subcategories: scs,
+    onSave: handleEditProd,
+    onClose: () => setMEditProd(null)
+  }), mComplete !== null && /*#__PURE__*/React.createElement(CompleteModal, {
+    product: mComplete,
+    onComplete: handleComplete,
+    onClose: () => setMComplete(null)
+  }), mConfirm !== null && /*#__PURE__*/React.createElement(ConfirmModal, {
+    message: mConfirm.msg,
+    onOk: mConfirm.fn,
+    onClose: () => setMConfirm(null)
+  }));
 }
 
 /* Register SW */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.warn));
 }
-ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/_jsx(App, {}));
+ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(App, null));
 </script>
+<div id="root"></div>
+<!-- Visible antes de que React arranque -->
+<div id="pre-load">
+  <div style="font-size:60px;margin-bottom:12px">&#x1F6D2;</div>
+  <div style="font-size:21px;font-weight:900;letter-spacing:-0.5px">La Despensa</div>
+  <div style="margin-top:20px;width:36px;height:36px;border:3px solid rgba(255,255,255,0.15);border-top-color:#4CAF50;border-radius:50%;animation:spin 0.75s linear infinite"></div>
+  <div style="margin-top:12px;color:rgba(255,255,255,0.4);font-size:13px;font-weight:600">Conectando...</div>
+  <div id="pre-load-err" style="display:none;margin-top:14px;background:rgba(198,40,40,0.25);border:1px solid rgba(198,40,40,0.5);border-radius:10px;padding:10px 16px;font-size:13px;max-width:300px;text-align:center;color:#EF9A9A"></div>
+</div>
+<style>
+  #pre-load{position:fixed;inset:0;background:linear-gradient(160deg,#0a1a0a 0%,#172e17 50%,#0a2020 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;color:#fff;font-family:Nunito,sans-serif;transition:opacity 0.35s;}
+  #pre-load.done{opacity:0;pointer-events:none;}
+</style>
+
 </body>
 </html>
