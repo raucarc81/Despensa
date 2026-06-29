@@ -15,7 +15,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -363,20 +362,27 @@
   #pre-load.done{opacity:0;pointer-events:none;}
 </style>
 
-<script type="text/babel" data-presets="react">
-const { useState, useEffect, useCallback, useRef, useMemo } = React;
+<script>
+import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+const {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo
+} = React;
 
 /* ════════════════════════════════════════════════════════════
    FIREBASE CONFIG  ← REEMPLAZA CON TUS PROPIOS VALORES
    ════════════════════════════════════════════════════════════ */
 const FB_CFG = {
-  apiKey:            "AIzaSyDtNmUVsgnbxXx8uIKtQuDmRXJ3G_5LGrg",
-  authDomain:        "despensa-b05ff.firebaseapp.com",
-  databaseURL:       "https://despensa-b05ff-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId:         "despensa-b05ff",
-  storageBucket:     "despensa-b05ff.firebasestorage.app",
+  apiKey: "AIzaSyDtNmUVsgnbxXx8uIKtQuDmRXJ3G_5LGrg",
+  authDomain: "despensa-b05ff.firebaseapp.com",
+  databaseURL: "https://despensa-b05ff-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "despensa-b05ff",
+  storageBucket: "despensa-b05ff.firebasestorage.app",
   messagingSenderId: "1082666820132",
-  appId:             "1:1082666820132:web:3eb634b8fdd91fe311eeb1"
+  appId: "1:1082666820132:web:3eb634b8fdd91fe311eeb1"
 };
 
 /* Init Firebase de forma segura — si falla, la app muestra error en vez de pantalla en blanco */
@@ -385,34 +391,57 @@ let _fbError = null;
 try {
   firebase.initializeApp(FB_CFG);
   db = firebase.database();
-} catch(e) {
+} catch (e) {
   _fbError = e.message || String(e);
   console.error('[Despensa] Firebase init error:', e);
   const el = document.getElementById('pre-load-err');
-  if (el) { el.textContent = 'Error Firebase: ' + _fbError; el.style.display='block'; }
+  if (el) {
+    el.textContent = 'Error Firebase: ' + _fbError;
+    el.style.display = 'block';
+  }
 }
 
 /* ════════════════ DATOS INICIALES ════════════════ */
-const INIT_CATS = [
-  { name:'Comida',           emoji:'🥩', order:0 },
-  { name:'Despensa',         emoji:'🥫', order:1 },
-  { name:'Bebidas',          emoji:'🥤', order:2 },
-  { name:'Limpieza y Baños', emoji:'🧹', order:3 },
-  { name:'Guarrerías',       emoji:'🍿', order:4 },
-  { name:'Barbacoa',         emoji:'🔥', order:5 },
-  { name:'Botiquín',         emoji:'💊', order:6 },
-];
+const INIT_CATS = [{
+  name: 'Comida',
+  emoji: '🥩',
+  order: 0
+}, {
+  name: 'Despensa',
+  emoji: '🥫',
+  order: 1
+}, {
+  name: 'Bebidas',
+  emoji: '🥤',
+  order: 2
+}, {
+  name: 'Limpieza y Baños',
+  emoji: '🧹',
+  order: 3
+}, {
+  name: 'Guarrerías',
+  emoji: '🍿',
+  order: 4
+}, {
+  name: 'Barbacoa',
+  emoji: '🔥',
+  order: 5
+}, {
+  name: 'Botiquín',
+  emoji: '💊',
+  order: 6
+}];
 const INIT_SC = {
-  'Comida':           ['Carnes','Pescados','Verduras','Huevos','Embutidos','Lechugas','Frutas','Frutos secos','Leche','Yogures','Quesos','Pan','Masa de pizza','Tortitas','Chocolate','Mantequilla','Mermelada'],
-  'Despensa':         ['Latas de conserva','Arroces','Legumbres','Pastas','Aceites','Salsas'],
-  'Bebidas':          ['Refrescos','Zumos','Vinos','Cervezas','Ron','Ginebra','Whisky','Licores'],
-  'Limpieza y Baños': ['Papel absorbente','Papel higiénico','Bastoncillos oídos','Cremas','Toallitas desmaquillantes','Toallitas húmedas','Clínex','Pañales normales','Pañales de agua'],
-  'Guarrerías':       ['Patatas','Cortezas','Encurtidos','Saladitos'],
-  'Barbacoa':         ['Pastillas para encender','Cerillas largas','Carbón'],
-  'Botiquín':         ['Alcohol','Agua oxigenada','Yodo','Cristalmina','Tiritas','Esparadrapo','Vendas','Algodón','Compresas para heridas'],
+  'Comida': ['Carnes', 'Pescados', 'Verduras', 'Huevos', 'Embutidos', 'Lechugas', 'Frutas', 'Frutos secos', 'Leche', 'Yogures', 'Quesos', 'Pan', 'Masa de pizza', 'Tortitas', 'Chocolate', 'Mantequilla', 'Mermelada'],
+  'Despensa': ['Latas de conserva', 'Arroces', 'Legumbres', 'Pastas', 'Aceites', 'Salsas'],
+  'Bebidas': ['Refrescos', 'Zumos', 'Vinos', 'Cervezas', 'Ron', 'Ginebra', 'Whisky', 'Licores'],
+  'Limpieza y Baños': ['Papel absorbente', 'Papel higiénico', 'Bastoncillos oídos', 'Cremas', 'Toallitas desmaquillantes', 'Toallitas húmedas', 'Clínex', 'Pañales normales', 'Pañales de agua'],
+  'Guarrerías': ['Patatas', 'Cortezas', 'Encurtidos', 'Saladitos'],
+  'Barbacoa': ['Pastillas para encender', 'Cerillas largas', 'Carbón'],
+  'Botiquín': ['Alcohol', 'Agua oxigenada', 'Yodo', 'Cristalmina', 'Tiritas', 'Esparadrapo', 'Vendas', 'Algodón', 'Compresas para heridas']
 };
-const SUPERS = ['Mercadona','Lidl','Carrefour','Alcampo','Consum','Dia','El Corte Inglés','Aldi','Otro'];
-const EMOJIS = ['🥩','🥫','🥤','🧹','🍿','🔥','💊','🌿','🧁','🐾','🏠','🎁','🧴','🧺','🍷','🥛','🧀','🥦','🍅','🎣'];
+const SUPERS = ['Mercadona', 'Lidl', 'Carrefour', 'Alcampo', 'Consum', 'Dia', 'El Corte Inglés', 'Aldi', 'Otro'];
+const EMOJIS = ['🥩', '🥫', '🥤', '🧹', '🍿', '🔥', '💊', '🌿', '🧁', '🐾', '🏠', '🎁', '🧴', '🧺', '🍷', '🥛', '🧀', '🥦', '🍅', '🎣'];
 
 /* ════════════════ SEED ════════════════ */
 async function seedData() {
@@ -423,13 +452,22 @@ async function seedData() {
   INIT_CATS.forEach(cat => {
     const id = db.ref('market/categories').push().key;
     ids[cat.name] = id;
-    upd[`market/categories/${id}`] = { name:cat.name, emoji:cat.emoji, order:cat.order };
+    upd[`market/categories/${id}`] = {
+      name: cat.name,
+      emoji: cat.emoji,
+      order: cat.order
+    };
   });
   Object.entries(INIT_SC).forEach(([cn, subs]) => {
-    const cid = ids[cn]; if (!cid) return;
+    const cid = ids[cn];
+    if (!cid) return;
     subs.forEach((name, i) => {
       const id = db.ref('market/subcategories').push().key;
-      upd[`market/subcategories/${id}`] = { name, categoryId:cid, order:i };
+      upd[`market/subcategories/${id}`] = {
+        name,
+        categoryId: cid,
+        order: i
+      };
     });
   });
   await db.ref().update(upd);
@@ -437,285 +475,613 @@ async function seedData() {
 
 /* ════════════════ USER HELPERS ════════════════ */
 function getUserLS() {
-  try { const d = localStorage.getItem('despensa_user'); return d ? JSON.parse(d) : null; } catch { return null; }
+  try {
+    const d = localStorage.getItem('despensa_user');
+    return d ? JSON.parse(d) : null;
+  } catch {
+    return null;
+  }
 }
-function saveUserLS(u) { localStorage.setItem('despensa_user', JSON.stringify(u)); }
-function genUID() { return 'u_' + Math.random().toString(36).slice(2,9) + Date.now().toString(36); }
+function saveUserLS(u) {
+  localStorage.setItem('despensa_user', JSON.stringify(u));
+}
+function genUID() {
+  return 'u_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
+}
 
 /* ════════════════════════════════════════════════════════════
    COMPONENTS
    ════════════════════════════════════════════════════════════ */
 
 /* ── Toast ── */
-function Toasts({ list }) {
-  return (
-    <div className="tbox">
-      {list.map(t => <div key={t.id} className={`toast ${t.type}`}>{t.msg}</div>)}
-    </div>
-  );
+function Toasts({
+  list
+}) {
+  return /*#__PURE__*/_jsx("div", {
+    className: "tbox",
+    children: list.map(t => /*#__PURE__*/_jsx("div", {
+      className: `toast ${t.type}`,
+      children: t.msg
+    }, t.id))
+  });
 }
 
 /* ── Modal sheet ── */
-function Sheet({ show, onClose, title, children }) {
+function Sheet({
+  show,
+  onClose,
+  title,
+  children
+}) {
   if (!show) return null;
-  return (
-    <div className="ovl" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="sheet">
-        <div className="drag" />
-        {title && <div className="m-ttl">{title}</div>}
-        {children}
-      </div>
-    </div>
-  );
+  return /*#__PURE__*/_jsx("div", {
+    className: "ovl",
+    onClick: e => e.target === e.currentTarget && onClose(),
+    children: /*#__PURE__*/_jsxs("div", {
+      className: "sheet",
+      children: [/*#__PURE__*/_jsx("div", {
+        className: "drag"
+      }), title && /*#__PURE__*/_jsx("div", {
+        className: "m-ttl",
+        children: title
+      }), children]
+    })
+  });
 }
 
 /* ── Add Category Modal ── */
-function AddCatModal({ onSave, onClose }) {
+function AddCatModal({
+  onSave,
+  onClose
+}) {
   const [name, setName] = useState('');
   const [emoji, setEmoji] = useState('🛒');
-  return (
-    <Sheet show onClose={onClose} title="Nueva categoría">
-      <div className="fg">
-        <label className="fl">Nombre</label>
-        <input className="fi" placeholder="Ej: Mascotas" value={name} onChange={e=>setName(e.target.value)} autoFocus />
-      </div>
-      <div className="fg">
-        <label className="fl">Icono</label>
-        <div className="emoji-grid">
-          {EMOJIS.map(e=>(
-            <button key={e} className={`ep${emoji===e?' sel':''}`} onClick={()=>setEmoji(e)}>{e}</button>
-          ))}
-        </div>
-      </div>
-      <div className="m-acts">
-        <button className="btn btn-s" onClick={onClose}>Cancelar</button>
-        <button className="btn btn-p" onClick={()=>name.trim()&&onSave(name.trim(),emoji)}>Crear</button>
-      </div>
-    </Sheet>
-  );
+  return /*#__PURE__*/_jsxs(Sheet, {
+    show: true,
+    onClose: onClose,
+    title: "Nueva categoría",
+    children: [/*#__PURE__*/_jsxs("div", {
+      className: "fg",
+      children: [/*#__PURE__*/_jsx("label", {
+        className: "fl",
+        children: "Nombre"
+      }), /*#__PURE__*/_jsx("input", {
+        className: "fi",
+        placeholder: "Ej: Mascotas",
+        value: name,
+        onChange: e => setName(e.target.value),
+        autoFocus: true
+      })]
+    }), /*#__PURE__*/_jsxs("div", {
+      className: "fg",
+      children: [/*#__PURE__*/_jsx("label", {
+        className: "fl",
+        children: "Icono"
+      }), /*#__PURE__*/_jsx("div", {
+        className: "emoji-grid",
+        children: EMOJIS.map(e => /*#__PURE__*/_jsx("button", {
+          className: `ep${emoji === e ? ' sel' : ''}`,
+          onClick: () => setEmoji(e),
+          children: e
+        }, e))
+      })]
+    }), /*#__PURE__*/_jsxs("div", {
+      className: "m-acts",
+      children: [/*#__PURE__*/_jsx("button", {
+        className: "btn btn-s",
+        onClick: onClose,
+        children: "Cancelar"
+      }), /*#__PURE__*/_jsx("button", {
+        className: "btn btn-p",
+        onClick: () => name.trim() && onSave(name.trim(), emoji),
+        children: "Crear"
+      })]
+    })]
+  });
 }
 
 /* ── Add Subcat Modal ── */
-function AddScModal({ categories, defaultCatId, onSave, onClose }) {
+function AddScModal({
+  categories,
+  defaultCatId,
+  onSave,
+  onClose
+}) {
   const [name, setName] = useState('');
   const [catId, setCatId] = useState(defaultCatId || categories[0]?.id || '');
-  return (
-    <Sheet show onClose={onClose} title="Nueva subcategoría">
-      <div className="fg">
-        <label className="fl">Nombre</label>
-        <input className="fi" placeholder="Ej: Postres frescos" value={name} onChange={e=>setName(e.target.value)} autoFocus />
-      </div>
-      <div className="fg">
-        <label className="fl">Categoría</label>
-        <select className="fsel" value={catId} onChange={e=>setCatId(e.target.value)}>
-          {categories.map(c=><option key={c.id} value={c.id}>{c.emoji} {c.name}</option>)}
-        </select>
-      </div>
-      <div className="m-acts">
-        <button className="btn btn-s" onClick={onClose}>Cancelar</button>
-        <button className="btn btn-p" onClick={()=>name.trim()&&onSave(name.trim(),catId)}>Crear</button>
-      </div>
-    </Sheet>
-  );
+  return /*#__PURE__*/_jsxs(Sheet, {
+    show: true,
+    onClose: onClose,
+    title: "Nueva subcategoría",
+    children: [/*#__PURE__*/_jsxs("div", {
+      className: "fg",
+      children: [/*#__PURE__*/_jsx("label", {
+        className: "fl",
+        children: "Nombre"
+      }), /*#__PURE__*/_jsx("input", {
+        className: "fi",
+        placeholder: "Ej: Postres frescos",
+        value: name,
+        onChange: e => setName(e.target.value),
+        autoFocus: true
+      })]
+    }), /*#__PURE__*/_jsxs("div", {
+      className: "fg",
+      children: [/*#__PURE__*/_jsx("label", {
+        className: "fl",
+        children: "Categoría"
+      }), /*#__PURE__*/_jsx("select", {
+        className: "fsel",
+        value: catId,
+        onChange: e => setCatId(e.target.value),
+        children: categories.map(c => /*#__PURE__*/_jsxs("option", {
+          value: c.id,
+          children: [c.emoji, " ", c.name]
+        }, c.id))
+      })]
+    }), /*#__PURE__*/_jsxs("div", {
+      className: "m-acts",
+      children: [/*#__PURE__*/_jsx("button", {
+        className: "btn btn-s",
+        onClick: onClose,
+        children: "Cancelar"
+      }), /*#__PURE__*/_jsx("button", {
+        className: "btn btn-p",
+        onClick: () => name.trim() && onSave(name.trim(), catId),
+        children: "Crear"
+      })]
+    })]
+  });
 }
 
 /* ── Add/Edit Product Modal ── */
-function ProductModal({ product, subcategory, categories, subcategories, onSave, onClose }) {
+function ProductModal({
+  product,
+  subcategory,
+  categories,
+  subcategories,
+  onSave,
+  onClose
+}) {
   const isEdit = !!product;
-  const [name, setName]     = useState(product?.name || '');
-  const [thr, setThr]       = useState(String(product?.minThreshold ?? 1));
-  const [sup, setSup]       = useState(product?.supermarket || '');
-  const [scId, setScId]     = useState(product?.subcategoryId || subcategory?.id || subcategories[0]?.id || '');
-  return (
-    <Sheet show onClose={onClose} title={isEdit ? 'Editar producto' : 'Nuevo producto'}>
-      <div className="fg">
-        <label className="fl">Nombre del producto</label>
-        <input className="fi" placeholder="Ej: Pechuga de pollo" value={name} onChange={e=>setName(e.target.value)} autoFocus />
-      </div>
-      {!isEdit && (
-        <div className="fg">
-          <label className="fl">Subcategoría</label>
-          <select className="fsel" value={scId} onChange={e=>setScId(e.target.value)}>
-            {subcategories.map(s => {
-              const cat = categories.find(c=>c.id===s.categoryId);
-              return <option key={s.id} value={s.id}>{cat?.emoji} {cat?.name} → {s.name}</option>;
-            })}
-          </select>
-        </div>
-      )}
-      <div className="f-row">
-        <div className="fg">
-          <label className="fl">Mínimo para avisar</label>
-          <input className="fi" type="number" min="0" placeholder="1" value={thr} onChange={e=>setThr(e.target.value)} />
-        </div>
-        <div className="fg">
-          <label className="fl">Supermercado</label>
-          <select className="fsel" value={sup} onChange={e=>setSup(e.target.value)}>
-            <option value="">Sin especificar</option>
-            {SUPERS.map(s=><option key={s} value={s}>{s}</option>)}
-          </select>
-        </div>
-      </div>
-      <div className="m-acts">
-        <button className="btn btn-s" onClick={onClose}>Cancelar</button>
-        <button className="btn btn-p" onClick={()=>{
+  const [name, setName] = useState(product?.name || '');
+  const [thr, setThr] = useState(String(product?.minThreshold ?? 1));
+  const [sup, setSup] = useState(product?.supermarket || '');
+  const [scId, setScId] = useState(product?.subcategoryId || subcategory?.id || subcategories[0]?.id || '');
+  return /*#__PURE__*/_jsxs(Sheet, {
+    show: true,
+    onClose: onClose,
+    title: isEdit ? 'Editar producto' : 'Nuevo producto',
+    children: [/*#__PURE__*/_jsxs("div", {
+      className: "fg",
+      children: [/*#__PURE__*/_jsx("label", {
+        className: "fl",
+        children: "Nombre del producto"
+      }), /*#__PURE__*/_jsx("input", {
+        className: "fi",
+        placeholder: "Ej: Pechuga de pollo",
+        value: name,
+        onChange: e => setName(e.target.value),
+        autoFocus: true
+      })]
+    }), !isEdit && /*#__PURE__*/_jsxs("div", {
+      className: "fg",
+      children: [/*#__PURE__*/_jsx("label", {
+        className: "fl",
+        children: "Subcategoría"
+      }), /*#__PURE__*/_jsx("select", {
+        className: "fsel",
+        value: scId,
+        onChange: e => setScId(e.target.value),
+        children: subcategories.map(s => {
+          const cat = categories.find(c => c.id === s.categoryId);
+          return /*#__PURE__*/_jsxs("option", {
+            value: s.id,
+            children: [cat?.emoji, " ", cat?.name, " → ", s.name]
+          }, s.id);
+        })
+      })]
+    }), /*#__PURE__*/_jsxs("div", {
+      className: "f-row",
+      children: [/*#__PURE__*/_jsxs("div", {
+        className: "fg",
+        children: [/*#__PURE__*/_jsx("label", {
+          className: "fl",
+          children: "Mínimo para avisar"
+        }), /*#__PURE__*/_jsx("input", {
+          className: "fi",
+          type: "number",
+          min: "0",
+          placeholder: "1",
+          value: thr,
+          onChange: e => setThr(e.target.value)
+        })]
+      }), /*#__PURE__*/_jsxs("div", {
+        className: "fg",
+        children: [/*#__PURE__*/_jsx("label", {
+          className: "fl",
+          children: "Supermercado"
+        }), /*#__PURE__*/_jsxs("select", {
+          className: "fsel",
+          value: sup,
+          onChange: e => setSup(e.target.value),
+          children: [/*#__PURE__*/_jsx("option", {
+            value: "",
+            children: "Sin especificar"
+          }), SUPERS.map(s => /*#__PURE__*/_jsx("option", {
+            value: s,
+            children: s
+          }, s))]
+        })]
+      })]
+    }), /*#__PURE__*/_jsxs("div", {
+      className: "m-acts",
+      children: [/*#__PURE__*/_jsx("button", {
+        className: "btn btn-s",
+        onClick: onClose,
+        children: "Cancelar"
+      }), /*#__PURE__*/_jsx("button", {
+        className: "btn btn-p",
+        onClick: () => {
           if (!name.trim()) return;
-          onSave({ name:name.trim(), minThreshold:Math.max(0,parseInt(thr)||0), supermarket:sup, subcategoryId:scId });
-        }}>{isEdit?'Guardar':'Crear'}</button>
-      </div>
-    </Sheet>
-  );
+          onSave({
+            name: name.trim(),
+            minThreshold: Math.max(0, parseInt(thr) || 0),
+            supermarket: sup,
+            subcategoryId: scId
+          });
+        },
+        children: isEdit ? 'Guardar' : 'Crear'
+      })]
+    })]
+  });
 }
 
 /* ── Complete Purchase Modal ── */
-function CompleteModal({ product, onComplete, onClose }) {
+function CompleteModal({
+  product,
+  onComplete,
+  onClose
+}) {
   const [qty, setQty] = useState('');
-  return (
-    <Sheet show onClose={onClose} title="✅ Completar compra">
-      <div style={{textAlign:'center',marginBottom:'18px'}}>
-        <div style={{color:'rgba(255,255,255,0.6)',fontSize:'13px'}}>Producto comprado:</div>
-        <div style={{color:'#fff',fontSize:'19px',fontWeight:'900',marginTop:'4px'}}>{product?.name}</div>
-        {product?.supermarket && <div style={{color:'var(--g-pale)',fontSize:'12px',marginTop:'3px'}}>📍 {product.supermarket}</div>}
-      </div>
-      <div className="fg">
-        <label className="fl">¿Cuántas unidades has traído a casa?</label>
-        <input className="fi" type="number" min="1" placeholder="Ej: 3"
-          value={qty} onChange={e=>setQty(e.target.value)} autoFocus
-          style={{fontSize:'26px',textAlign:'center',fontWeight:'900'}}
-        />
-      </div>
-      <div className="m-acts">
-        <button className="btn btn-s" onClick={onClose}>Cancelar</button>
-        <button className="btn btn-p" onClick={()=>{ const n=parseInt(qty); if(n>0) onComplete(product.id,n); }}>Confirmar</button>
-      </div>
-    </Sheet>
-  );
+  return /*#__PURE__*/_jsxs(Sheet, {
+    show: true,
+    onClose: onClose,
+    title: "✅ Completar compra",
+    children: [/*#__PURE__*/_jsxs("div", {
+      style: {
+        textAlign: 'center',
+        marginBottom: '18px'
+      },
+      children: [/*#__PURE__*/_jsx("div", {
+        style: {
+          color: 'rgba(255,255,255,0.6)',
+          fontSize: '13px'
+        },
+        children: "Producto comprado:"
+      }), /*#__PURE__*/_jsx("div", {
+        style: {
+          color: '#fff',
+          fontSize: '19px',
+          fontWeight: '900',
+          marginTop: '4px'
+        },
+        children: product?.name
+      }), product?.supermarket && /*#__PURE__*/_jsxs("div", {
+        style: {
+          color: 'var(--g-pale)',
+          fontSize: '12px',
+          marginTop: '3px'
+        },
+        children: ["📍 ", product.supermarket]
+      })]
+    }), /*#__PURE__*/_jsxs("div", {
+      className: "fg",
+      children: [/*#__PURE__*/_jsx("label", {
+        className: "fl",
+        children: "¿Cuántas unidades has traído a casa?"
+      }), /*#__PURE__*/_jsx("input", {
+        className: "fi",
+        type: "number",
+        min: "1",
+        placeholder: "Ej: 3",
+        value: qty,
+        onChange: e => setQty(e.target.value),
+        autoFocus: true,
+        style: {
+          fontSize: '26px',
+          textAlign: 'center',
+          fontWeight: '900'
+        }
+      })]
+    }), /*#__PURE__*/_jsxs("div", {
+      className: "m-acts",
+      children: [/*#__PURE__*/_jsx("button", {
+        className: "btn btn-s",
+        onClick: onClose,
+        children: "Cancelar"
+      }), /*#__PURE__*/_jsx("button", {
+        className: "btn btn-p",
+        onClick: () => {
+          const n = parseInt(qty);
+          if (n > 0) onComplete(product.id, n);
+        },
+        children: "Confirmar"
+      })]
+    })]
+  });
 }
 
 /* ── Confirm Delete Modal ── */
-function ConfirmModal({ message, onOk, onClose }) {
-  return (
-    <Sheet show onClose={onClose} title="¿Eliminar?">
-      <div style={{textAlign:'center',color:'rgba(255,255,255,0.65)',fontSize:'14px',marginBottom:'22px'}}>{message}</div>
-      <div className="m-acts">
-        <button className="btn btn-s" onClick={onClose}>Cancelar</button>
-        <button className="btn btn-d" onClick={onOk}>Eliminar</button>
-      </div>
-    </Sheet>
-  );
+function ConfirmModal({
+  message,
+  onOk,
+  onClose
+}) {
+  return /*#__PURE__*/_jsxs(Sheet, {
+    show: true,
+    onClose: onClose,
+    title: "¿Eliminar?",
+    children: [/*#__PURE__*/_jsx("div", {
+      style: {
+        textAlign: 'center',
+        color: 'rgba(255,255,255,0.65)',
+        fontSize: '14px',
+        marginBottom: '22px'
+      },
+      children: message
+    }), /*#__PURE__*/_jsxs("div", {
+      className: "m-acts",
+      children: [/*#__PURE__*/_jsx("button", {
+        className: "btn btn-s",
+        onClick: onClose,
+        children: "Cancelar"
+      }), /*#__PURE__*/_jsx("button", {
+        className: "btn btn-d",
+        onClick: onOk,
+        children: "Eliminar"
+      })]
+    })]
+  });
 }
 
 /* ── Product Card ── */
-function PCard({ product, onUpdateQty, onEdit, onDelete, onOpenComplete, onForceCart }) {
+function PCard({
+  product,
+  onUpdateQty,
+  onEdit,
+  onDelete,
+  onOpenComplete,
+  onForceCart
+}) {
   const [menu, setMenu] = useState(false);
-  const low   = product.quantity > 0 && product.quantity <= product.minThreshold;
-  const zero  = product.quantity === 0;
+  const low = product.quantity > 0 && product.quantity <= product.minThreshold;
+  const zero = product.quantity === 0;
   const inCart = product.inCart;
-
   useEffect(() => {
     if (!menu) return;
     const h = () => setMenu(false);
     setTimeout(() => document.addEventListener('click', h), 0);
     return () => document.removeEventListener('click', h);
   }, [menu]);
-
-  return (
-    <div className={`pc${inCart?' incart':''}`}>
-      {inCart && (
-        <div className="pc-cart-ico" onClick={onOpenComplete} title="Ver en carrito / Completar">🛒</div>
-      )}
-      <div className="pc-info">
-        <div className="pc-name">{product.name}</div>
-        <div className="pc-meta">
-          {product.supermarket && <span className="pc-super">{product.supermarket}</span>}
-          <span className="pc-min">mín.{product.minThreshold}</span>
-          {inCart && product.inCartBy && <span className="pc-who">· {product.inCartBy}</span>}
-        </div>
-      </div>
-      <div className="pc-ctrl">
-        <button className="qbtn qbtn-m" onClick={()=>onUpdateQty(product.id, product.quantity-1)} disabled={zero}>−</button>
-        <div className={`qnum${zero?' zero':low?' low':''}`}>{product.quantity}</div>
-        <button className="qbtn qbtn-p" onClick={()=>onUpdateQty(product.id, product.quantity+1)}>+</button>
-      </div>
-      <div style={{position:'relative'}}>
-        <button className="kb" onClick={e=>{e.stopPropagation();setMenu(m=>!m)}}>⋮</button>
-        {menu && (
-          <div className="ctxm" onClick={e=>e.stopPropagation()}>
-            <div className="ctxi" onClick={()=>{onEdit(product);setMenu(false)}}>✏️ Editar</div>
-            {!inCart
-              ? <div className="ctxi" onClick={()=>{onForceCart(product.id);setMenu(false)}}>🛒 Al carrito</div>
-              : <div className="ctxi" onClick={()=>{onOpenComplete();setMenu(false)}}>✅ Completar</div>
-            }
-            <div className="ctxi del" onClick={()=>{onDelete(product.id);setMenu(false)}}>🗑 Eliminar</div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  return /*#__PURE__*/_jsxs("div", {
+    className: `pc${inCart ? ' incart' : ''}`,
+    children: [inCart && /*#__PURE__*/_jsx("div", {
+      className: "pc-cart-ico",
+      onClick: onOpenComplete,
+      title: "Ver en carrito / Completar",
+      children: "🛒"
+    }), /*#__PURE__*/_jsxs("div", {
+      className: "pc-info",
+      children: [/*#__PURE__*/_jsx("div", {
+        className: "pc-name",
+        children: product.name
+      }), /*#__PURE__*/_jsxs("div", {
+        className: "pc-meta",
+        children: [product.supermarket && /*#__PURE__*/_jsx("span", {
+          className: "pc-super",
+          children: product.supermarket
+        }), /*#__PURE__*/_jsxs("span", {
+          className: "pc-min",
+          children: ["mín.", product.minThreshold]
+        }), inCart && product.inCartBy && /*#__PURE__*/_jsxs("span", {
+          className: "pc-who",
+          children: ["· ", product.inCartBy]
+        })]
+      })]
+    }), /*#__PURE__*/_jsxs("div", {
+      className: "pc-ctrl",
+      children: [/*#__PURE__*/_jsx("button", {
+        className: "qbtn qbtn-m",
+        onClick: () => onUpdateQty(product.id, product.quantity - 1),
+        disabled: zero,
+        children: "−"
+      }), /*#__PURE__*/_jsx("div", {
+        className: `qnum${zero ? ' zero' : low ? ' low' : ''}`,
+        children: product.quantity
+      }), /*#__PURE__*/_jsx("button", {
+        className: "qbtn qbtn-p",
+        onClick: () => onUpdateQty(product.id, product.quantity + 1),
+        children: "+"
+      })]
+    }), /*#__PURE__*/_jsxs("div", {
+      style: {
+        position: 'relative'
+      },
+      children: [/*#__PURE__*/_jsx("button", {
+        className: "kb",
+        onClick: e => {
+          e.stopPropagation();
+          setMenu(m => !m);
+        },
+        children: "⋮"
+      }), menu && /*#__PURE__*/_jsxs("div", {
+        className: "ctxm",
+        onClick: e => e.stopPropagation(),
+        children: [/*#__PURE__*/_jsx("div", {
+          className: "ctxi",
+          onClick: () => {
+            onEdit(product);
+            setMenu(false);
+          },
+          children: "✏️ Editar"
+        }), !inCart ? /*#__PURE__*/_jsx("div", {
+          className: "ctxi",
+          onClick: () => {
+            onForceCart(product.id);
+            setMenu(false);
+          },
+          children: "🛒 Al carrito"
+        }) : /*#__PURE__*/_jsx("div", {
+          className: "ctxi",
+          onClick: () => {
+            onOpenComplete();
+            setMenu(false);
+          },
+          children: "✅ Completar"
+        }), /*#__PURE__*/_jsx("div", {
+          className: "ctxi del",
+          onClick: () => {
+            onDelete(product.id);
+            setMenu(false);
+          },
+          children: "🗑 Eliminar"
+        })]
+      })]
+    })]
+  });
 }
 
 /* ── Subcategory Section ── */
-function ScSection({ sc, products, isOpen, onToggle, onAddProduct, onUpdateQty, onEdit, onDelete, onOpenComplete, onForceCart }) {
-  const cartN = products.filter(p=>p.inCart).length;
-  return (
-    <div className="sc">
-      <div className="sc-hdr" onClick={onToggle}>
-        <div className="sc-title">
-          {sc.name}
-          <span className={`sc-cnt${cartN>0?' cart':''}`}>{cartN>0?`🛒${cartN}`:products.length}</span>
-        </div>
-        <span className={`sc-arrow${isOpen?' open':''}`}>▶</span>
-      </div>
-      {isOpen && (
-        <div className="sc-body">
-          {products.length === 0 && (
-            <div style={{padding:'10px 14px',color:'rgba(255,255,255,0.3)',fontSize:'12px'}}>Sin productos — añade el primero abajo</div>
-          )}
-          {products.map(p => (
-            <PCard key={p.id} product={p}
-              onUpdateQty={onUpdateQty} onEdit={onEdit} onDelete={onDelete}
-              onOpenComplete={()=>onOpenComplete(p)} onForceCart={onForceCart}
-            />
-          ))}
-          <div className="sc-add" onClick={onAddProduct}><span>＋</span>Añadir producto</div>
-        </div>
-      )}
-    </div>
-  );
+function ScSection({
+  sc,
+  products,
+  isOpen,
+  onToggle,
+  onAddProduct,
+  onUpdateQty,
+  onEdit,
+  onDelete,
+  onOpenComplete,
+  onForceCart
+}) {
+  const cartN = products.filter(p => p.inCart).length;
+  return /*#__PURE__*/_jsxs("div", {
+    className: "sc",
+    children: [/*#__PURE__*/_jsxs("div", {
+      className: "sc-hdr",
+      onClick: onToggle,
+      children: [/*#__PURE__*/_jsxs("div", {
+        className: "sc-title",
+        children: [sc.name, /*#__PURE__*/_jsx("span", {
+          className: `sc-cnt${cartN > 0 ? ' cart' : ''}`,
+          children: cartN > 0 ? `🛒${cartN}` : products.length
+        })]
+      }), /*#__PURE__*/_jsx("span", {
+        className: `sc-arrow${isOpen ? ' open' : ''}`,
+        children: "▶"
+      })]
+    }), isOpen && /*#__PURE__*/_jsxs("div", {
+      className: "sc-body",
+      children: [products.length === 0 && /*#__PURE__*/_jsx("div", {
+        style: {
+          padding: '10px 14px',
+          color: 'rgba(255,255,255,0.3)',
+          fontSize: '12px'
+        },
+        children: "Sin productos — añade el primero abajo"
+      }), products.map(p => /*#__PURE__*/_jsx(PCard, {
+        product: p,
+        onUpdateQty: onUpdateQty,
+        onEdit: onEdit,
+        onDelete: onDelete,
+        onOpenComplete: () => onOpenComplete(p),
+        onForceCart: onForceCart
+      }, p.id)), /*#__PURE__*/_jsxs("div", {
+        className: "sc-add",
+        onClick: onAddProduct,
+        children: [/*#__PURE__*/_jsx("span", {
+          children: "＋"
+        }), "Añadir producto"]
+      })]
+    })]
+  });
 }
 
 /* ── Inventory View ── */
-function InventoryView({ categories, subcategories, products, activeCatId, openScs, onToggleSc, onAddProduct, onUpdateQty, onEdit, onDelete, onOpenComplete, onForceCart, onAddSc }) {
-  const scs = useMemo(() => subcategories.filter(s=>s.categoryId===activeCatId).sort((a,b)=>a.order-b.order), [subcategories,activeCatId]);
+function InventoryView({
+  categories,
+  subcategories,
+  products,
+  activeCatId,
+  openScs,
+  onToggleSc,
+  onAddProduct,
+  onUpdateQty,
+  onEdit,
+  onDelete,
+  onOpenComplete,
+  onForceCart,
+  onAddSc
+}) {
+  const scs = useMemo(() => subcategories.filter(s => s.categoryId === activeCatId).sort((a, b) => a.order - b.order), [subcategories, activeCatId]);
   const bysc = useMemo(() => {
     const m = {};
-    products.forEach(p => { if (!m[p.subcategoryId]) m[p.subcategoryId]=[]; m[p.subcategoryId].push(p); });
+    products.forEach(p => {
+      if (!m[p.subcategoryId]) m[p.subcategoryId] = [];
+      m[p.subcategoryId].push(p);
+    });
     return m;
   }, [products]);
-
-  if (!activeCatId) return (
-    <div className="scroll" style={{display:'flex',alignItems:'center',justifyContent:'center'}}>
-      <div className="empty"><div className="empty-ico">🛒</div><div className="empty-t">Selecciona una categoría</div></div>
-    </div>
-  );
-
-  return (
-    <div className="scroll">
-      {scs.map(sc => (
-        <ScSection key={sc.id} sc={sc} products={bysc[sc.id]||[]}
-          isOpen={openScs.has(sc.id)} onToggle={()=>onToggleSc(sc.id)}
-          onAddProduct={()=>onAddProduct(sc)}
-          onUpdateQty={onUpdateQty} onEdit={onEdit} onDelete={onDelete}
-          onOpenComplete={onOpenComplete} onForceCart={onForceCart}
-        />
-      ))}
-      <div className="add-sc-btn" onClick={()=>onAddSc(activeCatId)}>＋ Nueva subcategoría</div>
-    </div>
-  );
+  if (!activeCatId) return /*#__PURE__*/_jsx("div", {
+    className: "scroll",
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    children: /*#__PURE__*/_jsxs("div", {
+      className: "empty",
+      children: [/*#__PURE__*/_jsx("div", {
+        className: "empty-ico",
+        children: "🛒"
+      }), /*#__PURE__*/_jsx("div", {
+        className: "empty-t",
+        children: "Selecciona una categoría"
+      })]
+    })
+  });
+  return /*#__PURE__*/_jsxs("div", {
+    className: "scroll",
+    children: [scs.map(sc => /*#__PURE__*/_jsx(ScSection, {
+      sc: sc,
+      products: bysc[sc.id] || [],
+      isOpen: openScs.has(sc.id),
+      onToggle: () => onToggleSc(sc.id),
+      onAddProduct: () => onAddProduct(sc),
+      onUpdateQty: onUpdateQty,
+      onEdit: onEdit,
+      onDelete: onDelete,
+      onOpenComplete: onOpenComplete,
+      onForceCart: onForceCart
+    }, sc.id)), /*#__PURE__*/_jsx("div", {
+      className: "add-sc-btn",
+      onClick: () => onAddSc(activeCatId),
+      children: "＋ Nueva subcategoría"
+    })]
+  });
 }
 
 /* ── Cart View ── */
-function CartView({ cartItems, categories, subcategories, view, setView, onComplete, onRemove }) {
+function CartView({
+  cartItems,
+  categories,
+  subcategories,
+  view,
+  setView,
+  onComplete,
+  onRemove
+}) {
   const byStore = useMemo(() => {
     const m = {};
     cartItems.forEach(p => {
@@ -723,144 +1089,213 @@ function CartView({ cartItems, categories, subcategories, view, setView, onCompl
       if (!m[k]) m[k] = [];
       m[k].push(p);
     });
-    return Object.entries(m).sort(([a],[b])=>a.localeCompare(b));
+    return Object.entries(m).sort(([a], [b]) => a.localeCompare(b));
   }, [cartItems]);
-
   const crumb = p => {
-    const sc = subcategories.find(s=>s.id===p.subcategoryId);
-    const cat = categories.find(c=>c.id===p.categoryId);
+    const sc = subcategories.find(s => s.id === p.subcategoryId);
+    const cat = categories.find(c => c.id === p.categoryId);
     return sc && cat ? `${cat.emoji} ${cat.name} › ${sc.name}` : '';
   };
-
-  const Item = ({ p }) => (
-    <div className="ci">
-      <div className="ci-info">
-        <div className="ci-name">{p.name}</div>
-        <div className="ci-bread">{crumb(p)}</div>
-        {p.inCartBy && <div className="ci-who">Añadido por {p.inCartBy}</div>}
-      </div>
-      {p.supermarket && view==='all' && <span className="ci-super">{p.supermarket}</span>}
-      <div className="ci-acts">
-        <button className="ca-btn ca-ok" onClick={()=>onComplete(p)}>✓</button>
-        <button className="ca-btn ca-rm" onClick={()=>onRemove(p.id)}>✕</button>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="scroll">
-      <div className="cart-hdr">
-        <div className="cart-ttl">🛒 Carrito ({cartItems.length})</div>
-        <div className="cart-tog">
-          <button className={`ctog-btn${view==='all'?' on':''}`} onClick={()=>setView('all')}>Todo</button>
-          <button className={`ctog-btn${view==='by'?' on':''}`} onClick={()=>setView('by')}>Por tienda</button>
-        </div>
-      </div>
-      {cartItems.length === 0 ? (
-        <div className="empty">
-          <div className="empty-ico">🎉</div>
-          <div className="empty-t">¡Despensa al completo!</div>
-          <div className="empty-s">El carrito está vacío</div>
-        </div>
-      ) : view==='all' ? (
-        cartItems.map(p=><Item key={p.id} p={p}/>)
-      ) : (
-        byStore.map(([store,items])=>(
-          <div key={store}>
-            <div className="csec-lbl">📍 {store}</div>
-            {items.map(p=><Item key={p.id} p={p}/>)}
-          </div>
-        ))
-      )}
-    </div>
-  );
+  const Item = ({
+    p
+  }) => /*#__PURE__*/_jsxs("div", {
+    className: "ci",
+    children: [/*#__PURE__*/_jsxs("div", {
+      className: "ci-info",
+      children: [/*#__PURE__*/_jsx("div", {
+        className: "ci-name",
+        children: p.name
+      }), /*#__PURE__*/_jsx("div", {
+        className: "ci-bread",
+        children: crumb(p)
+      }), p.inCartBy && /*#__PURE__*/_jsxs("div", {
+        className: "ci-who",
+        children: ["Añadido por ", p.inCartBy]
+      })]
+    }), p.supermarket && view === 'all' && /*#__PURE__*/_jsx("span", {
+      className: "ci-super",
+      children: p.supermarket
+    }), /*#__PURE__*/_jsxs("div", {
+      className: "ci-acts",
+      children: [/*#__PURE__*/_jsx("button", {
+        className: "ca-btn ca-ok",
+        onClick: () => onComplete(p),
+        children: "✓"
+      }), /*#__PURE__*/_jsx("button", {
+        className: "ca-btn ca-rm",
+        onClick: () => onRemove(p.id),
+        children: "✕"
+      })]
+    })]
+  });
+  return /*#__PURE__*/_jsxs("div", {
+    className: "scroll",
+    children: [/*#__PURE__*/_jsxs("div", {
+      className: "cart-hdr",
+      children: [/*#__PURE__*/_jsxs("div", {
+        className: "cart-ttl",
+        children: ["🛒 Carrito (", cartItems.length, ")"]
+      }), /*#__PURE__*/_jsxs("div", {
+        className: "cart-tog",
+        children: [/*#__PURE__*/_jsx("button", {
+          className: `ctog-btn${view === 'all' ? ' on' : ''}`,
+          onClick: () => setView('all'),
+          children: "Todo"
+        }), /*#__PURE__*/_jsx("button", {
+          className: `ctog-btn${view === 'by' ? ' on' : ''}`,
+          onClick: () => setView('by'),
+          children: "Por tienda"
+        })]
+      })]
+    }), cartItems.length === 0 ? /*#__PURE__*/_jsxs("div", {
+      className: "empty",
+      children: [/*#__PURE__*/_jsx("div", {
+        className: "empty-ico",
+        children: "🎉"
+      }), /*#__PURE__*/_jsx("div", {
+        className: "empty-t",
+        children: "¡Despensa al completo!"
+      }), /*#__PURE__*/_jsx("div", {
+        className: "empty-s",
+        children: "El carrito está vacío"
+      })]
+    }) : view === 'all' ? cartItems.map(p => /*#__PURE__*/_jsx(Item, {
+      p: p
+    }, p.id)) : byStore.map(([store, items]) => /*#__PURE__*/_jsxs("div", {
+      children: [/*#__PURE__*/_jsxs("div", {
+        className: "csec-lbl",
+        children: ["📍 ", store]
+      }), items.map(p => /*#__PURE__*/_jsx(Item, {
+        p: p
+      }, p.id))]
+    }, store))]
+  });
 }
 
 /* ── Welcome Screen ── */
-function Welcome({ onDone }) {
+function Welcome({
+  onDone
+}) {
   const [name, setName] = useState('');
   const go = () => {
     const n = name.trim();
     if (!n) return;
-    const u = { id:genUID(), name:n };
-    saveUserLS(u); onDone(u);
+    const u = {
+      id: genUID(),
+      name: n
+    };
+    saveUserLS(u);
+    onDone(u);
   };
-  return (
-    <div className="wlc">
-      <div className="wlc-logo">🛒</div>
-      <div className="wlc-ttl">La Despensa</div>
-      <div className="wlc-sub">La compra, sin dramas.</div>
-      <div className="wlc-card">
-        <label className="wlc-lbl">¿Cómo te llamas?</label>
-        <input className="wlc-inp" placeholder="Tu nombre" value={name}
-          onChange={e=>setName(e.target.value)} onKeyPress={e=>e.key==='Enter'&&go()} autoFocus />
-        <button className="btn btn-p" style={{width:'100%',padding:'14px',fontSize:'16px'}} onClick={go}>Entrar →</button>
-      </div>
-    </div>
-  );
+  return /*#__PURE__*/_jsxs("div", {
+    className: "wlc",
+    children: [/*#__PURE__*/_jsx("div", {
+      className: "wlc-logo",
+      children: "🛒"
+    }), /*#__PURE__*/_jsx("div", {
+      className: "wlc-ttl",
+      children: "La Despensa"
+    }), /*#__PURE__*/_jsx("div", {
+      className: "wlc-sub",
+      children: "La compra, sin dramas."
+    }), /*#__PURE__*/_jsxs("div", {
+      className: "wlc-card",
+      children: [/*#__PURE__*/_jsx("label", {
+        className: "wlc-lbl",
+        children: "¿Cómo te llamas?"
+      }), /*#__PURE__*/_jsx("input", {
+        className: "wlc-inp",
+        placeholder: "Tu nombre",
+        value: name,
+        onChange: e => setName(e.target.value),
+        onKeyPress: e => e.key === 'Enter' && go(),
+        autoFocus: true
+      }), /*#__PURE__*/_jsx("button", {
+        className: "btn btn-p",
+        style: {
+          width: '100%',
+          padding: '14px',
+          fontSize: '16px'
+        },
+        onClick: go,
+        children: "Entrar →"
+      })]
+    })]
+  });
 }
 
 /* ════════════════════════════════════════════════════════════
    MAIN APP
    ════════════════════════════════════════════════════════════ */
 function App() {
-  const [user, setUser]       = useState(() => getUserLS());
-  const [ready, setReady]     = useState(false);
-  const [cats, setCats]       = useState([]);
-  const [scs, setScs]         = useState([]);
-  const [prods, setProds]     = useState([]);
+  const [user, setUser] = useState(() => getUserLS());
+  const [ready, setReady] = useState(false);
+  const [cats, setCats] = useState([]);
+  const [scs, setScs] = useState([]);
+  const [prods, setProds] = useState([]);
   const [activeCat, setActiveCat] = useState(null);
-  const [mainView, setMainView]   = useState('inv');   // 'inv' | 'cart'
-  const [cartView, setCartView]   = useState('all');   // 'all' | 'by'
-  const [openScs, setOpenScs]     = useState(new Set());
-  const [toasts, setToasts]       = useState([]);
+  const [mainView, setMainView] = useState('inv'); // 'inv' | 'cart'
+  const [cartView, setCartView] = useState('all'); // 'all' | 'by'
+  const [openScs, setOpenScs] = useState(new Set());
+  const [toasts, setToasts] = useState([]);
 
   // Modals state
-  const [mAddCat, setMAddCat]     = useState(false);
-  const [mAddSc, setMAddSc]       = useState(null);   // catId
-  const [mAddProd, setMAddProd]   = useState(null);   // sc obj
-  const [mEditProd, setMEditProd] = useState(null);   // prod obj
-  const [mComplete, setMComplete] = useState(null);   // prod obj
-  const [mConfirm, setMConfirm]   = useState(null);   // { msg, fn }
+  const [mAddCat, setMAddCat] = useState(false);
+  const [mAddSc, setMAddSc] = useState(null); // catId
+  const [mAddProd, setMAddProd] = useState(null); // sc obj
+  const [mEditProd, setMEditProd] = useState(null); // prod obj
+  const [mComplete, setMComplete] = useState(null); // prod obj
+  const [mConfirm, setMConfirm] = useState(null); // { msg, fn }
 
-  const userRef       = useRef(user);
-  const prevCartRef   = useRef(new Set());
-  const catInitRef    = useRef(false);
-
-  useEffect(() => { userRef.current = user; }, [user]);
+  const userRef = useRef(user);
+  const prevCartRef = useRef(new Set());
+  const catInitRef = useRef(false);
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
 
   /* ── Firebase init ── */
   useEffect(() => {
     if (!user) return;
     let alive = true;
-
     seedData().then(() => {
       if (!alive) return;
-
       db.ref('market/categories').on('value', snap => {
-        const list = Object.entries(snap.val()||{}).map(([id,v])=>({id,...v})).sort((a,b)=>a.order-b.order);
+        const list = Object.entries(snap.val() || {}).map(([id, v]) => ({
+          id,
+          ...v
+        })).sort((a, b) => a.order - b.order);
         setCats(list);
-        if (!catInitRef.current && list.length) { setActiveCat(list[0].id); catInitRef.current=true; }
+        if (!catInitRef.current && list.length) {
+          setActiveCat(list[0].id);
+          catInitRef.current = true;
+        }
       });
-
       db.ref('market/subcategories').on('value', snap => {
-        setScs(Object.entries(snap.val()||{}).map(([id,v])=>({id,...v})).sort((a,b)=>a.order-b.order));
+        setScs(Object.entries(snap.val() || {}).map(([id, v]) => ({
+          id,
+          ...v
+        })).sort((a, b) => a.order - b.order));
       });
-
       db.ref('market/products').on('value', snap => {
-        const list = Object.entries(snap.val()||{}).map(([id,v])=>({id,...v}));
+        const list = Object.entries(snap.val() || {}).map(([id, v]) => ({
+          id,
+          ...v
+        }));
         // Notify if other user added to cart
         list.forEach(p => {
           if (p.inCart && !prevCartRef.current.has(p.id) && p.inCartBy && p.inCartBy !== userRef.current?.name) {
             toast(`🛒 ${p.inCartBy} añadió "${p.name}" al carrito`);
           }
         });
-        prevCartRef.current = new Set(list.filter(p=>p.inCart).map(p=>p.id));
+        prevCartRef.current = new Set(list.filter(p => p.inCart).map(p => p.id));
         setProds(list);
         setReady(true);
       });
-    }).catch(err => { console.error(err); setReady(true); });
-
+    }).catch(err => {
+      console.error(err);
+      setReady(true);
+    });
     return () => {
       alive = false;
       db.ref('market/categories').off();
@@ -870,30 +1305,35 @@ function App() {
   }, [user]);
 
   /* ── Toast helper ── */
-  const toast = useCallback((msg, type='info') => {
+  const toast = useCallback((msg, type = 'info') => {
     const id = Date.now() + Math.random();
-    setToasts(p=>[...p,{id,msg,type}]);
-    setTimeout(()=>setToasts(p=>p.filter(t=>t.id!==id)), 3500);
+    setToasts(p => [...p, {
+      id,
+      msg,
+      type
+    }]);
+    setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 3500);
   }, []);
 
   /* ── Update quantity ── */
   const handleQty = useCallback((pid, newQty) => {
     const qty = Math.max(0, newQty);
-    const prod = prods.find(p=>p.id===pid); if (!prod) return;
-    const shouldCart  = qty <= prod.minThreshold;
-    const wasCart     = prod.inCart;
+    const prod = prods.find(p => p.id === pid);
+    if (!prod) return;
+    const shouldCart = qty <= prod.minThreshold;
+    const wasCart = prod.inCart;
     const upd = {
-      [`market/products/${pid}/quantity`]:      qty,
-      [`market/products/${pid}/lastUpdatedBy`]: userRef.current?.name||'',
-      [`market/products/${pid}/lastUpdatedAt`]: Date.now(),
+      [`market/products/${pid}/quantity`]: qty,
+      [`market/products/${pid}/lastUpdatedBy`]: userRef.current?.name || '',
+      [`market/products/${pid}/lastUpdatedAt`]: Date.now()
     };
     if (shouldCart && !wasCart) {
-      upd[`market/products/${pid}/inCart`]    = true;
-      upd[`market/products/${pid}/inCartBy`]  = userRef.current?.name||'';
-      upd[`market/products/${pid}/inCartAt`]  = Date.now();
+      upd[`market/products/${pid}/inCart`] = true;
+      upd[`market/products/${pid}/inCartBy`] = userRef.current?.name || '';
+      upd[`market/products/${pid}/inCartAt`] = Date.now();
       toast(`🛒 "${prod.name}" al carrito (queda ${qty})`, 'wrn');
     } else if (!shouldCart && wasCart) {
-      upd[`market/products/${pid}/inCart`]   = false;
+      upd[`market/products/${pid}/inCart`] = false;
       upd[`market/products/${pid}/inCartBy`] = null;
     }
     db.ref().update(upd);
@@ -901,25 +1341,26 @@ function App() {
 
   /* ── Force to cart (manual) ── */
   const handleForceCart = useCallback(pid => {
-    const prod = prods.find(p=>p.id===pid); if (!prod || prod.inCart) return;
+    const prod = prods.find(p => p.id === pid);
+    if (!prod || prod.inCart) return;
     db.ref().update({
-      [`market/products/${pid}/inCart`]:   true,
-      [`market/products/${pid}/inCartBy`]: userRef.current?.name||'',
-      [`market/products/${pid}/inCartAt`]: Date.now(),
+      [`market/products/${pid}/inCart`]: true,
+      [`market/products/${pid}/inCartBy`]: userRef.current?.name || '',
+      [`market/products/${pid}/inCartAt`]: Date.now()
     });
     toast(`🛒 "${prod.name}" añadido al carrito`, 'wrn');
   }, [prods, toast]);
 
   /* ── Complete purchase ── */
   const handleComplete = useCallback((pid, qty) => {
-    const prod = prods.find(p=>p.id===pid);
+    const prod = prods.find(p => p.id === pid);
     db.ref().update({
-      [`market/products/${pid}/quantity`]:      qty,
-      [`market/products/${pid}/inCart`]:        false,
-      [`market/products/${pid}/inCartBy`]:      null,
-      [`market/products/${pid}/inCartAt`]:      null,
-      [`market/products/${pid}/lastUpdatedBy`]: userRef.current?.name||'',
-      [`market/products/${pid}/lastUpdatedAt`]: Date.now(),
+      [`market/products/${pid}/quantity`]: qty,
+      [`market/products/${pid}/inCart`]: false,
+      [`market/products/${pid}/inCartBy`]: null,
+      [`market/products/${pid}/inCartAt`]: null,
+      [`market/products/${pid}/lastUpdatedBy`]: userRef.current?.name || '',
+      [`market/products/${pid}/lastUpdatedAt`]: Date.now()
     });
     setMComplete(null);
     toast(`✅ "${prod?.name}" en despensa (${qty} uds.)`, 'ok');
@@ -927,37 +1368,65 @@ function App() {
 
   /* ── Remove from cart ── */
   const handleRemoveCart = useCallback(pid => {
-    db.ref().update({ [`market/products/${pid}/inCart`]:false, [`market/products/${pid}/inCartBy`]:null });
+    db.ref().update({
+      [`market/products/${pid}/inCart`]: false,
+      [`market/products/${pid}/inCartBy`]: null
+    });
   }, []);
 
   /* ── Add category ── */
   const handleAddCat = useCallback((name, emoji) => {
     const id = db.ref('market/categories').push().key;
-    db.ref(`market/categories/${id}`).set({ name, emoji, order:cats.length });
+    db.ref(`market/categories/${id}`).set({
+      name,
+      emoji,
+      order: cats.length
+    });
     setMAddCat(false);
     toast(`✅ Categoría "${name}" creada`, 'ok');
   }, [cats, toast]);
 
   /* ── Add subcategory ── */
   const handleAddSc = useCallback((name, catId) => {
-    const order = scs.filter(s=>s.categoryId===catId).length;
+    const order = scs.filter(s => s.categoryId === catId).length;
     const id = db.ref('market/subcategories').push().key;
-    db.ref(`market/subcategories/${id}`).set({ name, categoryId:catId, order });
+    db.ref(`market/subcategories/${id}`).set({
+      name,
+      categoryId: catId,
+      order
+    });
     setMAddSc(null);
-    setOpenScs(prev=>{ const n=new Set(prev); n.add(id); return n; });
+    setOpenScs(prev => {
+      const n = new Set(prev);
+      n.add(id);
+      return n;
+    });
     toast(`✅ Subcategoría "${name}" creada`, 'ok');
   }, [scs, toast]);
 
   /* ── Add product ── */
   const handleAddProd = useCallback(data => {
-    const { name, minThreshold, supermarket, subcategoryId } = data;
-    const sc = scs.find(s=>s.id===subcategoryId); if (!sc) return;
+    const {
+      name,
+      minThreshold,
+      supermarket,
+      subcategoryId
+    } = data;
+    const sc = scs.find(s => s.id === subcategoryId);
+    if (!sc) return;
     const id = db.ref('market/products').push().key;
     db.ref(`market/products/${id}`).set({
-      name, subcategoryId, categoryId:sc.categoryId,
-      quantity:0, minThreshold, supermarket:supermarket||'',
-      inCart:false, inCartBy:null, inCartAt:null,
-      lastUpdatedBy:userRef.current?.name||'', lastUpdatedAt:Date.now(),
+      name,
+      subcategoryId,
+      categoryId: sc.categoryId,
+      quantity: 0,
+      minThreshold,
+      supermarket: supermarket || '',
+      inCart: false,
+      inCartBy: null,
+      inCartAt: null,
+      lastUpdatedBy: userRef.current?.name || '',
+      lastUpdatedAt: Date.now()
     });
     setMAddProd(null);
     toast(`✅ "${name}" añadido`, 'ok');
@@ -967,11 +1436,11 @@ function App() {
   const handleEditProd = useCallback(data => {
     const id = mEditProd.id;
     db.ref().update({
-      [`market/products/${id}/name`]:          data.name,
-      [`market/products/${id}/minThreshold`]:  data.minThreshold,
-      [`market/products/${id}/supermarket`]:   data.supermarket||'',
-      [`market/products/${id}/lastUpdatedBy`]: userRef.current?.name||'',
-      [`market/products/${id}/lastUpdatedAt`]: Date.now(),
+      [`market/products/${id}/name`]: data.name,
+      [`market/products/${id}/minThreshold`]: data.minThreshold,
+      [`market/products/${id}/supermarket`]: data.supermarket || '',
+      [`market/products/${id}/lastUpdatedBy`]: userRef.current?.name || '',
+      [`market/products/${id}/lastUpdatedAt`]: Date.now()
     });
     setMEditProd(null);
     toast('✅ Producto actualizado', 'ok');
@@ -979,7 +1448,7 @@ function App() {
 
   /* ── Delete product ── */
   const handleDeleteProd = useCallback(pid => {
-    const prod = prods.find(p=>p.id===pid);
+    const prod = prods.find(p => p.id === pid);
     setMConfirm({
       msg: `¿Eliminar "${prod?.name}"? No se puede deshacer.`,
       fn: () => {
@@ -989,12 +1458,17 @@ function App() {
       }
     });
   }, [prods, toast]);
-
-  const cartItems = useMemo(()=>prods.filter(p=>p.inCart), [prods]);
+  const cartItems = useMemo(() => prods.filter(p => p.inCart), [prods]);
   const cartN = cartItems.length;
 
   /* ── Render ── */
-  const Bg = () => <><div className="bg-grad"/><div className="bg-img"/></>;
+  const Bg = () => /*#__PURE__*/_jsxs(_Fragment, {
+    children: [/*#__PURE__*/_jsx("div", {
+      className: "bg-grad"
+    }), /*#__PURE__*/_jsx("div", {
+      className: "bg-img"
+    })]
+  });
 
   /* Ocultar el pre-loader nativo en el primer render de React */
   useEffect(() => {
@@ -1003,114 +1477,206 @@ function App() {
   }, []);
 
   /* Si Firebase no pudo iniciarse, mostrar error claro */
-  if (!db) return (
-    <div className="app">
-      <Bg/>
-      <div className="ldg" style={{gap:'10px',padding:'24px',textAlign:'center'}}>
-        <div style={{fontSize:'48px'}}>⚠️</div>
-        <div style={{color:'#fff',fontSize:'17px',fontWeight:'900'}}>No se pudo conectar con Firebase</div>
-        <div style={{color:'rgba(255,255,255,0.6)',fontSize:'13px',maxWidth:'300px',lineHeight:'1.5'}}>
-          {_fbError || 'Error desconocido'}
-        </div>
-        <div style={{color:'rgba(255,255,255,0.4)',fontSize:'12px',marginTop:'8px'}}>
-          Comprueba que el Realtime Database está activado en Firebase Console y que la databaseURL es correcta.
-        </div>
-      </div>
-    </div>
-  );
-
-  if (!user) return <div className="app"><Bg/><Welcome onDone={u=>{setUser(u);}}/></div>;
-  if (!ready) return <div className="app"><Bg/><div className="ldg"><div className="spin"/><div className="ldg-txt">Cargando despensa…</div></div></div>;
-
-  return (
-    <div className="app">
-      <Bg/>
-
-      {/* ── HEADER ── */}
-      <div className="hdr">
-        <div className="hdr-left">
-          <div className="hdr-logo">🛒</div>
-          <div>
-            <div className="hdr-title">La Despensa</div>
-            <div className="hdr-sub">Hola, {user.name} 👋</div>
-          </div>
-        </div>
-        <div className="hdr-right">
-          <div className={`hdr-btn${mainView==='cart'?' on':''}`}
-            onClick={()=>setMainView(v=>v==='cart'?'inv':'cart')}>
-            🛒
-            {cartN>0 && <span className="bdg">{cartN}</span>}
-          </div>
-        </div>
-      </div>
-
-      {/* ── CAT NAV (only in inventory) ── */}
-      {mainView==='inv' && (
-        <div className="cat-nav">
-          <div className="cat-nav-inner">
-            {cats.map(c=>(
-              <button key={c.id} className={`cat-tab${activeCat===c.id?' active':''}`}
-                onClick={()=>setActiveCat(c.id)}>
-                <span>{c.emoji}</span><span>{c.name}</span>
-              </button>
-            ))}
-            <button className="cat-tab cat-tab-add" onClick={()=>setMAddCat(true)}>＋</button>
-          </div>
-        </div>
-      )}
-
-      {/* ── MAIN CONTENT ── */}
-      {mainView==='inv' ? (
-        <InventoryView
-          categories={cats} subcategories={scs} products={prods}
-          activeCatId={activeCat} openScs={openScs}
-          onToggleSc={id=>setOpenScs(p=>{const n=new Set(p);n.has(id)?n.delete(id):n.add(id);return n;})}
-          onAddProduct={setMAddProd} onUpdateQty={handleQty}
-          onEdit={setMEditProd} onDelete={handleDeleteProd}
-          onOpenComplete={setMComplete} onForceCart={handleForceCart}
-          onAddSc={setMAddSc}
-        />
-      ) : (
-        <CartView
-          cartItems={cartItems} categories={cats} subcategories={scs}
-          view={cartView} setView={setCartView}
-          onComplete={setMComplete} onRemove={handleRemoveCart}
-        />
-      )}
-
-      {/* ── BOTTOM NAV ── */}
-      <div className="bnav">
-        <div className={`bnav-btn${mainView==='inv'?' on':''}`} onClick={()=>setMainView('inv')}>
-          <div className="bnav-ico">🏠</div><span>Despensa</span>
-        </div>
-        <div className={`bnav-btn${mainView==='cart'?' on':''}`} onClick={()=>setMainView('cart')}>
-          <div className="bnav-ico">
-            🛒{cartN>0&&<span className="bdg" style={{fontSize:'9px',top:'-1px',right:'-5px'}}>{cartN}</span>}
-          </div>
-          <span>Carrito</span>
-        </div>
-      </div>
-
-      {/* ── TOASTS ── */}
-      <Toasts list={toasts}/>
-
-      {/* ── MODALS ── */}
-      {mAddCat  && <AddCatModal onSave={handleAddCat} onClose={()=>setMAddCat(false)}/>}
-      {mAddSc!==null && <AddScModal categories={cats} defaultCatId={mAddSc} onSave={handleAddSc} onClose={()=>setMAddSc(null)}/>}
-      {mAddProd!==null && <ProductModal subcategory={mAddProd} categories={cats} subcategories={scs} onSave={handleAddProd} onClose={()=>setMAddProd(null)}/>}
-      {mEditProd!==null && <ProductModal product={mEditProd} categories={cats} subcategories={scs} onSave={handleEditProd} onClose={()=>setMEditProd(null)}/>}
-      {mComplete!==null && <CompleteModal product={mComplete} onComplete={handleComplete} onClose={()=>setMComplete(null)}/>}
-      {mConfirm!==null && <ConfirmModal message={mConfirm.msg} onOk={mConfirm.fn} onClose={()=>setMConfirm(null)}/>}
-    </div>
-  );
+  if (!db) return /*#__PURE__*/_jsxs("div", {
+    className: "app",
+    children: [/*#__PURE__*/_jsx(Bg, {}), /*#__PURE__*/_jsxs("div", {
+      className: "ldg",
+      style: {
+        gap: '10px',
+        padding: '24px',
+        textAlign: 'center'
+      },
+      children: [/*#__PURE__*/_jsx("div", {
+        style: {
+          fontSize: '48px'
+        },
+        children: "⚠️"
+      }), /*#__PURE__*/_jsx("div", {
+        style: {
+          color: '#fff',
+          fontSize: '17px',
+          fontWeight: '900'
+        },
+        children: "No se pudo conectar con Firebase"
+      }), /*#__PURE__*/_jsx("div", {
+        style: {
+          color: 'rgba(255,255,255,0.6)',
+          fontSize: '13px',
+          maxWidth: '300px',
+          lineHeight: '1.5'
+        },
+        children: _fbError || 'Error desconocido'
+      }), /*#__PURE__*/_jsx("div", {
+        style: {
+          color: 'rgba(255,255,255,0.4)',
+          fontSize: '12px',
+          marginTop: '8px'
+        },
+        children: "Comprueba que el Realtime Database está activado en Firebase Console y que la databaseURL es correcta."
+      })]
+    })]
+  });
+  if (!user) return /*#__PURE__*/_jsxs("div", {
+    className: "app",
+    children: [/*#__PURE__*/_jsx(Bg, {}), /*#__PURE__*/_jsx(Welcome, {
+      onDone: u => {
+        setUser(u);
+      }
+    })]
+  });
+  if (!ready) return /*#__PURE__*/_jsxs("div", {
+    className: "app",
+    children: [/*#__PURE__*/_jsx(Bg, {}), /*#__PURE__*/_jsxs("div", {
+      className: "ldg",
+      children: [/*#__PURE__*/_jsx("div", {
+        className: "spin"
+      }), /*#__PURE__*/_jsx("div", {
+        className: "ldg-txt",
+        children: "Cargando despensa…"
+      })]
+    })]
+  });
+  return /*#__PURE__*/_jsxs("div", {
+    className: "app",
+    children: [/*#__PURE__*/_jsx(Bg, {}), /*#__PURE__*/_jsxs("div", {
+      className: "hdr",
+      children: [/*#__PURE__*/_jsxs("div", {
+        className: "hdr-left",
+        children: [/*#__PURE__*/_jsx("div", {
+          className: "hdr-logo",
+          children: "🛒"
+        }), /*#__PURE__*/_jsxs("div", {
+          children: [/*#__PURE__*/_jsx("div", {
+            className: "hdr-title",
+            children: "La Despensa"
+          }), /*#__PURE__*/_jsxs("div", {
+            className: "hdr-sub",
+            children: ["Hola, ", user.name, " 👋"]
+          })]
+        })]
+      }), /*#__PURE__*/_jsx("div", {
+        className: "hdr-right",
+        children: /*#__PURE__*/_jsxs("div", {
+          className: `hdr-btn${mainView === 'cart' ? ' on' : ''}`,
+          onClick: () => setMainView(v => v === 'cart' ? 'inv' : 'cart'),
+          children: ["🛒", cartN > 0 && /*#__PURE__*/_jsx("span", {
+            className: "bdg",
+            children: cartN
+          })]
+        })
+      })]
+    }), mainView === 'inv' && /*#__PURE__*/_jsx("div", {
+      className: "cat-nav",
+      children: /*#__PURE__*/_jsxs("div", {
+        className: "cat-nav-inner",
+        children: [cats.map(c => /*#__PURE__*/_jsxs("button", {
+          className: `cat-tab${activeCat === c.id ? ' active' : ''}`,
+          onClick: () => setActiveCat(c.id),
+          children: [/*#__PURE__*/_jsx("span", {
+            children: c.emoji
+          }), /*#__PURE__*/_jsx("span", {
+            children: c.name
+          })]
+        }, c.id)), /*#__PURE__*/_jsx("button", {
+          className: "cat-tab cat-tab-add",
+          onClick: () => setMAddCat(true),
+          children: "＋"
+        })]
+      })
+    }), mainView === 'inv' ? /*#__PURE__*/_jsx(InventoryView, {
+      categories: cats,
+      subcategories: scs,
+      products: prods,
+      activeCatId: activeCat,
+      openScs: openScs,
+      onToggleSc: id => setOpenScs(p => {
+        const n = new Set(p);
+        n.has(id) ? n.delete(id) : n.add(id);
+        return n;
+      }),
+      onAddProduct: setMAddProd,
+      onUpdateQty: handleQty,
+      onEdit: setMEditProd,
+      onDelete: handleDeleteProd,
+      onOpenComplete: setMComplete,
+      onForceCart: handleForceCart,
+      onAddSc: setMAddSc
+    }) : /*#__PURE__*/_jsx(CartView, {
+      cartItems: cartItems,
+      categories: cats,
+      subcategories: scs,
+      view: cartView,
+      setView: setCartView,
+      onComplete: setMComplete,
+      onRemove: handleRemoveCart
+    }), /*#__PURE__*/_jsxs("div", {
+      className: "bnav",
+      children: [/*#__PURE__*/_jsxs("div", {
+        className: `bnav-btn${mainView === 'inv' ? ' on' : ''}`,
+        onClick: () => setMainView('inv'),
+        children: [/*#__PURE__*/_jsx("div", {
+          className: "bnav-ico",
+          children: "🏠"
+        }), /*#__PURE__*/_jsx("span", {
+          children: "Despensa"
+        })]
+      }), /*#__PURE__*/_jsxs("div", {
+        className: `bnav-btn${mainView === 'cart' ? ' on' : ''}`,
+        onClick: () => setMainView('cart'),
+        children: [/*#__PURE__*/_jsxs("div", {
+          className: "bnav-ico",
+          children: ["🛒", cartN > 0 && /*#__PURE__*/_jsx("span", {
+            className: "bdg",
+            style: {
+              fontSize: '9px',
+              top: '-1px',
+              right: '-5px'
+            },
+            children: cartN
+          })]
+        }), /*#__PURE__*/_jsx("span", {
+          children: "Carrito"
+        })]
+      })]
+    }), /*#__PURE__*/_jsx(Toasts, {
+      list: toasts
+    }), mAddCat && /*#__PURE__*/_jsx(AddCatModal, {
+      onSave: handleAddCat,
+      onClose: () => setMAddCat(false)
+    }), mAddSc !== null && /*#__PURE__*/_jsx(AddScModal, {
+      categories: cats,
+      defaultCatId: mAddSc,
+      onSave: handleAddSc,
+      onClose: () => setMAddSc(null)
+    }), mAddProd !== null && /*#__PURE__*/_jsx(ProductModal, {
+      subcategory: mAddProd,
+      categories: cats,
+      subcategories: scs,
+      onSave: handleAddProd,
+      onClose: () => setMAddProd(null)
+    }), mEditProd !== null && /*#__PURE__*/_jsx(ProductModal, {
+      product: mEditProd,
+      categories: cats,
+      subcategories: scs,
+      onSave: handleEditProd,
+      onClose: () => setMEditProd(null)
+    }), mComplete !== null && /*#__PURE__*/_jsx(CompleteModal, {
+      product: mComplete,
+      onComplete: handleComplete,
+      onClose: () => setMComplete(null)
+    }), mConfirm !== null && /*#__PURE__*/_jsx(ConfirmModal, {
+      message: mConfirm.msg,
+      onOk: mConfirm.fn,
+      onClose: () => setMConfirm(null)
+    })]
+  });
 }
 
 /* Register SW */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.warn));
 }
-
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/_jsx(App, {}));
 </script>
 </body>
 </html>
