@@ -350,6 +350,18 @@
 </head>
 <body>
 <div id="root"></div>
+<!-- Visible antes de que React arranque -->
+<div id="pre-load">
+  <div style="font-size:60px;margin-bottom:12px">&#x1F6D2;</div>
+  <div style="font-size:21px;font-weight:900;letter-spacing:-0.5px">La Despensa</div>
+  <div style="margin-top:20px;width:36px;height:36px;border:3px solid rgba(255,255,255,0.15);border-top-color:#4CAF50;border-radius:50%;animation:spin 0.75s linear infinite"></div>
+  <div style="margin-top:12px;color:rgba(255,255,255,0.4);font-size:13px;font-weight:600">Conectando...</div>
+  <div id="pre-load-err" style="display:none;margin-top:14px;background:rgba(198,40,40,0.25);border:1px solid rgba(198,40,40,0.5);border-radius:10px;padding:10px 16px;font-size:13px;max-width:300px;text-align:center;color:#EF9A9A"></div>
+</div>
+<style>
+  #pre-load{position:fixed;inset:0;background:linear-gradient(160deg,#0a1a0a 0%,#172e17 50%,#0a2020 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;color:#fff;font-family:Nunito,sans-serif;transition:opacity 0.35s;}
+  #pre-load.done{opacity:0;pointer-events:none;}
+</style>
 
 <script type="text/babel" data-presets="react">
 const { useState, useEffect, useCallback, useRef, useMemo } = React;
@@ -367,8 +379,18 @@ const FB_CFG = {
   appId:             "1:1082666820132:web:3eb634b8fdd91fe311eeb1"
 };
 
-firebase.initializeApp(FB_CFG);
-const db = firebase.database();
+/* Init Firebase de forma segura — si falla, la app muestra error en vez de pantalla en blanco */
+let db = null;
+let _fbError = null;
+try {
+  firebase.initializeApp(FB_CFG);
+  db = firebase.database();
+} catch(e) {
+  _fbError = e.message || String(e);
+  console.error('[Despensa] Firebase init error:', e);
+  const el = document.getElementById('pre-load-err');
+  if (el) { el.textContent = 'Error Firebase: ' + _fbError; el.style.display='block'; }
+}
 
 /* ════════════════ DATOS INICIALES ════════════════ */
 const INIT_CATS = [
@@ -973,6 +995,29 @@ function App() {
 
   /* ── Render ── */
   const Bg = () => <><div className="bg-grad"/><div className="bg-img"/></>;
+
+  /* Ocultar el pre-loader nativo en el primer render de React */
+  useEffect(() => {
+    const el = document.getElementById('pre-load');
+    if (el) el.classList.add('done');
+  }, []);
+
+  /* Si Firebase no pudo iniciarse, mostrar error claro */
+  if (!db) return (
+    <div className="app">
+      <Bg/>
+      <div className="ldg" style={{gap:'10px',padding:'24px',textAlign:'center'}}>
+        <div style={{fontSize:'48px'}}>⚠️</div>
+        <div style={{color:'#fff',fontSize:'17px',fontWeight:'900'}}>No se pudo conectar con Firebase</div>
+        <div style={{color:'rgba(255,255,255,0.6)',fontSize:'13px',maxWidth:'300px',lineHeight:'1.5'}}>
+          {_fbError || 'Error desconocido'}
+        </div>
+        <div style={{color:'rgba(255,255,255,0.4)',fontSize:'12px',marginTop:'8px'}}>
+          Comprueba que el Realtime Database está activado en Firebase Console y que la databaseURL es correcta.
+        </div>
+      </div>
+    </div>
+  );
 
   if (!user) return <div className="app"><Bg/><Welcome onDone={u=>{setUser(u);}}/></div>;
   if (!ready) return <div className="app"><Bg/><div className="ldg"><div className="spin"/><div className="ldg-txt">Cargando despensa…</div></div></div>;
