@@ -368,6 +368,20 @@ window.addEventListener('unhandledrejection',function(e){var el=document.getElem
 </head>
 <body>
 <!-- Capturador de errores JS — muestra cualquier fallo en pantalla -->
+<div id="root"></div>
+<!-- Visible antes de que React arranque -->
+<div id="pre-load">
+  <div style="font-size:60px;margin-bottom:12px">&#x1F6D2;</div>
+  <div style="font-size:21px;font-weight:900;letter-spacing:-0.5px">La Despensa</div>
+  <div style="margin-top:20px;width:36px;height:36px;border:3px solid rgba(255,255,255,0.15);border-top-color:#4CAF50;border-radius:50%;animation:spin 0.75s linear infinite"></div>
+  <div style="margin-top:12px;color:rgba(255,255,255,0.4);font-size:13px;font-weight:600">Conectando...</div>
+  <div id="pre-load-err" style="display:none;margin-top:14px;background:rgba(198,40,40,0.25);border:1px solid rgba(198,40,40,0.5);border-radius:10px;padding:10px 16px;font-size:13px;max-width:300px;text-align:center;color:#EF9A9A"></div>
+</div>
+<style>
+  #pre-load{position:fixed;inset:0;background:linear-gradient(160deg,#0a1a0a 0%,#172e17 50%,#0a2020 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;color:#fff;font-family:Nunito,sans-serif;transition:opacity 0.35s;}
+  #pre-load.done{opacity:0;pointer-events:none;}
+</style>
+
 <script>
 const {
   useState,
@@ -1532,19 +1546,5 @@ if ('serviceWorker' in navigator) {
 }
 ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(App, null));
 </script>
-<div id="root"></div>
-<!-- Visible antes de que React arranque -->
-<div id="pre-load">
-  <div style="font-size:60px;margin-bottom:12px">&#x1F6D2;</div>
-  <div style="font-size:21px;font-weight:900;letter-spacing:-0.5px">La Despensa</div>
-  <div style="margin-top:20px;width:36px;height:36px;border:3px solid rgba(255,255,255,0.15);border-top-color:#4CAF50;border-radius:50%;animation:spin 0.75s linear infinite"></div>
-  <div style="margin-top:12px;color:rgba(255,255,255,0.4);font-size:13px;font-weight:600">Conectando...</div>
-  <div id="pre-load-err" style="display:none;margin-top:14px;background:rgba(198,40,40,0.25);border:1px solid rgba(198,40,40,0.5);border-radius:10px;padding:10px 16px;font-size:13px;max-width:300px;text-align:center;color:#EF9A9A"></div>
-</div>
-<style>
-  #pre-load{position:fixed;inset:0;background:linear-gradient(160deg,#0a1a0a 0%,#172e17 50%,#0a2020 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;color:#fff;font-family:Nunito,sans-serif;transition:opacity 0.35s;}
-  #pre-load.done{opacity:0;pointer-events:none;}
-</style>
-
 </body>
 </html>
