@@ -1,4 +1,4 @@
-const CACHE = 'despensa-v2';
+const CACHE = 'despensa-v3';
 const ASSETS = [
   './',
   './index.html',
