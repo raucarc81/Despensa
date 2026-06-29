@@ -1,4 +1,4 @@
-const CACHE = 'despensa-v1';
+const CACHE = 'despensa-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -26,7 +26,6 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Skip non-GET, Firebase, CDN, Unsplash
   if (e.request.method !== 'GET') return;
   const url = e.request.url;
   if (url.includes('firebasedatabase') || url.includes('googleapis') ||
