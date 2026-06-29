@@ -1,10 +1,10 @@
-const CACHE = 'despensa-v5';
+const CACHE = 'despensa-v6';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 self.addEventListener('install', e => {
@@ -29,7 +29,7 @@ self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   const url = e.request.url;
   if (url.includes('firebasedatabase') || url.includes('googleapis') ||
-      url.includes('gstatic') || url.includes('unpkg') ||
+      url.includes('gstatic') || url.includes('jsdelivr') ||
       url.includes('fonts.') || url.includes('unsplash')) return;
 
   e.respondWith(
