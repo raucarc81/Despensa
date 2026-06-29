@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1B5E20">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="La Despensa">
+  <title>La Despensa 🛒</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --g-dark:   #1B5E20;
+      --g-mid:    #2E7D32;
+      --g-bright: #4CAF50;
+      --g-pale:   #A5D6A7;
+      --g-soft:   #E8F5E9;
+      --orange:   #E65100;
+      --orange-l: #FF8F00;
+      --red:      #C62828;
+      --w100: rgba(255,255,255,1.00);
+      --w85:  rgba(255,255,255,0.85);
+      --w60:  rgba(255,255,255,0.60);
+      --w30:  rgba(255,255,255,0.30);
+      --w15:  rgba(255,255,255,0.15);
+      --w08:  rgba(255,255,255,0.08);
+      --font: 'Nunito', sans-serif;
+      --r: 16px; --rs: 10px;
+    }
+
+    html, body { height: 100%; overflow: hidden; font-family: var(--font); }
+    #root { height: 100%; }
+
+    /* ── BACKGROUND ── */
+    .bg-img {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        url('https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=1920&q=50')
+        center/cover no-repeat;
+      filter: blur(10px) grayscale(0.88) brightness(0.30);
+      transform: scale(1.08);
+    }
+    .bg-grad {
+      position: fixed; inset: 0; z-index: -1;
+      background: linear-gradient(160deg,#0a1a0a 0%,#172e17 45%,#0a2020 100%);
+    }
+
+    /* ── APP SHELL ── */
+    .app { position: relative; height: 100%; display: flex; flex-direction: column; z-index: 1; overflow: hidden; }
+
+    /* ── HEADER ── */
+    .hdr {
+      background: rgba(18,50,18,0.88);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      padding: 10px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--w15);
+      box-shadow: 0 2px 16px rgba(0,0,0,0.35);
+      flex-shrink: 0; z-index: 100;
+    }
+    .hdr-left  { display: flex; align-items: center; gap: 10px; }
+    .hdr-logo  { font-size: 28px; line-height: 1; }
+    .hdr-title { color: #fff; font-size: 19px; font-weight: 900; letter-spacing: -0.3px; }
+    .hdr-sub   { color: var(--g-pale); font-size: 11px; font-weight: 600; }
+    .hdr-right { display: flex; align-items: center; gap: 8px; }
+    .hdr-btn {
+      position: relative; background: var(--w15);
+      border: 1px solid var(--w30); border-radius: 50%;
+      width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 20px; color: #fff; transition: all 0.18s; flex-shrink: 0;
+    }
+    .hdr-btn:active { background: rgba(255,255,255,0.25); transform: scale(0.95); }
+    .hdr-btn.on { background: var(--orange); border-color: var(--orange); }
+    .bdg {
+      position: absolute; top: -4px; right: -4px;
+      background: var(--red); color: #fff;
+      font-size: 10px; font-weight: 900; border-radius: 10px;
+      min-width: 18px; height: 18px; padding: 0 4px;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid var(--g-dark);
+    }
+
+    /* ── CATEGORY NAV ── */
+    .cat-nav {
+      background: rgba(6,20,6,0.55);
+      backdrop-filter: blur(10px);
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--w08);
+      overflow-x: auto; scrollbar-width: none; flex-shrink: 0;
+    }
+    .cat-nav::-webkit-scrollbar { display: none; }
+    .cat-nav-inner { display: flex; gap: 7px; width: max-content; }
+    .cat-tab {
+      background: var(--w08); border: 1px solid var(--w15);
+      border-radius: 20px; padding: 6px 13px;
+      color: var(--w60); font-family: var(--font); font-size: 13px; font-weight: 700;
+      cursor: pointer; transition: all 0.18s; white-space: nowrap;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .cat-tab.active { background: var(--g-bright); border-color: var(--g-bright); color: #fff; box-shadow: 0 2px 10px rgba(76,175,80,0.45); }
+    .cat-tab:active { transform: scale(0.95); }
+    .cat-tab-add { background: var(--w08); border: 1px dashed var(--w30); color: var(--w30); font-size: 16px; padding: 6px 12px; }
+
+    /* ── MAIN SCROLL ── */
+    .scroll {
+      flex: 1; overflow-y: auto; overflow-x: hidden;
+      padding: 10px 10px 88px;
+      scrollbar-width: thin; scrollbar-color: var(--w15) transparent;
+    }
+
+    /* ── SUBCAT SECTION ── */
+    .sc {
+      margin-bottom: 9px; border-radius: var(--r);
+      background: var(--w08); backdrop-filter: blur(12px);
+      border: 1px solid var(--w15); overflow: hidden;
+    }
+    .sc-hdr {
+      padding: 11px 14px; display: flex; align-items: center;
+      justify-content: space-between; cursor: pointer; user-select: none;
+    }
+    .sc-hdr:active { background: var(--w08); }
+    .sc-title { color: #fff; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .sc-cnt {
+      background: var(--w15); color: var(--w60);
+      font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 9px;
+    }
+    .sc-cnt.cart { background: rgba(230,81,0,0.65); color: #fff; }
+    .sc-arrow { color: var(--w30); font-size: 12px; transition: transform 0.2s; }
+    .sc-arrow.open { transform: rotate(90deg); }
+    .sc-body { border-top: 1px solid var(--w08); }
+    .sc-add {
+      padding: 9px 14px; display: flex; align-items: center; gap: 7px;
+      color: var(--g-pale); font-size: 12px; font-weight: 700; cursor: pointer;
+      border-top: 1px solid var(--w08);
+    }
+    .sc-add:active { background: var(--w08); }
+    .add-sc-btn {
+      background: var(--w08); border: 1px dashed var(--w30);
+      border-radius: var(--r); padding: 11px;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      color: var(--w30); font-size: 13px; font-weight: 700;
+      cursor: pointer; margin-bottom: 9px;
+    }
+    .add-sc-btn:active { background: var(--w15); }
+
+    /* ── PRODUCT CARD ── */
+    .pc {
+      padding: 9px 13px; display: flex; align-items: center; gap: 9px;
+      border-bottom: 1px solid var(--w08); position: relative;
+    }
+    .pc:last-child { border-bottom: none; }
+    .pc.incart { background: rgba(230,81,0,0.07); }
+    .pc-cart-ico { font-size: 17px; cursor: pointer; flex-shrink: 0; }
+    .pc-info { flex: 1; min-width: 0; }
+    .pc-name { color: #fff; font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pc-meta { display: flex; align-items: center; gap: 5px; margin-top: 3px; flex-wrap: wrap; }
+    .pc-super {
+      background: var(--w15); color: var(--w60);
+      font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 5px;
+      text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .pc-min { color: var(--w30); font-size: 10px; }
+    .pc-who { color: rgba(165,214,167,0.6); font-size: 10px; }
+    .pc-ctrl { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+    .qbtn {
+      width: 30px; height: 30px; border-radius: 50%; border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 20px; font-weight: 700; line-height: 1;
+      transition: transform 0.12s, background 0.12s;
+    }
+    .qbtn:active { transform: scale(0.88); }
+    .qbtn-m { background: var(--w15); color: var(--w85); }
+    .qbtn-m:active { background: rgba(255,80,80,0.35); }
+    .qbtn-p { background: var(--g-bright); color: #fff; }
+    .qbtn-p:active { background: var(--g-mid); }
+    .qnum { min-width: 28px; text-align: center; color: #fff; font-size: 16px; font-weight: 900; }
+    .qnum.zero { color: var(--w30); }
+    .qnum.low  { color: #FFB74D; }
+    .kb { background: none; border: none; color: var(--w30); font-size: 17px; cursor: pointer; padding: 3px 2px; border-radius: 4px; }
+    .kb:active { background: var(--w08); }
+
+    /* ── CONTEXT MENU ── */
+    .ctxm {
+      position: absolute; right: 6px; top: 34px;
+      background: #152a15; border: 1px solid var(--w15);
+      border-radius: 12px; padding: 5px; z-index: 50;
+      min-width: 155px; box-shadow: 0 8px 30px rgba(0,0,0,0.55);
+    }
+    .ctxi {
+      padding: 9px 11px; color: var(--w85); font-size: 13px; font-weight: 700;
+      cursor: pointer; border-radius: 7px; display: flex; align-items: center; gap: 7px;
+    }
+    .ctxi:active { background: var(--w08); }
+    .ctxi.del { color: #EF9A9A; }
+
+    /* ── CART VIEW ── */
+    .cart-hdr { padding: 12px 14px 6px; display: flex; align-items: center; justify-content: space-between; }
+    .cart-ttl { color: #fff; font-size: 17px; font-weight: 900; }
+    .cart-tog { display: flex; background: var(--w08); border-radius: 20px; padding: 2px; }
+    .ctog-btn { padding: 5px 11px; border-radius: 18px; border: none; background: transparent; color: var(--w60); font-family: var(--font); font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.18s; }
+    .ctog-btn.on { background: var(--orange); color: #fff; }
+    .csec-lbl { padding: 7px 14px 5px; color: var(--g-pale); font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.7px; }
+    .ci {
+      background: var(--w08); border: 1px solid var(--w15);
+      border-radius: var(--rs); padding: 11px 12px;
+      margin: 0 0 7px; display: flex; align-items: center; gap: 10px;
+    }
+    .ci-info { flex: 1; min-width: 0; }
+    .ci-name { color: #fff; font-size: 14px; font-weight: 800; }
+    .ci-bread { color: var(--w30); font-size: 10px; margin-top: 2px; }
+    .ci-who  { color: rgba(165,214,167,0.55); font-size: 10px; margin-top: 1px; }
+    .ci-super { background: rgba(230,81,0,0.25); color: #FFB74D; font-size: 9px; font-weight: 900; padding: 2px 7px; border-radius: 5px; text-transform: uppercase; flex-shrink: 0; }
+    .ci-acts { display: flex; gap: 5px; flex-shrink: 0; }
+    .ca-btn { padding: 7px 10px; border-radius: 8px; border: none; font-family: var(--font); font-size: 12px; font-weight: 800; cursor: pointer; transition: all 0.15s; }
+    .ca-btn:active { transform: scale(0.95); }
+    .ca-ok  { background: var(--g-bright); color: #fff; }
+    .ca-rm  { background: var(--w08); color: var(--w60); }
+    .empty { text-align: center; padding: 56px 20px; color: var(--w30); }
+    .empty-ico { font-size: 56px; margin-bottom: 14px; }
+    .empty-t { font-size: 18px; font-weight: 800; }
+    .empty-s { font-size: 13px; margin-top: 6px; }
+
+    /* ── BOTTOM NAV ── */
+    .bnav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(8,18,8,0.92); backdrop-filter: blur(20px);
+      border-top: 1px solid var(--w08);
+      padding: 7px 0 calc(7px + env(safe-area-inset-bottom));
+      display: flex; z-index: 100;
+    }
+    .bnav-btn {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+      cursor: pointer; padding: 3px 0;
+      color: var(--w30); font-size: 10px; font-weight: 800; position: relative;
+    }
+    .bnav-btn.on { color: var(--g-bright); }
+    .bnav-ico { font-size: 22px; position: relative; }
+
+    /* ── MODALS ── */
+    .ovl {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.72);
+      backdrop-filter: blur(5px); z-index: 200;
+      display: flex; align-items: flex-end; justify-content: center;
+    }
+    .sheet {
+      background: #142014; border-radius: 22px 22px 0 0;
+      padding: 18px 18px calc(20px + env(safe-area-inset-bottom));
+      width: 100%; max-width: 500px; max-height: 92vh; overflow-y: auto;
+      border-top: 1px solid var(--w15);
+    }
+    .drag { width: 38px; height: 4px; background: var(--w15); border-radius: 2px; margin: 0 auto 18px; }
+    .m-ttl { color: #fff; font-size: 17px; font-weight: 900; margin-bottom: 18px; text-align: center; }
+    .fg { margin-bottom: 13px; }
+    .fl { color: var(--w60); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; display: block; }
+    .fi {
+      width: 100%; background: var(--w08); border: 1px solid var(--w15);
+      border-radius: 9px; padding: 10px 13px; color: #fff;
+      font-family: var(--font); font-size: 15px; font-weight: 600; outline: none;
+    }
+    .fi:focus { border-color: var(--g-bright); }
+    .fi::placeholder { color: var(--w30); font-weight: 500; }
+    .fsel {
+      width: 100%; background: var(--w08); border: 1px solid var(--w15);
+      border-radius: 9px; padding: 10px 13px; color: #fff;
+      font-family: var(--font); font-size: 14px; font-weight: 600;
+      outline: none; appearance: none; cursor: pointer;
+    }
+    .fsel option { background: #142014; color: #fff; }
+    .f-row { display: flex; gap: 10px; }
+    .f-row .fg { flex: 1; }
+    .m-acts { display: flex; gap: 9px; margin-top: 18px; }
+    .btn { flex: 1; padding: 13px; border-radius: 11px; border: none; font-family: var(--font); font-size: 14px; font-weight: 800; cursor: pointer; }
+    .btn:active { transform: scale(0.97); }
+    .btn-p { background: var(--g-bright); color: #fff; }
+    .btn-s { background: var(--w08); color: var(--w60); }
+    .btn-d { background: rgba(198,40,40,0.7); color: #fff; }
+    .emoji-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+    .ep {
+      background: var(--w08); border: 1px solid var(--w15);
+      border-radius: 8px; width: 40px; height: 40px;
+      font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .ep.sel { background: rgba(76,175,80,0.25); border-color: var(--g-bright); }
+
+    /* ── WELCOME ── */
+    .wlc {
+      height: 100%; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 32px; text-align: center;
+    }
+    .wlc-logo { font-size: 72px; margin-bottom: 14px; filter: drop-shadow(0 4px 16px rgba(0,0,0,0.5)); }
+    .wlc-ttl { color: #fff; font-size: 30px; font-weight: 900; letter-spacing: -1px; margin-bottom: 6px; }
+    .wlc-sub { color: var(--g-pale); font-size: 15px; font-weight: 600; margin-bottom: 40px; }
+    .wlc-card {
+      background: var(--w08); backdrop-filter: blur(20px);
+      border: 1px solid var(--w15); border-radius: 20px;
+      padding: 26px 22px; width: 100%; max-width: 340px;
+    }
+    .wlc-lbl { color: var(--w60); font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 9px; display: block; }
+    .wlc-inp {
+      width: 100%; background: rgba(255,255,255,0.1);
+      border: 1px solid var(--w30); border-radius: 12px;
+      padding: 13px 16px; color: #fff; font-family: var(--font);
+      font-size: 20px; font-weight: 900; outline: none;
+      margin-bottom: 18px; text-align: center;
+    }
+    .wlc-inp:focus { border-color: var(--g-bright); }
+    .wlc-inp::placeholder { color: var(--w30); font-weight: 500; font-size: 16px; }
+
+    /* ── LOADING ── */
+    .ldg { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; gap: 14px; }
+    .spin { width: 38px; height: 38px; border: 3px solid var(--w15); border-top-color: var(--g-bright); border-radius: 50%; animation: spin 0.75s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .ldg-txt { color: var(--w60); font-size: 14px; font-weight: 700; }
+
+    /* ── TOAST ── */
+    .tbox { position: fixed; top: 78px; left: 50%; transform: translateX(-50%); z-index: 300; display: flex; flex-direction: column; gap: 7px; width: 90%; max-width: 390px; pointer-events: none; }
+    .toast {
+      background: rgba(18,42,18,0.97); backdrop-filter: blur(18px);
+      border: 1px solid var(--w15); border-radius: 11px;
+      padding: 11px 15px; color: #fff; font-size: 13px; font-weight: 700;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.45); animation: tin 0.28s ease;
+    }
+    .toast.ok  { border-color: var(--g-pale); }
+    .toast.wrn { border-color: #FFB74D; }
+    @keyframes tin { from { opacity:0; transform: translateY(-8px); } to { opacity:1; transform: translateY(0); } }
+
+    /* ── MISC ── */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type=number] { -moz-appearance: textfield; }
+
+    @media (min-width: 480px) {
+      .ovl { align-items: center; }
+      .sheet { border-radius: 22px; margin: 14px; max-height: 80vh; }
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useCallback, useRef, useMemo } = React;
+
+/* ════════════════════════════════════════════════════════════
+   FIREBASE CONFIG  ← REEMPLAZA CON TUS PROPIOS VALORES
+   ════════════════════════════════════════════════════════════ */
+const FB_CFG = {
+  apiKey:            "AIzaSyDtNmUVsgnbxXx8uIKtQuDmRXJ3G_5LGrg",
+  authDomain:        "despensa-b05ff.firebaseapp.com",
+  databaseURL:       "https://despensa-b05ff-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:         "despensa-b05ff",
+  storageBucket:     "despensa-b05ff.firebasestorage.app",
+  messagingSenderId: "1082666820132",
+  appId:             "1:1082666820132:web:3eb634b8fdd91fe311eeb1"
+};
+
+firebase.initializeApp(FB_CFG);
+const db = firebase.database();
+
+/* ════════════════ DATOS INICIALES ════════════════ */
+const INIT_CATS = [
+  { name:'Comida',           emoji:'🥩', order:0 },
+  { name:'Despensa',         emoji:'🥫', order:1 },
+  { name:'Bebidas',          emoji:'🥤', order:2 },
+  { name:'Limpieza y Baños', emoji:'🧹', order:3 },
+  { name:'Guarrerías',       emoji:'🍿', order:4 },
+  { name:'Barbacoa',         emoji:'🔥', order:5 },
+  { name:'Botiquín',         emoji:'💊', order:6 },
+];
+const INIT_SC = {
+  'Comida':           ['Carnes','Pescados','Verduras','Huevos','Embutidos','Lechugas','Frutas','Frutos secos','Leche','Yogures','Quesos','Pan','Masa de pizza','Tortitas','Chocolate','Mantequilla','Mermelada'],
+  'Despensa':         ['Latas de conserva','Arroces','Legumbres','Pastas','Aceites','Salsas'],
+  'Bebidas':          ['Refrescos','Zumos','Vinos','Cervezas','Ron','Ginebra','Whisky','Licores'],
+  'Limpieza y Baños': ['Papel absorbente','Papel higiénico','Bastoncillos oídos','Cremas','Toallitas desmaquillantes','Toallitas húmedas','Clínex','Pañales normales','Pañales de agua'],
+  'Guarrerías':       ['Patatas','Cortezas','Encurtidos','Saladitos'],
+  'Barbacoa':         ['Pastillas para encender','Cerillas largas','Carbón'],
+  'Botiquín':         ['Alcohol','Agua oxigenada','Yodo','Cristalmina','Tiritas','Esparadrapo','Vendas','Algodón','Compresas para heridas'],
+};
+const SUPERS = ['Mercadona','Lidl','Carrefour','Alcampo','Consum','Dia','El Corte Inglés','Aldi','Otro'];
+const EMOJIS = ['🥩','🥫','🥤','🧹','🍿','🔥','💊','🌿','🧁','🐾','🏠','🎁','🧴','🧺','🍷','🥛','🧀','🥦','🍅','🎣'];
+
+/* ════════════════ SEED ════════════════ */
+async function seedData() {
+  const snap = await db.ref('market/categories').once('value');
+  if (snap.exists()) return;
+  const upd = {};
+  const ids = {};
+  INIT_CATS.forEach(cat => {
+    const id = db.ref('market/categories').push().key;
+    ids[cat.name] = id;
+    upd[`market/categories/${id}`] = { name:cat.name, emoji:cat.emoji, order:cat.order };
+  });
+  Object.entries(INIT_SC).forEach(([cn, subs]) => {
+    const cid = ids[cn]; if (!cid) return;
+    subs.forEach((name, i) => {
+      const id = db.ref('market/subcategories').push().key;
+      upd[`market/subcategories/${id}`] = { name, categoryId:cid, order:i };
+    });
+  });
+  await db.ref().update(upd);
+}
+
+/* ════════════════ USER HELPERS ════════════════ */
+function getUserLS() {
+  try { const d = localStorage.getItem('despensa_user'); return d ? JSON.parse(d) : null; } catch { return null; }
+}
+function saveUserLS(u) { localStorage.setItem('despensa_user', JSON.stringify(u)); }
+function genUID() { return 'u_' + Math.random().toString(36).slice(2,9) + Date.now().toString(36); }
+
+/* ════════════════════════════════════════════════════════════
+   COMPONENTS
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Toast ── */
+function Toasts({ list }) {
+  return (
+    <div className="tbox">
+      {list.map(t => <div key={t.id} className={`toast ${t.type}`}>{t.msg}</div>)}
+    </div>
+  );
+}
+
+/* ── Modal sheet ── */
+function Sheet({ show, onClose, title, children }) {
+  if (!show) return null;
+  return (
+    <div className="ovl" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="sheet">
+        <div className="drag" />
+        {title && <div className="m-ttl">{title}</div>}
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/* ── Add Category Modal ── */
+function AddCatModal({ onSave, onClose }) {
+  const [name, setName] = useState('');
+  const [emoji, setEmoji] = useState('🛒');
+  return (
+    <Sheet show onClose={onClose} title="Nueva categoría">
+      <div className="fg">
+        <label className="fl">Nombre</label>
+        <input className="fi" placeholder="Ej: Mascotas" value={name} onChange={e=>setName(e.target.value)} autoFocus />
+      </div>
+      <div className="fg">
+        <label className="fl">Icono</label>
+        <div className="emoji-grid">
+          {EMOJIS.map(e=>(
+            <button key={e} className={`ep${emoji===e?' sel':''}`} onClick={()=>setEmoji(e)}>{e}</button>
+          ))}
+        </div>
+      </div>
+      <div className="m-acts">
+        <button className="btn btn-s" onClick={onClose}>Cancelar</button>
+        <button className="btn btn-p" onClick={()=>name.trim()&&onSave(name.trim(),emoji)}>Crear</button>
+      </div>
+    </Sheet>
+  );
+}
+
+/* ── Add Subcat Modal ── */
+function AddScModal({ categories, defaultCatId, onSave, onClose }) {
+  const [name, setName] = useState('');
+  const [catId, setCatId] = useState(defaultCatId || categories[0]?.id || '');
+  return (
+    <Sheet show onClose={onClose} title="Nueva subcategoría">
+      <div className="fg">
+        <label className="fl">Nombre</label>
+        <input className="fi" placeholder="Ej: Postres frescos" value={name} onChange={e=>setName(e.target.value)} autoFocus />
+      </div>
+      <div className="fg">
+        <label className="fl">Categoría</label>
+        <select className="fsel" value={catId} onChange={e=>setCatId(e.target.value)}>
+          {categories.map(c=><option key={c.id} value={c.id}>{c.emoji} {c.name}</option>)}
+        </select>
+      </div>
+      <div className="m-acts">
+        <button className="btn btn-s" onClick={onClose}>Cancelar</button>
+        <button className="btn btn-p" onClick={()=>name.trim()&&onSave(name.trim(),catId)}>Crear</button>
+      </div>
+    </Sheet>
+  );
+}
+
+/* ── Add/Edit Product Modal ── */
+function ProductModal({ product, subcategory, categories, subcategories, onSave, onClose }) {
+  const isEdit = !!product;
+  const [name, setName]     = useState(product?.name || '');
+  const [thr, setThr]       = useState(String(product?.minThreshold ?? 1));
+  const [sup, setSup]       = useState(product?.supermarket || '');
+  const [scId, setScId]     = useState(product?.subcategoryId || subcategory?.id || subcategories[0]?.id || '');
+  return (
+    <Sheet show onClose={onClose} title={isEdit ? 'Editar producto' : 'Nuevo producto'}>
+      <div className="fg">
+        <label className="fl">Nombre del producto</label>
+        <input className="fi" placeholder="Ej: Pechuga de pollo" value={name} onChange={e=>setName(e.target.value)} autoFocus />
+      </div>
+      {!isEdit && (
+        <div className="fg">
+          <label className="fl">Subcategoría</label>
+          <select className="fsel" value={scId} onChange={e=>setScId(e.target.value)}>
+            {subcategories.map(s => {
+              const cat = categories.find(c=>c.id===s.categoryId);
+              return <option key={s.id} value={s.id}>{cat?.emoji} {cat?.name} → {s.name}</option>;
+            })}
+          </select>
+        </div>
+      )}
+      <div className="f-row">
+        <div className="fg">
+          <label className="fl">Mínimo para avisar</label>
+          <input className="fi" type="number" min="0" placeholder="1" value={thr} onChange={e=>setThr(e.target.value)} />
+        </div>
+        <div className="fg">
+          <label className="fl">Supermercado</label>
+          <select className="fsel" value={sup} onChange={e=>setSup(e.target.value)}>
+            <option value="">Sin especificar</option>
+            {SUPERS.map(s=><option key={s} value={s}>{s}</option>)}
+          </select>
+        </div>
+      </div>
+      <div className="m-acts">
+        <button className="btn btn-s" onClick={onClose}>Cancelar</button>
+        <button className="btn btn-p" onClick={()=>{
+          if (!name.trim()) return;
+          onSave({ name:name.trim(), minThreshold:Math.max(0,parseInt(thr)||0), supermarket:sup, subcategoryId:scId });
+        }}>{isEdit?'Guardar':'Crear'}</button>
+      </div>
+    </Sheet>
+  );
+}
+
+/* ── Complete Purchase Modal ── */
+function CompleteModal({ product, onComplete, onClose }) {
+  const [qty, setQty] = useState('');
+  return (
+    <Sheet show onClose={onClose} title="✅ Completar compra">
+      <div style={{textAlign:'center',marginBottom:'18px'}}>
+        <div style={{color:'rgba(255,255,255,0.6)',fontSize:'13px'}}>Producto comprado:</div>
+        <div style={{color:'#fff',fontSize:'19px',fontWeight:'900',marginTop:'4px'}}>{product?.name}</div>
+        {product?.supermarket && <div style={{color:'var(--g-pale)',fontSize:'12px',marginTop:'3px'}}>📍 {product.supermarket}</div>}
+      </div>
+      <div className="fg">
+        <label className="fl">¿Cuántas unidades has traído a casa?</label>
+        <input className="fi" type="number" min="1" placeholder="Ej: 3"
+          value={qty} onChange={e=>setQty(e.target.value)} autoFocus
+          style={{fontSize:'26px',textAlign:'center',fontWeight:'900'}}
+        />
+      </div>
+      <div className="m-acts">
+        <button className="btn btn-s" onClick={onClose}>Cancelar</button>
+        <button className="btn btn-p" onClick={()=>{ const n=parseInt(qty); if(n>0) onComplete(product.id,n); }}>Confirmar</button>
+      </div>
+    </Sheet>
+  );
+}
+
+/* ── Confirm Delete Modal ── */
+function ConfirmModal({ message, onOk, onClose }) {
+  return (
+    <Sheet show onClose={onClose} title="¿Eliminar?">
+      <div style={{textAlign:'center',color:'rgba(255,255,255,0.65)',fontSize:'14px',marginBottom:'22px'}}>{message}</div>
+      <div className="m-acts">
+        <button className="btn btn-s" onClick={onClose}>Cancelar</button>
+        <button className="btn btn-d" onClick={onOk}>Eliminar</button>
+      </div>
+    </Sheet>
+  );
+}
+
+/* ── Product Card ── */
+function PCard({ product, onUpdateQty, onEdit, onDelete, onOpenComplete, onForceCart }) {
+  const [menu, setMenu] = useState(false);
+  const low   = product.quantity > 0 && product.quantity <= product.minThreshold;
+  const zero  = product.quantity === 0;
+  const inCart = product.inCart;
+
+  useEffect(() => {
+    if (!menu) return;
+    const h = () => setMenu(false);
+    setTimeout(() => document.addEventListener('click', h), 0);
+    return () => document.removeEventListener('click', h);
+  }, [menu]);
+
+  return (
+    <div className={`pc${inCart?' incart':''}`}>
+      {inCart && (
+        <div className="pc-cart-ico" onClick={onOpenComplete} title="Ver en carrito / Completar">🛒</div>
+      )}
+      <div className="pc-info">
+        <div className="pc-name">{product.name}</div>
+        <div className="pc-meta">
+          {product.supermarket && <span className="pc-super">{product.supermarket}</span>}
+          <span className="pc-min">mín.{product.minThreshold}</span>
+          {inCart && product.inCartBy && <span className="pc-who">· {product.inCartBy}</span>}
+        </div>
+      </div>
+      <div className="pc-ctrl">
+        <button className="qbtn qbtn-m" onClick={()=>onUpdateQty(product.id, product.quantity-1)} disabled={zero}>−</button>
+        <div className={`qnum${zero?' zero':low?' low':''}`}>{product.quantity}</div>
+        <button className="qbtn qbtn-p" onClick={()=>onUpdateQty(product.id, product.quantity+1)}>+</button>
+      </div>
+      <div style={{position:'relative'}}>
+        <button className="kb" onClick={e=>{e.stopPropagation();setMenu(m=>!m)}}>⋮</button>
+        {menu && (
+          <div className="ctxm" onClick={e=>e.stopPropagation()}>
+            <div className="ctxi" onClick={()=>{onEdit(product);setMenu(false)}}>✏️ Editar</div>
+            {!inCart
+              ? <div className="ctxi" onClick={()=>{onForceCart(product.id);setMenu(false)}}>🛒 Al carrito</div>
+              : <div className="ctxi" onClick={()=>{onOpenComplete();setMenu(false)}}>✅ Completar</div>
+            }
+            <div className="ctxi del" onClick={()=>{onDelete(product.id);setMenu(false)}}>🗑 Eliminar</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Subcategory Section ── */
+function ScSection({ sc, products, isOpen, onToggle, onAddProduct, onUpdateQty, onEdit, onDelete, onOpenComplete, onForceCart }) {
+  const cartN = products.filter(p=>p.inCart).length;
+  return (
+    <div className="sc">
+      <div className="sc-hdr" onClick={onToggle}>
+        <div className="sc-title">
+          {sc.name}
+          <span className={`sc-cnt${cartN>0?' cart':''}`}>{cartN>0?`🛒${cartN}`:products.length}</span>
+        </div>
+        <span className={`sc-arrow${isOpen?' open':''}`}>▶</span>
+      </div>
+      {isOpen && (
+        <div className="sc-body">
+          {products.length === 0 && (
+            <div style={{padding:'10px 14px',color:'rgba(255,255,255,0.3)',fontSize:'12px'}}>Sin productos — añade el primero abajo</div>
+          )}
+          {products.map(p => (
+            <PCard key={p.id} product={p}
+              onUpdateQty={onUpdateQty} onEdit={onEdit} onDelete={onDelete}
+              onOpenComplete={()=>onOpenComplete(p)} onForceCart={onForceCart}
+            />
+          ))}
+          <div className="sc-add" onClick={onAddProduct}><span>＋</span>Añadir producto</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Inventory View ── */
+function InventoryView({ categories, subcategories, products, activeCatId, openScs, onToggleSc, onAddProduct, onUpdateQty, onEdit, onDelete, onOpenComplete, onForceCart, onAddSc }) {
+  const scs = useMemo(() => subcategories.filter(s=>s.categoryId===activeCatId).sort((a,b)=>a.order-b.order), [subcategories,activeCatId]);
+  const bysc = useMemo(() => {
+    const m = {};
+    products.forEach(p => { if (!m[p.subcategoryId]) m[p.subcategoryId]=[]; m[p.subcategoryId].push(p); });
+    return m;
+  }, [products]);
+
+  if (!activeCatId) return (
+    <div className="scroll" style={{display:'flex',alignItems:'center',justifyContent:'center'}}>
+      <div className="empty"><div className="empty-ico">🛒</div><div className="empty-t">Selecciona una categoría</div></div>
+    </div>
+  );
+
+  return (
+    <div className="scroll">
+      {scs.map(sc => (
+        <ScSection key={sc.id} sc={sc} products={bysc[sc.id]||[]}
+          isOpen={openScs.has(sc.id)} onToggle={()=>onToggleSc(sc.id)}
+          onAddProduct={()=>onAddProduct(sc)}
+          onUpdateQty={onUpdateQty} onEdit={onEdit} onDelete={onDelete}
+          onOpenComplete={onOpenComplete} onForceCart={onForceCart}
+        />
+      ))}
+      <div className="add-sc-btn" onClick={()=>onAddSc(activeCatId)}>＋ Nueva subcategoría</div>
+    </div>
+  );
+}
+
+/* ── Cart View ── */
+function CartView({ cartItems, categories, subcategories, view, setView, onComplete, onRemove }) {
+  const byStore = useMemo(() => {
+    const m = {};
+    cartItems.forEach(p => {
+      const k = p.supermarket || 'Sin especificar';
+      if (!m[k]) m[k] = [];
+      m[k].push(p);
+    });
+    return Object.entries(m).sort(([a],[b])=>a.localeCompare(b));
+  }, [cartItems]);
+
+  const crumb = p => {
+    const sc = subcategories.find(s=>s.id===p.subcategoryId);
+    const cat = categories.find(c=>c.id===p.categoryId);
+    return sc && cat ? `${cat.emoji} ${cat.name} › ${sc.name}` : '';
+  };
+
+  const Item = ({ p }) => (
+    <div className="ci">
+      <div className="ci-info">
+        <div className="ci-name">{p.name}</div>
+        <div className="ci-bread">{crumb(p)}</div>
+        {p.inCartBy && <div className="ci-who">Añadido por {p.inCartBy}</div>}
+      </div>
+      {p.supermarket && view==='all' && <span className="ci-super">{p.supermarket}</span>}
+      <div className="ci-acts">
+        <button className="ca-btn ca-ok" onClick={()=>onComplete(p)}>✓</button>
+        <button className="ca-btn ca-rm" onClick={()=>onRemove(p.id)}>✕</button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="scroll">
+      <div className="cart-hdr">
+        <div className="cart-ttl">🛒 Carrito ({cartItems.length})</div>
+        <div className="cart-tog">
+          <button className={`ctog-btn${view==='all'?' on':''}`} onClick={()=>setView('all')}>Todo</button>
+          <button className={`ctog-btn${view==='by'?' on':''}`} onClick={()=>setView('by')}>Por tienda</button>
+        </div>
+      </div>
+      {cartItems.length === 0 ? (
+        <div className="empty">
+          <div className="empty-ico">🎉</div>
+          <div className="empty-t">¡Despensa al completo!</div>
+          <div className="empty-s">El carrito está vacío</div>
+        </div>
+      ) : view==='all' ? (
+        cartItems.map(p=><Item key={p.id} p={p}/>)
+      ) : (
+        byStore.map(([store,items])=>(
+          <div key={store}>
+            <div className="csec-lbl">📍 {store}</div>
+            {items.map(p=><Item key={p.id} p={p}/>)}
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
+/* ── Welcome Screen ── */
+function Welcome({ onDone }) {
+  const [name, setName] = useState('');
+  const go = () => {
+    const n = name.trim();
+    if (!n) return;
+    const u = { id:genUID(), name:n };
+    saveUserLS(u); onDone(u);
+  };
+  return (
+    <div className="wlc">
+      <div className="wlc-logo">🛒</div>
+      <div className="wlc-ttl">La Despensa</div>
+      <div className="wlc-sub">La compra, sin dramas.</div>
+      <div className="wlc-card">
+        <label className="wlc-lbl">¿Cómo te llamas?</label>
+        <input className="wlc-inp" placeholder="Tu nombre" value={name}
+          onChange={e=>setName(e.target.value)} onKeyPress={e=>e.key==='Enter'&&go()} autoFocus />
+        <button className="btn btn-p" style={{width:'100%',padding:'14px',fontSize:'16px'}} onClick={go}>Entrar →</button>
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════
+   MAIN APP
+   ════════════════════════════════════════════════════════════ */
+function App() {
+  const [user, setUser]       = useState(() => getUserLS());
+  const [ready, setReady]     = useState(false);
+  const [cats, setCats]       = useState([]);
+  const [scs, setScs]         = useState([]);
+  const [prods, setProds]     = useState([]);
+  const [activeCat, setActiveCat] = useState(null);
+  const [mainView, setMainView]   = useState('inv');   // 'inv' | 'cart'
+  const [cartView, setCartView]   = useState('all');   // 'all' | 'by'
+  const [openScs, setOpenScs]     = useState(new Set());
+  const [toasts, setToasts]       = useState([]);
+
+  // Modals state
+  const [mAddCat, setMAddCat]     = useState(false);
+  const [mAddSc, setMAddSc]       = useState(null);   // catId
+  const [mAddProd, setMAddProd]   = useState(null);   // sc obj
+  const [mEditProd, setMEditProd] = useState(null);   // prod obj
+  const [mComplete, setMComplete] = useState(null);   // prod obj
+  const [mConfirm, setMConfirm]   = useState(null);   // { msg, fn }
+
+  const userRef       = useRef(user);
+  const prevCartRef   = useRef(new Set());
+  const catInitRef    = useRef(false);
+
+  useEffect(() => { userRef.current = user; }, [user]);
+
+  /* ── Firebase init ── */
+  useEffect(() => {
+    if (!user) return;
+    let alive = true;
+
+    seedData().then(() => {
+      if (!alive) return;
+
+      db.ref('market/categories').on('value', snap => {
+        const list = Object.entries(snap.val()||{}).map(([id,v])=>({id,...v})).sort((a,b)=>a.order-b.order);
+        setCats(list);
+        if (!catInitRef.current && list.length) { setActiveCat(list[0].id); catInitRef.current=true; }
+      });
+
+      db.ref('market/subcategories').on('value', snap => {
+        setScs(Object.entries(snap.val()||{}).map(([id,v])=>({id,...v})).sort((a,b)=>a.order-b.order));
+      });
+
+      db.ref('market/products').on('value', snap => {
+        const list = Object.entries(snap.val()||{}).map(([id,v])=>({id,...v}));
+        // Notify if other user added to cart
+        list.forEach(p => {
+          if (p.inCart && !prevCartRef.current.has(p.id) && p.inCartBy && p.inCartBy !== userRef.current?.name) {
+            toast(`🛒 ${p.inCartBy} añadió "${p.name}" al carrito`);
+          }
+        });
+        prevCartRef.current = new Set(list.filter(p=>p.inCart).map(p=>p.id));
+        setProds(list);
+        setReady(true);
+      });
+    }).catch(err => { console.error(err); setReady(true); });
+
+    return () => {
+      alive = false;
+      db.ref('market/categories').off();
+      db.ref('market/subcategories').off();
+      db.ref('market/products').off();
+    };
+  }, [user]);
+
+  /* ── Toast helper ── */
+  const toast = useCallback((msg, type='info') => {
+    const id = Date.now() + Math.random();
+    setToasts(p=>[...p,{id,msg,type}]);
+    setTimeout(()=>setToasts(p=>p.filter(t=>t.id!==id)), 3500);
+  }, []);
+
+  /* ── Update quantity ── */
+  const handleQty = useCallback((pid, newQty) => {
+    const qty = Math.max(0, newQty);
+    const prod = prods.find(p=>p.id===pid); if (!prod) return;
+    const shouldCart  = qty <= prod.minThreshold;
+    const wasCart     = prod.inCart;
+    const upd = {
+      [`market/products/${pid}/quantity`]:      qty,
+      [`market/products/${pid}/lastUpdatedBy`]: userRef.current?.name||'',
+      [`market/products/${pid}/lastUpdatedAt`]: Date.now(),
+    };
+    if (shouldCart && !wasCart) {
+      upd[`market/products/${pid}/inCart`]    = true;
+      upd[`market/products/${pid}/inCartBy`]  = userRef.current?.name||'';
+      upd[`market/products/${pid}/inCartAt`]  = Date.now();
+      toast(`🛒 "${prod.name}" al carrito (queda ${qty})`, 'wrn');
+    } else if (!shouldCart && wasCart) {
+      upd[`market/products/${pid}/inCart`]   = false;
+      upd[`market/products/${pid}/inCartBy`] = null;
+    }
+    db.ref().update(upd);
+  }, [prods, toast]);
+
+  /* ── Force to cart (manual) ── */
+  const handleForceCart = useCallback(pid => {
+    const prod = prods.find(p=>p.id===pid); if (!prod || prod.inCart) return;
+    db.ref().update({
+      [`market/products/${pid}/inCart`]:   true,
+      [`market/products/${pid}/inCartBy`]: userRef.current?.name||'',
+      [`market/products/${pid}/inCartAt`]: Date.now(),
+    });
+    toast(`🛒 "${prod.name}" añadido al carrito`, 'wrn');
+  }, [prods, toast]);
+
+  /* ── Complete purchase ── */
+  const handleComplete = useCallback((pid, qty) => {
+    const prod = prods.find(p=>p.id===pid);
+    db.ref().update({
+      [`market/products/${pid}/quantity`]:      qty,
+      [`market/products/${pid}/inCart`]:        false,
+      [`market/products/${pid}/inCartBy`]:      null,
+      [`market/products/${pid}/inCartAt`]:      null,
+      [`market/products/${pid}/lastUpdatedBy`]: userRef.current?.name||'',
+      [`market/products/${pid}/lastUpdatedAt`]: Date.now(),
+    });
+    setMComplete(null);
+    toast(`✅ "${prod?.name}" en despensa (${qty} uds.)`, 'ok');
+  }, [prods, toast]);
+
+  /* ── Remove from cart ── */
+  const handleRemoveCart = useCallback(pid => {
+    db.ref().update({ [`market/products/${pid}/inCart`]:false, [`market/products/${pid}/inCartBy`]:null });
+  }, []);
+
+  /* ── Add category ── */
+  const handleAddCat = useCallback((name, emoji) => {
+    const id = db.ref('market/categories').push().key;
+    db.ref(`market/categories/${id}`).set({ name, emoji, order:cats.length });
+    setMAddCat(false);
+    toast(`✅ Categoría "${name}" creada`, 'ok');
+  }, [cats, toast]);
+
+  /* ── Add subcategory ── */
+  const handleAddSc = useCallback((name, catId) => {
+    const order = scs.filter(s=>s.categoryId===catId).length;
+    const id = db.ref('market/subcategories').push().key;
+    db.ref(`market/subcategories/${id}`).set({ name, categoryId:catId, order });
+    setMAddSc(null);
+    setOpenScs(prev=>{ const n=new Set(prev); n.add(id); return n; });
+    toast(`✅ Subcategoría "${name}" creada`, 'ok');
+  }, [scs, toast]);
+
+  /* ── Add product ── */
+  const handleAddProd = useCallback(data => {
+    const { name, minThreshold, supermarket, subcategoryId } = data;
+    const sc = scs.find(s=>s.id===subcategoryId); if (!sc) return;
+    const id = db.ref('market/products').push().key;
+    db.ref(`market/products/${id}`).set({
+      name, subcategoryId, categoryId:sc.categoryId,
+      quantity:0, minThreshold, supermarket:supermarket||'',
+      inCart:false, inCartBy:null, inCartAt:null,
+      lastUpdatedBy:userRef.current?.name||'', lastUpdatedAt:Date.now(),
+    });
+    setMAddProd(null);
+    toast(`✅ "${name}" añadido`, 'ok');
+  }, [scs, toast]);
+
+  /* ── Edit product ── */
+  const handleEditProd = useCallback(data => {
+    const id = mEditProd.id;
+    db.ref().update({
+      [`market/products/${id}/name`]:          data.name,
+      [`market/products/${id}/minThreshold`]:  data.minThreshold,
+      [`market/products/${id}/supermarket`]:   data.supermarket||'',
+      [`market/products/${id}/lastUpdatedBy`]: userRef.current?.name||'',
+      [`market/products/${id}/lastUpdatedAt`]: Date.now(),
+    });
+    setMEditProd(null);
+    toast('✅ Producto actualizado', 'ok');
+  }, [mEditProd, toast]);
+
+  /* ── Delete product ── */
+  const handleDeleteProd = useCallback(pid => {
+    const prod = prods.find(p=>p.id===pid);
+    setMConfirm({
+      msg: `¿Eliminar "${prod?.name}"? No se puede deshacer.`,
+      fn: () => {
+        db.ref(`market/products/${pid}`).remove();
+        setMConfirm(null);
+        toast('🗑 Producto eliminado');
+      }
+    });
+  }, [prods, toast]);
+
+  const cartItems = useMemo(()=>prods.filter(p=>p.inCart), [prods]);
+  const cartN = cartItems.length;
+
+  /* ── Render ── */
+  const Bg = () => <><div className="bg-grad"/><div className="bg-img"/></>;
+
+  if (!user) return <div className="app"><Bg/><Welcome onDone={u=>{setUser(u);}}/></div>;
+  if (!ready) return <div className="app"><Bg/><div className="ldg"><div className="spin"/><div className="ldg-txt">Cargando despensa…</div></div></div>;
+
+  return (
+    <div className="app">
+      <Bg/>
+
+      {/* ── HEADER ── */}
+      <div className="hdr">
+        <div className="hdr-left">
+          <div className="hdr-logo">🛒</div>
+          <div>
+            <div className="hdr-title">La Despensa</div>
+            <div className="hdr-sub">Hola, {user.name} 👋</div>
+          </div>
+        </div>
+        <div className="hdr-right">
+          <div className={`hdr-btn${mainView==='cart'?' on':''}`}
+            onClick={()=>setMainView(v=>v==='cart'?'inv':'cart')}>
+            🛒
+            {cartN>0 && <span className="bdg">{cartN}</span>}
+          </div>
+        </div>
+      </div>
+
+      {/* ── CAT NAV (only in inventory) ── */}
+      {mainView==='inv' && (
+        <div className="cat-nav">
+          <div className="cat-nav-inner">
+            {cats.map(c=>(
+              <button key={c.id} className={`cat-tab${activeCat===c.id?' active':''}`}
+                onClick={()=>setActiveCat(c.id)}>
+                <span>{c.emoji}</span><span>{c.name}</span>
+              </button>
+            ))}
+            <button className="cat-tab cat-tab-add" onClick={()=>setMAddCat(true)}>＋</button>
+          </div>
+        </div>
+      )}
+
+      {/* ── MAIN CONTENT ── */}
+      {mainView==='inv' ? (
+        <InventoryView
+          categories={cats} subcategories={scs} products={prods}
+          activeCatId={activeCat} openScs={openScs}
+          onToggleSc={id=>setOpenScs(p=>{const n=new Set(p);n.has(id)?n.delete(id):n.add(id);return n;})}
+          onAddProduct={setMAddProd} onUpdateQty={handleQty}
+          onEdit={setMEditProd} onDelete={handleDeleteProd}
+          onOpenComplete={setMComplete} onForceCart={handleForceCart}
+          onAddSc={setMAddSc}
+        />
+      ) : (
+        <CartView
+          cartItems={cartItems} categories={cats} subcategories={scs}
+          view={cartView} setView={setCartView}
+          onComplete={setMComplete} onRemove={handleRemoveCart}
+        />
+      )}
+
+      {/* ── BOTTOM NAV ── */}
+      <div className="bnav">
+        <div className={`bnav-btn${mainView==='inv'?' on':''}`} onClick={()=>setMainView('inv')}>
+          <div className="bnav-ico">🏠</div><span>Despensa</span>
+        </div>
+        <div className={`bnav-btn${mainView==='cart'?' on':''}`} onClick={()=>setMainView('cart')}>
+          <div className="bnav-ico">
+            🛒{cartN>0&&<span className="bdg" style={{fontSize:'9px',top:'-1px',right:'-5px'}}>{cartN}</span>}
+          </div>
+          <span>Carrito</span>
+        </div>
+      </div>
+
+      {/* ── TOASTS ── */}
+      <Toasts list={toasts}/>
+
+      {/* ── MODALS ── */}
+      {mAddCat  && <AddCatModal onSave={handleAddCat} onClose={()=>setMAddCat(false)}/>}
+      {mAddSc!==null && <AddScModal categories={cats} defaultCatId={mAddSc} onSave={handleAddSc} onClose={()=>setMAddSc(null)}/>}
+      {mAddProd!==null && <ProductModal subcategory={mAddProd} categories={cats} subcategories={scs} onSave={handleAddProd} onClose={()=>setMAddProd(null)}/>}
+      {mEditProd!==null && <ProductModal product={mEditProd} categories={cats} subcategories={scs} onSave={handleEditProd} onClose={()=>setMEditProd(null)}/>}
+      {mComplete!==null && <CompleteModal product={mComplete} onComplete={handleComplete} onClose={()=>setMComplete(null)}/>}
+      {mConfirm!==null && <ConfirmModal message={mConfirm.msg} onOk={mConfirm.fn} onClose={()=>setMConfirm(null)}/>}
+    </div>
+  );
+}
+
+/* Register SW */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.warn));
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
