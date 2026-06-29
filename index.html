@@ -346,6 +346,147 @@
       .sheet { border-radius: 22px; margin: 14px; max-height: 80vh; }
     }
   </style>
+<style>
+  /* ══ DESPENSA v2.1 — NEW STYLES ══ */
+
+  /* Subcategory action buttons */
+  .sc-hdr { gap:6px; }
+  .sc-acts { display:flex; align-items:center; gap:2px; }
+  .sc-act-btn { background:none; border:none; color:var(--w30); font-size:14px; cursor:pointer; padding:4px 6px; border-radius:7px; transition:all 0.15s; }
+  .sc-act-btn:active { background:var(--w15); color:var(--w85); transform:scale(0.92); }
+
+  /* Inventory subcategory header */
+  .inv-sc-hdr { display:flex; align-items:center; justify-content:space-between; padding:8px 14px 6px; }
+  .inv-sc-lbl { color:var(--w60); font-size:12px; font-weight:800; }
+  .inv-add-sc-btn { background:rgba(76,175,80,0.12); border:1px solid rgba(76,175,80,0.28); border-radius:9px; padding:6px 12px; color:var(--g-pale); font-family:var(--font); font-size:12px; font-weight:800; cursor:pointer; }
+  .inv-add-sc-btn:active { background:rgba(76,175,80,0.25); }
+
+  /* For-guests indicator on PCard */
+  .pc.forguests { background:rgba(76,175,80,0.04); }
+
+  /* Manage cats */
+  .mgr-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--w08); }
+  .mgr-row:last-child { border-bottom:none; }
+  .mgr-emoji { font-size:22px; flex-shrink:0; }
+  .mgr-name { flex:1; color:#fff; font-size:14px; font-weight:700; }
+  .mgr-acts { display:flex; gap:5px; }
+  .mgr-btn { background:var(--w08); border:1px solid var(--w15); border-radius:8px; color:var(--w60); font-size:13px; cursor:pointer; padding:5px 9px; transition:all 0.15s; font-family:var(--font); }
+  .mgr-btn:disabled { opacity:0.25; cursor:default; }
+  .mgr-btn:not(:disabled):active { background:var(--w15); }
+  .mgr-btn.del { color:rgba(239,154,154,0.8); }
+
+  /* Settings */
+  .sett-sec { margin-bottom:18px; }
+  .sett-ttl { color:var(--w60); font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:10px; }
+  .sett-row { display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--w08); }
+  .sett-row:last-child { border-bottom:none; }
+  .sett-lbl { color:#fff; font-size:14px; font-weight:700; }
+  .sett-sub { color:var(--w60); font-size:11px; margin-top:2px; }
+  .color-grid { display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
+  .color-dot { width:34px; height:34px; border-radius:50%; cursor:pointer; border:3px solid transparent; transition:all 0.18s; }
+  .color-dot.sel { border-color:#fff; transform:scale(1.14); box-shadow:0 2px 10px rgba(0,0,0,0.5); }
+  .sw-wrap { position:relative; width:46px; height:26px; flex-shrink:0; }
+  .sw-inp { opacity:0; width:0; height:0; position:absolute; }
+  .sw-slider { position:absolute; inset:0; background:var(--w15); border-radius:13px; cursor:pointer; transition:0.2s; }
+  .sw-slider::before { content:''; position:absolute; height:20px; width:20px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:0.2s; }
+  .sw-inp:checked + .sw-slider { background:var(--orange); }
+  .sw-inp:checked + .sw-slider::before { transform:translateX(20px); }
+
+  /* Search overlay */
+  .srch-ovl { position:fixed; inset:0; background:rgba(0,0,0,0.88); backdrop-filter:blur(14px); z-index:300; display:flex; flex-direction:column; }
+  .srch-hdr { padding:12px 14px 10px; display:flex; align-items:center; gap:9px; border-bottom:1px solid var(--w15); flex-shrink:0; }
+  .srch-inp { flex:1; background:var(--w08); border:1px solid var(--w15); border-radius:10px; padding:10px 13px; color:#fff; font-family:var(--font); font-size:16px; font-weight:600; outline:none; }
+  .srch-inp:focus { border-color:var(--g-bright); }
+  .srch-inp::placeholder { color:var(--w30); font-weight:500; }
+  .srch-cls { background:none; border:none; color:var(--w60); font-family:var(--font); font-size:13px; font-weight:700; cursor:pointer; padding:8px 4px; white-space:nowrap; }
+  .srch-res { flex:1; overflow-y:auto; padding:4px 14px 60px; }
+  .srch-item { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--w08); }
+  .srch-item:last-child { border-bottom:none; }
+  .srch-item-name { color:#fff; font-size:14px; font-weight:700; }
+  .srch-item-cat { color:var(--w60); font-size:11px; margin-top:2px; }
+  .srch-empty { color:var(--w30); text-align:center; padding:50px 20px; font-size:14px; }
+
+  /* History */
+  .hist-hdr { padding:12px 14px 6px; display:flex; align-items:center; justify-content:space-between; }
+  .hist-ttl { color:#fff; font-size:17px; font-weight:900; }
+  .hist-flt { display:flex; gap:7px; padding:0 14px 10px; }
+  .hist-flt-sel { flex:1; background:var(--w08); border:1px solid var(--w15); border-radius:8px; padding:7px 10px; color:var(--w60); font-family:var(--font); font-size:12px; font-weight:700; outline:none; appearance:none; cursor:pointer; }
+  .hist-flt-sel option { background:#142014; }
+  .hist-stats { display:flex; gap:8px; padding:0 14px 10px; }
+  .stat-card { flex:1; background:var(--w08); border:1px solid var(--w15); border-radius:12px; padding:10px 12px; }
+  .stat-card-val { color:#fff; font-size:19px; font-weight:900; line-height:1.1; }
+  .stat-card-lbl { color:var(--w60); font-size:10px; font-weight:700; margin-top:3px; }
+  .hist-sec-ttl { color:var(--w60); font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:0.5px; padding:10px 14px 4px; }
+  .hist-item { display:flex; align-items:center; gap:10px; padding:9px 14px; border-bottom:1px solid var(--w08); }
+  .hist-item:last-child { border-bottom:none; }
+  .hist-item-name { color:#fff; font-size:13px; font-weight:700; }
+  .hist-item-meta { color:var(--w60); font-size:11px; margin-top:2px; }
+  .hist-item-qty { color:var(--g-pale); font-size:13px; font-weight:800; flex-shrink:0; }
+  .hist-item-price { color:var(--orange-l); font-weight:700; }
+
+  /* Urgent view */
+  .urg-full { position:fixed; inset:0; z-index:150; display:flex; flex-direction:column; background:rgba(4,10,4,0.97); backdrop-filter:blur(20px); }
+  .urg-hdr { padding:12px 14px; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--w15); flex-shrink:0; }
+  .urg-back { background:var(--w08); border:1px solid var(--w15); border-radius:50%; color:var(--w60); font-size:20px; cursor:pointer; width:38px; height:38px; display:flex; align-items:center; justify-content:center; }
+  .urg-ttl { flex:1; color:#fff; font-size:17px; font-weight:900; }
+  .urg-cnt { color:var(--orange-l); font-size:13px; font-weight:700; }
+  .urg-body { flex:1; overflow-y:auto; padding:4px 0 80px; }
+  .urg-store-ttl { color:var(--w60); font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:0.5px; padding:10px 14px 4px; }
+  .urg-item { display:flex; align-items:center; gap:10px; padding:11px 14px; border-bottom:1px solid var(--w08); }
+  .urg-item-name { color:#fff; font-size:15px; font-weight:700; }
+  .urg-item-meta { color:var(--w60); font-size:11px; margin-top:2px; }
+  .urg-acts { display:flex; gap:8px; flex-shrink:0; }
+  .urg-btn { width:40px; height:40px; border-radius:11px; border:none; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
+  .urg-btn.ok { background:rgba(76,175,80,0.2); color:var(--g-pale); border:1px solid rgba(76,175,80,0.3); }
+  .urg-btn.rm { background:rgba(198,40,40,0.18); color:rgba(239,154,154,0.8); border:1px solid rgba(198,40,40,0.25); }
+  .urg-btn:active { transform:scale(0.9); }
+
+  /* Guest view */
+  .guest-add-row { display:flex; gap:8px; padding:10px 14px; border-bottom:1px solid var(--w08); }
+  .guest-inp { flex:1; background:var(--w08); border:1px solid var(--w15); border-radius:9px; padding:9px 12px; color:#fff; font-family:var(--font); font-size:14px; font-weight:600; outline:none; }
+  .guest-inp:focus { border-color:var(--g-bright); }
+  .guest-inp::placeholder { color:var(--w30); font-weight:500; }
+  .guest-add-btn { background:var(--g-bright); color:#fff; border:none; border-radius:9px; padding:9px 15px; font-family:var(--font); font-size:14px; font-weight:800; cursor:pointer; flex-shrink:0; }
+  .guest-add-btn:active { transform:scale(0.95); }
+  .guest-item { display:flex; align-items:center; gap:9px; padding:10px 14px; border-bottom:1px solid var(--w08); }
+  .guest-item.done .guest-name { text-decoration:line-through; opacity:0.45; }
+  .guest-check { width:24px; height:24px; border-radius:7px; border:2px solid var(--w30); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; transition:all 0.15s; color:#fff; }
+  .guest-check.done { background:var(--g-bright); border-color:var(--g-bright); }
+  .guest-name { flex:1; color:#fff; font-size:14px; font-weight:700; }
+  .guest-rm { background:none; border:none; color:rgba(239,154,154,0.6); font-size:20px; cursor:pointer; padding:2px 4px; line-height:1; }
+  .guest-rm:active { color:rgba(239,154,154,1); }
+  .guest-clear { display:block; width:calc(100% - 28px); margin:14px; background:rgba(198,40,40,0.12); border:1px solid rgba(198,40,40,0.25); border-radius:10px; padding:11px; color:rgba(239,154,154,0.75); font-family:var(--font); font-size:13px; font-weight:700; cursor:pointer; text-align:center; }
+
+  /* Cart action buttons */
+  .cart-action-btn { flex:1; background:var(--w08); border:1px solid var(--w15); border-radius:11px; padding:10px 6px; color:var(--w60); font-family:var(--font); font-size:12px; font-weight:800; cursor:pointer; text-align:center; }
+  .cart-action-btn:active { background:var(--w15); color:#fff; transform:scale(0.97); }
+
+  /* Light mode */
+  .app.light-mode .bg-grad { background:linear-gradient(160deg,#e8f5e9 0%,#c8e6c9 45%,#b2dfdb 100%); }
+  .app.light-mode .bg-img { filter:blur(10px) grayscale(0.5) brightness(0.75); }
+  .app.light-mode .hdr { background:rgba(232,245,232,0.92); border-bottom-color:rgba(0,0,0,0.1); }
+  .app.light-mode .hdr-title { color:#1B5E20; }
+  .app.light-mode .hdr-sub { color:#33691E; }
+  .app.light-mode .hdr-btn { background:rgba(0,0,0,0.08); border-color:rgba(0,0,0,0.12); color:#1B5E20; }
+  .app.light-mode .cat-nav { background:rgba(255,255,255,0.55); }
+  .app.light-mode .cat-tab { background:rgba(0,0,0,0.06); border-color:rgba(0,0,0,0.1); color:rgba(0,0,0,0.5); }
+  .app.light-mode .sc { background:rgba(255,255,255,0.5); border-color:rgba(0,0,0,0.1); }
+  .app.light-mode .sc-title { color:#1B5E20; }
+  .app.light-mode .pc-name { color:#1a2a1a; }
+  .app.light-mode .bnav { background:rgba(240,248,240,0.94); border-top-color:rgba(0,0,0,0.08); }
+  .app.light-mode .bnav-btn { color:rgba(0,0,0,0.3); }
+  .app.light-mode .bnav-btn.on { color:var(--g-mid); }
+  .app.light-mode .sheet { background:#f0f7f0; }
+  .app.light-mode .m-ttl { color:#1B5E20; }
+  .app.light-mode .fl { color:rgba(0,0,0,0.45); }
+  .app.light-mode .fi { background:rgba(0,0,0,0.05); border-color:rgba(0,0,0,0.12); color:#1a1a1a; }
+  .app.light-mode .fi::placeholder { color:rgba(0,0,0,0.28); }
+  .app.light-mode .fsel { background:rgba(0,0,0,0.05); border-color:rgba(0,0,0,0.12); color:#1a1a1a; }
+  .app.light-mode .fsel option { background:#f0f7f0; color:#1a1a1a; }
+  .app.light-mode .btn-s { background:rgba(0,0,0,0.06); color:rgba(0,0,0,0.55); }
+  .app.light-mode .hist-ttl, .app.light-mode .ci-name, .app.light-mode .urg-ttl { color:#1B5E20; }
+  .app.light-mode .add-sc-btn { background:rgba(0,0,0,0.05); border-color:rgba(0,0,0,0.15); color:rgba(0,0,0,0.35); }
+</style>
 <script>
 /* Verificación de CDNs — si alguno falla, se muestra en pantalla */
 (function(){
@@ -383,6 +524,9 @@ window.addEventListener('unhandledrejection',function(e){var el=document.getElem
 </style>
 
 <script>
+/* ══════════════════════════════════════════════════════════
+   La Despensa v2.1 — fixes + 5 nuevas features
+   ══════════════════════════════════════════════════════════ */
 const {
   useState,
   useEffect,
@@ -391,9 +535,7 @@ const {
   useMemo
 } = React;
 
-/* ════════════════════════════════════════════════════════════
-   FIREBASE CONFIG  ← REEMPLAZA CON TUS PROPIOS VALORES
-   ════════════════════════════════════════════════════════════ */
+/* ════════ FIREBASE ════════ */
 const FB_CFG = {
   apiKey: "AIzaSyDtNmUVsgnbxXx8uIKtQuDmRXJ3G_5LGrg",
   authDomain: "despensa-b05ff.firebaseapp.com",
@@ -403,16 +545,13 @@ const FB_CFG = {
   messagingSenderId: "1082666820132",
   appId: "1:1082666820132:web:3eb634b8fdd91fe311eeb1"
 };
-
-/* Init Firebase de forma segura — si falla, la app muestra error en vez de pantalla en blanco */
-let db = null;
-let _fbError = null;
+let db = null,
+  _fbError = null;
 try {
   firebase.initializeApp(FB_CFG);
   db = firebase.database();
 } catch (e) {
   _fbError = e.message || String(e);
-  console.error('[Despensa] Firebase init error:', e);
   const el = document.getElementById('pre-load-err');
   if (el) {
     el.textContent = 'Error Firebase: ' + _fbError;
@@ -420,7 +559,40 @@ try {
   }
 }
 
-/* ════════════════ DATOS INICIALES ════════════════ */
+/* ════════ CONSTANTS ════════ */
+const ACCENT_PRESETS = [{
+  id: 'orange',
+  label: 'Naranja',
+  dark: '#E65100',
+  light: '#FF8F00'
+}, {
+  id: 'green',
+  label: 'Verde',
+  dark: '#2E7D32',
+  light: '#4CAF50'
+}, {
+  id: 'blue',
+  label: 'Azul',
+  dark: '#1565C0',
+  light: '#1E88E5'
+}, {
+  id: 'purple',
+  label: 'Morado',
+  dark: '#6A1B9A',
+  light: '#8E24AA'
+}, {
+  id: 'pink',
+  label: 'Rosa',
+  dark: '#AD1457',
+  light: '#E91E63'
+}, {
+  id: 'red',
+  label: 'Rojo',
+  dark: '#B71C1C',
+  light: '#E53935'
+}];
+const SUPERS = ['Mercadona', 'Lidl', 'Carrefour', 'Alcampo', 'Consum', 'Dia', 'El Corte Inglés', 'Aldi', 'Otro'];
+const EMOJIS = ['🥩', '🥫', '🥤', '🧹', '🍿', '🔥', '💊', '🌿', '🧁', '🐾', '🏠', '🎁', '🧴', '🧺', '🍷', '🥛', '🧀', '🥦', '🍅', '🎣'];
 const INIT_CATS = [{
   name: 'Comida',
   emoji: '🥩',
@@ -459,22 +631,20 @@ const INIT_SC = {
   'Barbacoa': ['Pastillas para encender', 'Cerillas largas', 'Carbón'],
   'Botiquín': ['Alcohol', 'Agua oxigenada', 'Yodo', 'Cristalmina', 'Tiritas', 'Esparadrapo', 'Vendas', 'Algodón', 'Compresas para heridas']
 };
-const SUPERS = ['Mercadona', 'Lidl', 'Carrefour', 'Alcampo', 'Consum', 'Dia', 'El Corte Inglés', 'Aldi', 'Otro'];
-const EMOJIS = ['🥩', '🥫', '🥤', '🧹', '🍿', '🔥', '💊', '🌿', '🧁', '🐾', '🏠', '🎁', '🧴', '🧺', '🍷', '🥛', '🧀', '🥦', '🍅', '🎣'];
 
-/* ════════════════ SEED ════════════════ */
+/* ════════ SEED ════════ */
 async function seedData() {
   const snap = await db.ref('market/categories').once('value');
   if (snap.exists()) return;
-  const upd = {};
-  const ids = {};
-  INIT_CATS.forEach(cat => {
+  const upd = {},
+    ids = {};
+  INIT_CATS.forEach(c => {
     const id = db.ref('market/categories').push().key;
-    ids[cat.name] = id;
+    ids[c.name] = id;
     upd[`market/categories/${id}`] = {
-      name: cat.name,
-      emoji: cat.emoji,
-      order: cat.order
+      name: c.name,
+      emoji: c.emoji,
+      order: c.order
     };
   });
   Object.entries(INIT_SC).forEach(([cn, subs]) => {
@@ -492,27 +662,120 @@ async function seedData() {
   await db.ref().update(upd);
 }
 
-/* ════════════════ USER HELPERS ════════════════ */
-function getUserLS() {
+/* ════════ HELPERS ════════ */
+function getLS(k, fb) {
   try {
-    const d = localStorage.getItem('despensa_user');
-    return d ? JSON.parse(d) : null;
+    const d = localStorage.getItem(k);
+    return d ? JSON.parse(d) : fb;
   } catch {
-    return null;
+    return fb;
   }
 }
+function setLS(k, v) {
+  try {
+    localStorage.setItem(k, JSON.stringify(v));
+  } catch {}
+}
+function getUserLS() {
+  return getLS('despensa_user', null);
+}
 function saveUserLS(u) {
-  localStorage.setItem('despensa_user', JSON.stringify(u));
+  setLS('despensa_user', u);
 }
 function genUID() {
   return 'u_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
 }
+function getSettingsLS() {
+  return getLS('despensa_settings', {
+    accent: 'orange',
+    bgOn: true,
+    lightMode: false
+  });
+}
+function saveSettingsLS(s) {
+  setLS('despensa_settings', s);
+}
+function getGuestsLS() {
+  return getLS('despensa_guests', []);
+}
+function saveGuestsLS(g) {
+  setLS('despensa_guests', g);
+}
+function getApiKeyLS() {
+  return localStorage.getItem('despensa_apikey') || '';
+}
+function saveApiKeyLS(k) {
+  if (k) localStorage.setItem('despensa_apikey', k);else localStorage.removeItem('despensa_apikey');
+}
+function applySettings(s) {
+  const p = ACCENT_PRESETS.find(x => x.id === s.accent) || ACCENT_PRESETS[0];
+  document.documentElement.style.setProperty('--orange', p.dark);
+  document.documentElement.style.setProperty('--orange-l', p.light);
+}
+function autoWeeklyBackup(cats, scs, prods) {
+  try {
+    const sv = getLS('despensa_backup_weekly', null);
+    if (sv && Date.now() - sv.ts < 7 * 24 * 3600 * 1000) return;
+    setLS('despensa_backup_weekly', {
+      ts: Date.now(),
+      data: {
+        categories: cats,
+        subcategories: scs,
+        products: prods
+      }
+    });
+  } catch {}
+}
+function formatMonth(ts) {
+  return new Date(ts).toLocaleDateString('es', {
+    month: 'long',
+    year: 'numeric'
+  });
+}
+function downloadJSON(data, fn) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], {
+    type: 'application/json'
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fn;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 
-/* ════════════════════════════════════════════════════════════
-   COMPONENTS
-   ════════════════════════════════════════════════════════════ */
+/* Fuzzy match for ticket scanning */
+function normWords(str) {
+  return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter(w => w.length > 2);
+}
+function jaccardSim(a, b) {
+  const sa = new Set(normWords(a)),
+    sb = new Set(normWords(b));
+  const inter = [...sa].filter(w => sb.has(w)).length;
+  const union = new Set([...sa, ...sb]).size;
+  return union > 0 ? inter / union : 0;
+}
+function matchItemsToCart(ticketItems, cartItems) {
+  return ticketItems.map(item => {
+    let best = null,
+      bestScore = 0.22;
+    cartItems.forEach(p => {
+      const s = jaccardSim(item.nombre || item.name || '', p.name);
+      if (s > bestScore) {
+        bestScore = s;
+        best = p;
+      }
+    });
+    return {
+      ...item,
+      cartProduct: best,
+      matchScore: bestScore
+    };
+  });
+}
 
-/* ── Toast ── */
+/* ════════ COMPONENTS ════════ */
+
 function Toasts({
   list
 }) {
@@ -523,8 +786,6 @@ function Toasts({
     className: `toast ${t.type}`
   }, t.msg)));
 }
-
-/* ── Modal sheet ── */
 function Sheet({
   show,
   onClose,
@@ -543,8 +804,37 @@ function Sheet({
     className: "m-ttl"
   }, title), children));
 }
-
-/* ── Add Category Modal ── */
+function ConfirmModal({
+  message,
+  title = '¿Eliminar?',
+  okLabel = 'Eliminar',
+  okClass = 'btn-d',
+  onOk,
+  onClose
+}) {
+  return /*#__PURE__*/React.createElement(Sheet, {
+    show: true,
+    onClose: onClose,
+    title: title
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: 'center',
+      color: 'rgba(255,255,255,0.65)',
+      fontSize: '14px',
+      marginBottom: '22px',
+      lineHeight: '1.5',
+      whiteSpace: 'pre-line'
+    }
+  }, message), /*#__PURE__*/React.createElement("div", {
+    className: "m-acts"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-s",
+    onClick: onClose
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: `btn ${okClass}`,
+    onClick: onOk
+  }, okLabel)));
+}
 function AddCatModal({
   onSave,
   onClose
@@ -585,8 +875,95 @@ function AddCatModal({
     onClick: () => name.trim() && onSave(name.trim(), emoji)
   }, "Crear")));
 }
-
-/* ── Add Subcat Modal ── */
+function EditCatModal({
+  cat,
+  onSave,
+  onClose
+}) {
+  const [name, setName] = useState(cat.name);
+  const [emoji, setEmoji] = useState(cat.emoji);
+  return /*#__PURE__*/React.createElement(Sheet, {
+    show: true,
+    onClose: onClose,
+    title: "Editar categoría"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "fg"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fl"
+  }, "Nombre"), /*#__PURE__*/React.createElement("input", {
+    className: "fi",
+    value: name,
+    onChange: e => setName(e.target.value),
+    autoFocus: true
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "fg"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fl"
+  }, "Icono"), /*#__PURE__*/React.createElement("div", {
+    className: "emoji-grid"
+  }, EMOJIS.map(e => /*#__PURE__*/React.createElement("button", {
+    key: e,
+    className: `ep${emoji === e ? ' sel' : ''}`,
+    onClick: () => setEmoji(e)
+  }, e)))), /*#__PURE__*/React.createElement("div", {
+    className: "m-acts"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-s",
+    onClick: onClose
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-p",
+    onClick: () => name.trim() && onSave(cat.id, name.trim(), emoji)
+  }, "Guardar")));
+}
+function ManageCatsModal({
+  cats,
+  onEdit,
+  onDelete,
+  onReorder,
+  onAdd,
+  onClose
+}) {
+  return /*#__PURE__*/React.createElement(Sheet, {
+    show: true,
+    onClose: onClose,
+    title: "Gestionar categorías"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: '10px'
+    }
+  }, cats.map((c, i) => /*#__PURE__*/React.createElement("div", {
+    key: c.id,
+    className: "mgr-row"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mgr-emoji"
+  }, c.emoji), /*#__PURE__*/React.createElement("div", {
+    className: "mgr-name"
+  }, c.name), /*#__PURE__*/React.createElement("div", {
+    className: "mgr-acts"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "mgr-btn",
+    onClick: () => onReorder(c.id, 'up'),
+    disabled: i === 0
+  }, "↑"), /*#__PURE__*/React.createElement("button", {
+    className: "mgr-btn",
+    onClick: () => onReorder(c.id, 'down'),
+    disabled: i === cats.length - 1
+  }, "↓"), /*#__PURE__*/React.createElement("button", {
+    className: "mgr-btn",
+    onClick: () => onEdit(c)
+  }, "✏️"), /*#__PURE__*/React.createElement("button", {
+    className: "mgr-btn del",
+    onClick: () => onDelete(c)
+  }, "🗑"))))), /*#__PURE__*/React.createElement("div", {
+    className: "m-acts"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-s",
+    onClick: onClose
+  }, "Cerrar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-p",
+    onClick: onAdd
+  }, "＋ Nueva")));
+}
 function AddScModal({
   categories,
   defaultCatId,
@@ -630,8 +1007,35 @@ function AddScModal({
     onClick: () => name.trim() && onSave(name.trim(), catId)
   }, "Crear")));
 }
-
-/* ── Add/Edit Product Modal ── */
+function EditScModal({
+  sc,
+  onSave,
+  onClose
+}) {
+  const [name, setName] = useState(sc.name);
+  return /*#__PURE__*/React.createElement(Sheet, {
+    show: true,
+    onClose: onClose,
+    title: "Editar subcategoría"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "fg"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fl"
+  }, "Nombre"), /*#__PURE__*/React.createElement("input", {
+    className: "fi",
+    value: name,
+    onChange: e => setName(e.target.value),
+    autoFocus: true
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "m-acts"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-s",
+    onClick: onClose
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-p",
+    onClick: () => name.trim() && onSave(sc.id, name.trim())
+  }, "Guardar")));
+}
 function ProductModal({
   product,
   subcategory,
@@ -644,6 +1048,7 @@ function ProductModal({
   const [name, setName] = useState(product?.name || '');
   const [thr, setThr] = useState(String(product?.minThreshold ?? 1));
   const [sup, setSup] = useState(product?.supermarket || '');
+  const [price, setPrice] = useState(product?.price ? String(product.price) : '');
   const [scId, setScId] = useState(product?.subcategoryId || subcategory?.id || subcategories[0]?.id || '');
   return /*#__PURE__*/React.createElement(Sheet, {
     show: true,
@@ -653,7 +1058,7 @@ function ProductModal({
     className: "fg"
   }, /*#__PURE__*/React.createElement("label", {
     className: "fl"
-  }, "Nombre del producto"), /*#__PURE__*/React.createElement("input", {
+  }, "Nombre"), /*#__PURE__*/React.createElement("input", {
     className: "fi",
     placeholder: "Ej: Pechuga de pollo",
     value: name,
@@ -690,6 +1095,18 @@ function ProductModal({
     className: "fg"
   }, /*#__PURE__*/React.createElement("label", {
     className: "fl"
+  }, "Precio (€ opcional)"), /*#__PURE__*/React.createElement("input", {
+    className: "fi",
+    type: "number",
+    min: "0",
+    step: "0.01",
+    placeholder: "0.00",
+    value: price,
+    onChange: e => setPrice(e.target.value)
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "fg"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fl"
   }, "Supermercado"), /*#__PURE__*/React.createElement("select", {
     className: "fsel",
     value: sup,
@@ -699,7 +1116,7 @@ function ProductModal({
   }, "Sin especificar"), SUPERS.map(s => /*#__PURE__*/React.createElement("option", {
     key: s,
     value: s
-  }, s))))), /*#__PURE__*/React.createElement("div", {
+  }, s)))), /*#__PURE__*/React.createElement("div", {
     className: "m-acts"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn btn-s",
@@ -712,13 +1129,12 @@ function ProductModal({
         name: name.trim(),
         minThreshold: Math.max(0, parseInt(thr) || 0),
         supermarket: sup,
-        subcategoryId: scId
+        subcategoryId: scId,
+        price: price ? parseFloat(price) : null
       });
     }
   }, isEdit ? 'Guardar' : 'Crear')));
 }
-
-/* ── Complete Purchase Modal ── */
 function CompleteModal({
   product,
   onComplete,
@@ -752,11 +1168,17 @@ function CompleteModal({
       fontSize: '12px',
       marginTop: '3px'
     }
-  }, "📍 ", product.supermarket)), /*#__PURE__*/React.createElement("div", {
+  }, "📍 ", product.supermarket), product?.price && /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'var(--orange-l)',
+      fontSize: '12px',
+      marginTop: '3px'
+    }
+  }, "~", product.price.toFixed(2), "€/ud.")), /*#__PURE__*/React.createElement("div", {
     className: "fg"
   }, /*#__PURE__*/React.createElement("label", {
     className: "fl"
-  }, "¿Cuántas unidades has traído a casa?"), /*#__PURE__*/React.createElement("input", {
+  }, "¿Cuántas unidades has traído?"), /*#__PURE__*/React.createElement("input", {
     className: "fi",
     type: "number",
     min: "1",
@@ -783,32 +1205,1291 @@ function CompleteModal({
   }, "Confirmar")));
 }
 
-/* ── Confirm Delete Modal ── */
-function ConfirmModal({
-  message,
-  onOk,
+/* ── Invoice Modal (Factura) ── */
+function InvoiceModal({
+  cartItems,
+  onSave,
   onClose
 }) {
+  const defaultStore = useMemo(() => {
+    const m = {};
+    cartItems.forEach(p => {
+      if (p.supermarket) m[p.supermarket] = (m[p.supermarket] || 0) + 1;
+    });
+    return Object.entries(m).sort((a, b) => b[1] - a[1])[0]?.[0] || '';
+  }, [cartItems]);
+  const [amount, setAmount] = useState('');
+  const [store, setStore] = useState(defaultStore);
+  const [note, setNote] = useState('');
   return /*#__PURE__*/React.createElement(Sheet, {
     show: true,
     onClose: onClose,
-    title: "¿Eliminar?"
+    title: "💰 Registrar factura"
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      textAlign: 'center',
-      color: 'rgba(255,255,255,0.65)',
-      fontSize: '14px',
-      marginBottom: '22px'
+      background: 'rgba(230,81,0,0.08)',
+      border: '1px solid rgba(230,81,0,0.2)',
+      borderRadius: '12px',
+      padding: '10px 14px',
+      marginBottom: '16px',
+      color: 'rgba(255,255,255,0.5)',
+      fontSize: '12px',
+      lineHeight: '1.5'
     }
-  }, message), /*#__PURE__*/React.createElement("div", {
+  }, "Registra el importe total del ticket de compra. Esto se guarda en el historial de gastos para ver estadísticas reales."), /*#__PURE__*/React.createElement("div", {
+    className: "fg"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fl"
+  }, "Importe total del ticket (€)"), /*#__PURE__*/React.createElement("input", {
+    className: "fi",
+    type: "number",
+    min: "0",
+    step: "0.01",
+    placeholder: "0.00",
+    value: amount,
+    onChange: e => setAmount(e.target.value),
+    autoFocus: true,
+    style: {
+      fontSize: '28px',
+      textAlign: 'center',
+      fontWeight: '900'
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "fg"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fl"
+  }, "Tienda"), /*#__PURE__*/React.createElement("select", {
+    className: "fsel",
+    value: store,
+    onChange: e => setStore(e.target.value)
+  }, /*#__PURE__*/React.createElement("option", {
+    value: ""
+  }, "Sin especificar"), SUPERS.map(s => /*#__PURE__*/React.createElement("option", {
+    key: s,
+    value: s
+  }, s)))), /*#__PURE__*/React.createElement("div", {
+    className: "fg"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fl"
+  }, "Nota (opcional)"), /*#__PURE__*/React.createElement("input", {
+    className: "fi",
+    placeholder: "Ej: Compra semanal",
+    value: note,
+    onChange: e => setNote(e.target.value)
+  })), /*#__PURE__*/React.createElement("div", {
     className: "m-acts"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn btn-s",
     onClick: onClose
   }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-d",
-    onClick: onOk
-  }, "Eliminar")));
+    className: "btn btn-p",
+    onClick: () => {
+      const n = parseFloat(amount);
+      if (!n || n <= 0) return;
+      onSave({
+        amount: n,
+        store,
+        note,
+        date: Date.now()
+      });
+    }
+  }, "Registrar")));
+}
+
+/* ── Ticket Scan Modal (AI) ── */
+function TicketScanModal({
+  cartItems,
+  apiKey,
+  onComplete,
+  onClose
+}) {
+  const [step, setStep] = useState('upload');
+  const [scanResult, setScanResult] = useState(null);
+  const [error, setError] = useState(null);
+  const fileRef = useRef(null);
+  const processImage = async (base64, mType) => {
+    setStep('processing');
+    setError(null);
+    try {
+      const cartCtx = cartItems.length > 0 ? `\nProductos en el carrito: ${cartItems.map(p => `"${p.name}"`).join(', ')}` : '';
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1024,
+          messages: [{
+            role: 'user',
+            content: [{
+              type: 'image',
+              source: {
+                type: 'base64',
+                media_type: mType,
+                data: base64
+              }
+            }, {
+              type: 'text',
+              text: `Analiza este ticket de compra español y extrae los artículos.${cartCtx}\n\nDevuelve ÚNICAMENTE este JSON válido (sin texto adicional, sin markdown):\n{"tienda":null,"total":null,"items":[{"nombre":"","cantidad":1,"precioUnitario":null,"precioTotal":null}]}`
+            }]
+          }]
+        })
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err.error?.message || `Error ${resp.status}`);
+      }
+      const data = await resp.json();
+      const text = (data.content || []).find(b => b.type === 'text')?.text || '';
+      const clean = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      const parsed = JSON.parse(clean);
+      setScanResult({
+        ...parsed,
+        matched: matchItemsToCart(parsed.items || [], cartItems)
+      });
+      setStep('review');
+    } catch (e) {
+      setError(e.message || 'Error al procesar');
+      setStep('upload');
+    }
+  };
+  const handleFile = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const mType = file.type || 'image/jpeg';
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const b64 = ev.target.result.split(',')[1];
+      processImage(b64, mType);
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+  const matchedItems = scanResult?.matched?.filter(i => i.cartProduct) || [];
+  const unmatchedItems = scanResult?.matched?.filter(i => !i.cartProduct) || [];
+  if (step === 'upload') return /*#__PURE__*/React.createElement(Sheet, {
+    show: true,
+    onClose: onClose,
+    title: "📷 Escanear ticket"
+  }, /*#__PURE__*/React.createElement("input", {
+    ref: fileRef,
+    type: "file",
+    accept: "image/*",
+    capture: "environment",
+    style: {
+      display: 'none'
+    },
+    onChange: handleFile
+  }), !apiKey && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: 'rgba(255,183,77,0.12)',
+      border: '1px solid rgba(255,183,77,0.3)',
+      borderRadius: '10px',
+      padding: '12px 14px',
+      marginBottom: '14px',
+      color: '#FFB74D',
+      fontSize: '13px',
+      lineHeight: '1.5'
+    }
+  }, "⚠️ Para escanear tickets necesitas configurar tu API Key de Anthropic en ", /*#__PURE__*/React.createElement("strong", null, "⚙️ Ajustes → Escáner IA"), "."), error && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: 'rgba(198,40,40,0.12)',
+      border: '1px solid rgba(198,40,40,0.3)',
+      borderRadius: '10px',
+      padding: '12px 14px',
+      marginBottom: '14px',
+      color: '#EF9A9A',
+      fontSize: '13px'
+    }
+  }, "❌ ", error), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '10px',
+      marginBottom: '16px'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-p",
+    style: {
+      padding: '18px',
+      fontSize: '16px'
+    },
+    disabled: !apiKey,
+    onClick: () => fileRef.current?.click()
+  }, "📷 Hacer foto del ticket"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-s",
+    style: {
+      fontSize: '14px'
+    },
+    disabled: !apiKey,
+    onClick: () => {
+      if (fileRef.current) {
+        fileRef.current.removeAttribute('capture');
+        fileRef.current.click();
+      }
+      setTimeout(() => {
+        if (fileRef.current) fileRef.current.setAttribute('capture', 'environment');
+      }, 500);
+    }
+  }, "🖼️ Elegir imagen de galería")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'rgba(255,255,255,0.3)',
+      fontSize: '11px',
+      lineHeight: '1.5'
+    }
+  }, "El ticket se analiza con IA (Claude). Las imágenes se envían directamente a Anthropic y no se almacenan en ningún servidor propio."), /*#__PURE__*/React.createElement("div", {
+    className: "m-acts",
+    style: {
+      marginTop: '14px'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-s",
+    onClick: onClose
+  }, "Cerrar")));
+  if (step === 'processing') return /*#__PURE__*/React.createElement(Sheet, {
+    show: true,
+    onClose: onClose,
+    title: "📷 Analizando..."
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: 'center',
+      padding: '36px 20px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "spin",
+    style: {
+      margin: '0 auto 16px'
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'rgba(255,255,255,0.6)',
+      fontSize: '14px',
+      lineHeight: '1.6'
+    }
+  }, "Analizando el ticket con IA…", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: '12px'
+    }
+  }, "Suele tardar 5-15 segundos"))));
+  if (step === 'review' && scanResult) return /*#__PURE__*/React.createElement(Sheet, {
+    show: true,
+    onClose: onClose,
+    title: "✅ Resultados del ticket"
+  }, scanResult.tienda && /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'var(--g-pale)',
+      fontSize: '13px',
+      marginBottom: '6px'
+    }
+  }, "📍 ", scanResult.tienda), scanResult.total && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      background: 'rgba(230,81,0,0.1)',
+      border: '1px solid rgba(230,81,0,0.2)',
+      borderRadius: '10px',
+      padding: '10px 13px',
+      marginBottom: '12px'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: 'rgba(255,255,255,0.55)',
+      fontSize: '13px'
+    }
+  }, "Total del ticket"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: 'var(--orange-l)',
+      fontSize: '22px',
+      fontWeight: '900'
+    }
+  }, parseFloat(scanResult.total).toFixed(2), "€")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: '6px',
+      color: 'var(--w60)',
+      fontSize: '10px',
+      fontWeight: '900',
+      textTransform: 'uppercase',
+      letterSpacing: '0.5px'
+    }
+  }, "Artículos detectados (", scanResult.items?.length || 0, ") · ", /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: 'var(--g-pale)'
+    }
+  }, matchedItems.length, " coinciden"), unmatchedItems.length > 0 && /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: '#FFB74D'
+    }
+  }, " · ", unmatchedItems.length, " sin coincidencia")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      maxHeight: '280px',
+      overflowY: 'auto',
+      marginBottom: '12px',
+      borderRadius: '10px',
+      border: '1px solid var(--w08)',
+      overflow: 'hidden'
+    }
+  }, scanResult.matched?.map((item, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+      padding: '9px 12px',
+      borderBottom: '1px solid rgba(255,255,255,0.05)'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: '16px',
+      flexShrink: 0
+    }
+  }, item.cartProduct ? '✅' : '⚠️'), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      minWidth: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: '#fff',
+      fontSize: '13px',
+      fontWeight: '700',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap'
+    }
+  }, item.nombre), item.cartProduct && /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'var(--g-pale)',
+      fontSize: '11px'
+    }
+  }, "→ ", item.cartProduct.name), !item.cartProduct && /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: '#FFB74D',
+      fontSize: '11px'
+    }
+  }, "No encontrado en el carrito")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: 'right',
+      flexShrink: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'var(--w60)',
+      fontSize: '12px',
+      fontWeight: '700'
+    }
+  }, "×", item.cantidad || 1), item.precioTotal && /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'var(--orange-l)',
+      fontSize: '11px'
+    }
+  }, parseFloat(item.precioTotal).toFixed(2), "€"))))), /*#__PURE__*/React.createElement("div", {
+    className: "m-acts"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-s",
+    onClick: onClose
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-p",
+    disabled: matchedItems.length === 0,
+    onClick: () => onComplete(scanResult)
+  }, "Completar ", matchedItems.length, " ", matchedItems.length === 1 ? 'compra' : 'compras')));
+  return null;
+}
+
+/* ── Search Overlay ── */
+function SearchOverlay({
+  products,
+  categories,
+  subcategories,
+  onClose,
+  onUpdateQty
+}) {
+  const [q, setQ] = useState('');
+  const inpRef = useRef(null);
+  useEffect(() => {
+    setTimeout(() => inpRef.current?.focus(), 60);
+  }, []);
+  const results = useMemo(() => {
+    if (!q.trim()) return [];
+    const lq = q.toLowerCase();
+    return products.filter(p => p.name.toLowerCase().includes(lq)).slice(0, 40);
+  }, [products, q]);
+  const crumb = p => {
+    const sc = subcategories.find(s => s.id === p.subcategoryId);
+    const cat = categories.find(c => c.id === p.categoryId);
+    return sc && cat ? `${cat.emoji} ${cat.name} › ${sc.name}` : '';
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "srch-ovl"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "srch-hdr"
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: '18px'
+    }
+  }, "🔍"), /*#__PURE__*/React.createElement("input", {
+    ref: inpRef,
+    className: "srch-inp",
+    placeholder: "Buscar productos...",
+    value: q,
+    onChange: e => setQ(e.target.value)
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "srch-cls",
+    onClick: onClose
+  }, "Cerrar")), /*#__PURE__*/React.createElement("div", {
+    className: "srch-res"
+  }, q.trim() === '' && /*#__PURE__*/React.createElement("div", {
+    className: "srch-empty"
+  }, "Escribe para buscar entre todos los productos"), q.trim() !== '' && results.length === 0 && /*#__PURE__*/React.createElement("div", {
+    className: "srch-empty"
+  }, "Sin resultados para \"", q, "\""), results.map(p => {
+    const low = p.quantity > 0 && p.quantity <= p.minThreshold;
+    const zero = p.quantity === 0;
+    return /*#__PURE__*/React.createElement("div", {
+      key: p.id,
+      className: "srch-item"
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "srch-item-name"
+    }, p.inCart && '🛒 ', p.forGuests && '👥 ', p.name), /*#__PURE__*/React.createElement("div", {
+      className: "srch-item-cat"
+    }, crumb(p), p.price ? ` · ${p.price.toFixed(2)}€` : '')), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '5px',
+        flexShrink: 0
+      }
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "qbtn qbtn-m",
+      onClick: () => onUpdateQty(p.id, p.quantity - 1),
+      disabled: zero
+    }, "−"), /*#__PURE__*/React.createElement("div", {
+      className: `qnum${zero ? ' zero' : low ? ' low' : ''}`
+    }, p.quantity), /*#__PURE__*/React.createElement("button", {
+      className: "qbtn qbtn-p",
+      onClick: () => onUpdateQty(p.id, p.quantity + 1)
+    }, "+")));
+  })));
+}
+
+/* ── Settings Modal ── */
+function SettingsModal({
+  user,
+  settings,
+  cats,
+  scs,
+  prods,
+  onSave,
+  onClose
+}) {
+  const [accent, setAccent] = useState(settings.accent);
+  const [bgOn, setBgOn] = useState(settings.bgOn !== false);
+  const [lightMode, setLightMode] = useState(settings.lightMode || false);
+  const [userName, setUserName] = useState(user.name);
+  const [apiKey, setApiKey] = useState(() => getApiKeyLS());
+  const [showKey, setShowKey] = useState(false);
+  const fileRef = useRef(null);
+  const handleSave = () => {
+    saveApiKeyLS(apiKey);
+    onSave({
+      accent,
+      bgOn,
+      lightMode
+    }, {
+      ...user,
+      name: userName.trim() || user.name
+    });
+  };
+  const handleExport = withQty => {
+    const ps = withQty ? prods : prods.map(({
+      quantity,
+      inCart,
+      inCartBy,
+      inCartAt,
+      ...r
+    }) => ({
+      ...r,
+      quantity: 0,
+      inCart: false,
+      inCartBy: null,
+      inCartAt: null
+    }));
+    downloadJSON({
+      version: 2,
+      exportedAt: new Date().toISOString(),
+      categories: cats,
+      subcategories: scs,
+      products: ps
+    }, `despensa_${new Date().toISOString().slice(0, 10)}.json`);
+  };
+  const handleImport = () => fileRef.current?.click();
+  const handleFileRead = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (!data.categories || !data.subcategories || !data.products) {
+          alert('Archivo inválido.');
+          return;
+        }
+        if (window.confirm(`¿Importar backup?\nReemplazará TODOS los datos actuales.\n\n${data.categories.length} categorías · ${data.products.length} productos`)) {
+          const c = {},
+            s = {},
+            p = {};
+          data.categories.forEach(x => {
+            const {
+              id,
+              ...v
+            } = x;
+            c[id] = v;
+          });
+          data.subcategories.forEach(x => {
+            const {
+              id,
+              ...v
+            } = x;
+            s[id] = v;
+          });
+          data.products.forEach(x => {
+            const {
+              id,
+              ...v
+            } = x;
+            p[id] = v;
+          });
+          db.ref('market/categories').set(c);
+          db.ref('market/subcategories').set(s);
+          db.ref('market/products').set(p);
+          onClose();
+        }
+      } catch {
+        alert('Error al leer JSON.');
+      }
+      e.target.value = '';
+    };
+    reader.readAsText(file);
+  };
+  const bkAge = getLS('despensa_backup_weekly', null);
+  const bkH = bkAge ? Math.round((Date.now() - bkAge.ts) / 3600000) : null;
+  return /*#__PURE__*/React.createElement(Sheet, {
+    show: true,
+    onClose: onClose,
+    title: "⚙️ Ajustes"
+  }, /*#__PURE__*/React.createElement("input", {
+    ref: fileRef,
+    type: "file",
+    accept: ".json",
+    style: {
+      display: 'none'
+    },
+    onChange: handleFileRead
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "sett-sec"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sett-ttl"
+  }, "Mi nombre"), /*#__PURE__*/React.createElement("input", {
+    className: "fi",
+    value: userName,
+    onChange: e => setUserName(e.target.value),
+    placeholder: "Tu nombre"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "sett-sec"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sett-ttl"
+  }, "Color de acento"), /*#__PURE__*/React.createElement("div", {
+    className: "color-grid"
+  }, ACCENT_PRESETS.map(p => /*#__PURE__*/React.createElement("div", {
+    key: p.id,
+    style: {
+      textAlign: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: `color-dot${accent === p.id ? ' sel' : ''}`,
+    style: {
+      background: `linear-gradient(135deg,${p.dark},${p.light})`
+    },
+    onClick: () => setAccent(p.id)
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'rgba(255,255,255,0.35)',
+      fontSize: '9px',
+      marginTop: '3px'
+    }
+  }, p.label))))), /*#__PURE__*/React.createElement("div", {
+    className: "sett-sec"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sett-ttl"
+  }, "Apariencia"), /*#__PURE__*/React.createElement("div", {
+    className: "sett-row"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "sett-lbl"
+  }, "Imagen de fondo"), /*#__PURE__*/React.createElement("div", {
+    className: "sett-sub"
+  }, "Foto de supermercado")), /*#__PURE__*/React.createElement("label", {
+    className: "sw-wrap"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    className: "sw-inp",
+    checked: bgOn,
+    onChange: e => setBgOn(e.target.checked)
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "sw-slider"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "sett-row"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "sett-lbl"
+  }, "Modo claro"), /*#__PURE__*/React.createElement("div", {
+    className: "sett-sub"
+  }, "Colores verdes claros")), /*#__PURE__*/React.createElement("label", {
+    className: "sw-wrap"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    className: "sw-inp",
+    checked: lightMode,
+    onChange: e => setLightMode(e.target.checked)
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "sw-slider"
+  })))), /*#__PURE__*/React.createElement("div", {
+    className: "sett-sec"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sett-ttl"
+  }, "Escáner de tickets (IA)"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'rgba(255,255,255,0.4)',
+      fontSize: '11px',
+      marginBottom: '8px',
+      lineHeight: '1.5'
+    }
+  }, "Necesitas una API Key de Anthropic. ", /*#__PURE__*/React.createElement("a", {
+    href: "https://console.anthropic.com",
+    target: "_blank",
+    rel: "noopener",
+    style: {
+      color: 'var(--orange-l)'
+    }
+  }, "Obtener en console.anthropic.com")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: '8px',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "fi",
+    style: {
+      flex: 1
+    },
+    type: showKey ? 'text' : 'password',
+    placeholder: "sk-ant-api03-...",
+    value: apiKey,
+    onChange: e => setApiKey(e.target.value)
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "mgr-btn",
+    style: {
+      flexShrink: 0,
+      padding: '9px 10px'
+    },
+    onClick: () => setShowKey(s => !s)
+  }, showKey ? '🙈' : '👁')), apiKey && /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'var(--g-pale)',
+      fontSize: '11px',
+      marginTop: '5px'
+    }
+  }, "✅ API Key configurada")), /*#__PURE__*/React.createElement("div", {
+    className: "sett-sec"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sett-ttl"
+  }, "Copias de seguridad"), bkH !== null && /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'rgba(255,255,255,0.35)',
+      fontSize: '11px',
+      marginBottom: '8px'
+    }
+  }, "Copia auto: hace ", bkH < 1 ? 'menos de 1h' : `${bkH}h`), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '8px'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-s",
+    style: {
+      fontSize: '13px',
+      textAlign: 'left',
+      padding: '11px 14px'
+    },
+    onClick: () => handleExport(true)
+  }, "📥 Exportar con cantidades"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-s",
+    style: {
+      fontSize: '13px',
+      textAlign: 'left',
+      padding: '11px 14px'
+    },
+    onClick: () => handleExport(false)
+  }, "📥 Exportar plantilla (sin cantidades)"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-s",
+    style: {
+      fontSize: '13px',
+      textAlign: 'left',
+      padding: '11px 14px',
+      color: '#FFB74D'
+    },
+    onClick: handleImport
+  }, "📤 Importar backup JSON"))), /*#__PURE__*/React.createElement("div", {
+    className: "m-acts"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-s",
+    onClick: onClose
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-p",
+    onClick: handleSave
+  }, "Guardar")));
+}
+
+/* ── History View ── */
+function HistoryView({
+  history,
+  categories,
+  invoices
+}) {
+  const [filterCat, setFilterCat] = useState('');
+  const [filterMonth, setFilterMonth] = useState('');
+  const [activeTab, setActiveTab] = useState('compras'); // 'compras'|'facturas'
+
+  const months = useMemo(() => {
+    const seen = new Set(),
+      res = [];
+    history.forEach(h => {
+      const d = new Date(h.purchasedAt);
+      const k = `${d.getFullYear()}-${String(d.getMonth()).padStart(2, '0')}`;
+      if (!seen.has(k)) {
+        seen.add(k);
+        res.push({
+          key: k,
+          label: formatMonth(h.purchasedAt)
+        });
+      }
+    });
+    return res.sort((a, b) => b.key.localeCompare(a.key));
+  }, [history]);
+  const filtered = useMemo(() => {
+    let h = history;
+    if (filterCat) h = h.filter(x => x.categoryId === filterCat);
+    if (filterMonth) h = h.filter(x => {
+      const d = new Date(x.purchasedAt);
+      return `${d.getFullYear()}-${String(d.getMonth()).padStart(2, '0')}` === filterMonth;
+    });
+    return h.sort((a, b) => b.purchasedAt - a.purchasedAt);
+  }, [history, filterCat, filterMonth]);
+  const filteredInvoices = useMemo(() => {
+    let inv = invoices;
+    if (filterMonth) inv = inv.filter(x => {
+      const d = new Date(x.date);
+      return `${d.getFullYear()}-${String(d.getMonth()).padStart(2, '0')}` === filterMonth;
+    });
+    return inv.sort((a, b) => b.date - a.date);
+  }, [invoices, filterMonth]);
+  const totalInvoiceSpend = filteredInvoices.reduce((s, i) => s + i.amount, 0);
+  const prodCounts = {};
+  filtered.forEach(h => {
+    prodCounts[h.productName] = (prodCounts[h.productName] || 0) + 1;
+  });
+  const topProd = Object.entries(prodCounts).sort((a, b) => b[1] - a[1])[0];
+  const grouped = useMemo(() => {
+    const m = {};
+    filtered.forEach(h => {
+      const d = new Date(h.purchasedAt);
+      const k = `${d.getFullYear()}-${String(d.getMonth()).padStart(2, '0')}`;
+      if (!m[k]) m[k] = {
+        label: formatMonth(h.purchasedAt),
+        items: []
+      };
+      m[k].items.push(h);
+    });
+    return Object.entries(m).sort((a, b) => b[0].localeCompare(a[0]));
+  }, [filtered]);
+  const invGrouped = useMemo(() => {
+    const m = {};
+    filteredInvoices.forEach(inv => {
+      const d = new Date(inv.date);
+      const k = `${d.getFullYear()}-${String(d.getMonth()).padStart(2, '0')}`;
+      if (!m[k]) m[k] = {
+        label: formatMonth(inv.date),
+        total: 0,
+        items: []
+      };
+      m[k].total += inv.amount;
+      m[k].items.push(inv);
+    });
+    return Object.entries(m).sort((a, b) => b[0].localeCompare(a[0]));
+  }, [filteredInvoices]);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "scroll"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hist-hdr"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hist-ttl"
+  }, "📋 Historial"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: '6px'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: `ctog-btn${activeTab === 'compras' ? ' on' : ''}`,
+    onClick: () => setActiveTab('compras')
+  }, "Compras"), /*#__PURE__*/React.createElement("button", {
+    className: `ctog-btn${activeTab === 'facturas' ? ' on' : ''}`,
+    onClick: () => setActiveTab('facturas')
+  }, "Facturas"))), /*#__PURE__*/React.createElement("div", {
+    className: "hist-flt"
+  }, activeTab === 'compras' && /*#__PURE__*/React.createElement("select", {
+    className: "hist-flt-sel",
+    value: filterCat,
+    onChange: e => setFilterCat(e.target.value)
+  }, /*#__PURE__*/React.createElement("option", {
+    value: ""
+  }, "Todas las categorías"), categories.map(c => /*#__PURE__*/React.createElement("option", {
+    key: c.id,
+    value: c.id
+  }, c.emoji, " ", c.name))), /*#__PURE__*/React.createElement("select", {
+    className: "hist-flt-sel",
+    value: filterMonth,
+    onChange: e => setFilterMonth(e.target.value)
+  }, /*#__PURE__*/React.createElement("option", {
+    value: ""
+  }, "Todos los meses"), months.map(m => /*#__PURE__*/React.createElement("option", {
+    key: m.key,
+    value: m.key
+  }, m.label)))), activeTab === 'facturas' && invoices.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "hist-stats"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "stat-card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "stat-card-val"
+  }, filteredInvoices.length), /*#__PURE__*/React.createElement("div", {
+    className: "stat-card-lbl"
+  }, "Facturas")), /*#__PURE__*/React.createElement("div", {
+    className: "stat-card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "stat-card-val"
+  }, totalInvoiceSpend.toFixed(2), "€"), /*#__PURE__*/React.createElement("div", {
+    className: "stat-card-lbl"
+  }, "Gasto total")), filteredInvoices.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "stat-card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "stat-card-val"
+  }, (totalInvoiceSpend / filteredInvoices.length).toFixed(2), "€"), /*#__PURE__*/React.createElement("div", {
+    className: "stat-card-lbl"
+  }, "Media / compra"))), activeTab === 'compras' && filtered.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "hist-stats"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "stat-card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "stat-card-val"
+  }, filtered.length), /*#__PURE__*/React.createElement("div", {
+    className: "stat-card-lbl"
+  }, "Compras")), topProd && /*#__PURE__*/React.createElement("div", {
+    className: "stat-card",
+    style: {
+      flex: 2
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "stat-card-val",
+    style: {
+      fontSize: '12px',
+      lineHeight: '1.3'
+    }
+  }, topProd[0]), /*#__PURE__*/React.createElement("div", {
+    className: "stat-card-lbl"
+  }, "Más comprado (", topProd[1], " veces)"))), activeTab === 'compras' && /*#__PURE__*/React.createElement(React.Fragment, null, history.length === 0 && /*#__PURE__*/React.createElement("div", {
+    className: "empty",
+    style: {
+      marginTop: '50px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "empty-ico"
+  }, "📋"), /*#__PURE__*/React.createElement("div", {
+    className: "empty-t"
+  }, "Sin historial aún"), /*#__PURE__*/React.createElement("div", {
+    className: "empty-s"
+  }, "Las compras completadas aparecerán aquí")), history.length > 0 && filtered.length === 0 && /*#__PURE__*/React.createElement("div", {
+    className: "empty",
+    style: {
+      marginTop: '40px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "empty-ico"
+  }, "🔍"), /*#__PURE__*/React.createElement("div", {
+    className: "empty-t"
+  }, "Sin resultados"), /*#__PURE__*/React.createElement("div", {
+    className: "empty-s"
+  }, "Cambia los filtros")), grouped.map(([key, {
+    label,
+    items
+  }]) => /*#__PURE__*/React.createElement("div", {
+    key: key
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hist-sec-ttl"
+  }, label), items.map(h => /*#__PURE__*/React.createElement("div", {
+    key: h.id,
+    className: "hist-item"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hist-item-name"
+  }, h.productName), /*#__PURE__*/React.createElement("div", {
+    className: "hist-item-meta"
+  }, h.supermarket ? `📍 ${h.supermarket} · ` : '', h.purchasedBy, h.totalCost ? /*#__PURE__*/React.createElement("span", {
+    className: "hist-item-price"
+  }, " · ~", h.totalCost.toFixed(2), "€") : null)), /*#__PURE__*/React.createElement("div", {
+    className: "hist-item-qty"
+  }, h.quantity, " ud.")))))), activeTab === 'facturas' && /*#__PURE__*/React.createElement(React.Fragment, null, invoices.length === 0 && /*#__PURE__*/React.createElement("div", {
+    className: "empty",
+    style: {
+      marginTop: '50px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "empty-ico"
+  }, "💰"), /*#__PURE__*/React.createElement("div", {
+    className: "empty-t"
+  }, "Sin facturas aún"), /*#__PURE__*/React.createElement("div", {
+    className: "empty-s"
+  }, "Registra el ticket tras cada compra desde la vista Carrito")), invGrouped.map(([key, {
+    label,
+    total,
+    items
+  }]) => /*#__PURE__*/React.createElement("div", {
+    key: key
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hist-sec-ttl",
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between'
+    }
+  }, /*#__PURE__*/React.createElement("span", null, label), /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: 'var(--orange-l)'
+    }
+  }, total.toFixed(2), "€")), items.map(inv => /*#__PURE__*/React.createElement("div", {
+    key: inv.id,
+    className: "hist-item"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hist-item-name"
+  }, inv.store || 'Sin tienda'), /*#__PURE__*/React.createElement("div", {
+    className: "hist-item-meta"
+  }, new Date(inv.date).toLocaleDateString('es'), inv.note ? ` · ${inv.note}` : '')), /*#__PURE__*/React.createElement("div", {
+    className: "hist-item-qty",
+    style: {
+      color: 'var(--orange-l)',
+      fontSize: '16px'
+    }
+  }, inv.amount.toFixed(2), "€")))))));
+}
+
+/* ── Urgent View ── */
+function UrgentView({
+  cartItems,
+  onComplete,
+  onRemove,
+  onClose
+}) {
+  const byStore = useMemo(() => {
+    const m = {};
+    cartItems.forEach(p => {
+      const k = p.supermarket || 'Sin especificar';
+      if (!m[k]) m[k] = [];
+      m[k].push(p);
+    });
+    return Object.entries(m).sort(([a], [b]) => a.localeCompare(b));
+  }, [cartItems]);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "urg-full"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "urg-hdr"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "urg-back",
+    onClick: onClose
+  }, "←"), /*#__PURE__*/React.createElement("div", {
+    className: "urg-ttl"
+  }, "⚡ Modo urgente"), /*#__PURE__*/React.createElement("div", {
+    className: "urg-cnt"
+  }, cartItems.length, " artículos")), /*#__PURE__*/React.createElement("div", {
+    className: "urg-body"
+  }, byStore.map(([store, items]) => /*#__PURE__*/React.createElement("div", {
+    key: store
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "urg-store-ttl"
+  }, "📍 ", store), items.map(p => /*#__PURE__*/React.createElement("div", {
+    key: p.id,
+    className: "urg-item"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "urg-item-name"
+  }, p.name), p.price && /*#__PURE__*/React.createElement("div", {
+    className: "urg-item-meta"
+  }, "~", p.price.toFixed(2), "€/ud.")), /*#__PURE__*/React.createElement("div", {
+    className: "urg-acts"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "urg-btn ok",
+    onClick: () => onComplete(p)
+  }, "✓"), /*#__PURE__*/React.createElement("button", {
+    className: "urg-btn rm",
+    onClick: () => onRemove(p.id)
+  }, "✕")))))), cartItems.length === 0 && /*#__PURE__*/React.createElement("div", {
+    className: "empty",
+    style: {
+      marginTop: '80px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "empty-ico"
+  }, "🎉"), /*#__PURE__*/React.createElement("div", {
+    className: "empty-t"
+  }, "¡Todo comprado!"))));
+}
+
+/* ── Guest View (enhanced: despensa products + manual list) ── */
+function GuestView({
+  prods,
+  cats,
+  scs,
+  onUpdateQty
+}) {
+  const [manualItems, setManualItems] = useState(() => getGuestsLS());
+  const [newName, setNewName] = useState('');
+  const [newQty, setNewQty] = useState('1');
+  const guestProds = useMemo(() => prods.filter(p => p.forGuests), [prods]);
+  const grouped = useMemo(() => {
+    const m = {};
+    guestProds.forEach(p => {
+      const cat = cats.find(c => c.id === p.categoryId);
+      const sc = scs.find(s => s.id === p.subcategoryId);
+      if (!cat || !sc) return;
+      if (!m[cat.id]) m[cat.id] = {
+        cat,
+        scMap: {}
+      };
+      if (!m[cat.id].scMap[sc.id]) m[cat.id].scMap[sc.id] = {
+        sc,
+        prods: []
+      };
+      m[cat.id].scMap[sc.id].prods.push(p);
+    });
+    return Object.values(m);
+  }, [guestProds, cats, scs]);
+  const saveManual = updated => {
+    setManualItems(updated);
+    saveGuestsLS(updated);
+  };
+  const addItem = () => {
+    if (!newName.trim()) return;
+    saveManual([...manualItems, {
+      id: Date.now().toString(),
+      name: newName.trim(),
+      qty: parseInt(newQty) || 1,
+      done: false
+    }]);
+    setNewName('');
+    setNewQty('1');
+  };
+  const toggle = id => saveManual(manualItems.map(g => g.id === id ? {
+    ...g,
+    done: !g.done
+  } : g));
+  const remove = id => saveManual(manualItems.filter(g => g.id !== id));
+  const clearDone = () => saveManual(manualItems.filter(g => !g.done));
+  const doneN = manualItems.filter(g => g.done).length;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "scroll"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hist-hdr"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hist-ttl"
+  }, "👥 Invitados"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'rgba(255,255,255,0.4)',
+      fontSize: '12px'
+    }
+  }, guestProds.length, " productos · ", manualItems.length, " extras")), guestProds.length > 0 && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '4px 14px 6px',
+      color: 'var(--g-pale)',
+      fontSize: '11px',
+      fontWeight: '900',
+      textTransform: 'uppercase',
+      letterSpacing: '0.5px'
+    }
+  }, "De la despensa"), grouped.map(({
+    cat,
+    scMap
+  }) => /*#__PURE__*/React.createElement("div", {
+    key: cat.id
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '6px 14px 3px',
+      color: 'rgba(255,255,255,0.5)',
+      fontSize: '12px',
+      fontWeight: '800'
+    }
+  }, cat.emoji, " ", cat.name), Object.values(scMap).map(({
+    sc,
+    prods: sp
+  }) => /*#__PURE__*/React.createElement("div", {
+    key: sc.id
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '4px 20px 2px',
+      color: 'rgba(255,255,255,0.35)',
+      fontSize: '11px'
+    }
+  }, sc.name), sp.map(p => {
+    const zero = p.quantity === 0;
+    const low = p.quantity > 0 && p.quantity <= p.minThreshold;
+    return /*#__PURE__*/React.createElement("div", {
+      key: p.id,
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '9px',
+        padding: '8px 14px',
+        borderBottom: '1px solid rgba(255,255,255,0.05)'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        color: '#fff',
+        fontSize: '14px',
+        fontWeight: '700'
+      }
+    }, p.name), p.price && /*#__PURE__*/React.createElement("div", {
+      style: {
+        color: 'var(--orange-l)',
+        fontSize: '11px'
+      }
+    }, "~", p.price.toFixed(2), "€/ud.")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '5px'
+      }
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "qbtn qbtn-m",
+      onClick: () => onUpdateQty(p.id, p.quantity - 1),
+      disabled: zero
+    }, "−"), /*#__PURE__*/React.createElement("div", {
+      className: `qnum${zero ? ' zero' : low ? ' low' : ''}`
+    }, p.quantity), /*#__PURE__*/React.createElement("button", {
+      className: "qbtn qbtn-p",
+      onClick: () => onUpdateQty(p.id, p.quantity + 1)
+    }, "+")));
+  }))))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: '8px'
+    }
+  })), guestProds.length === 0 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: 'rgba(255,255,255,0.05)',
+      border: '1px dashed rgba(255,255,255,0.12)',
+      borderRadius: '12px',
+      margin: '0 14px 12px',
+      padding: '14px',
+      color: 'rgba(255,255,255,0.35)',
+      fontSize: '12px',
+      lineHeight: '1.6',
+      textAlign: 'center'
+    }
+  }, "Marca productos con ", /*#__PURE__*/React.createElement("strong", null, "👥 Para invitados"), " desde su menú (⋮) para que aparezcan aquí con control de cantidades."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '4px 14px 6px',
+      color: 'rgba(255,255,255,0.4)',
+      fontSize: '11px',
+      fontWeight: '900',
+      textTransform: 'uppercase',
+      letterSpacing: '0.5px'
+    }
+  }, "Lista extra (temporal)"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'rgba(255,255,255,0.3)',
+      fontSize: '11px',
+      padding: '0 14px 8px'
+    }
+  }, "Artículos adicionales para el evento, solo en este dispositivo."), /*#__PURE__*/React.createElement("div", {
+    className: "guest-add-row"
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "guest-inp",
+    placeholder: "Añadir artículo...",
+    value: newName,
+    onChange: e => setNewName(e.target.value),
+    onKeyPress: e => e.key === 'Enter' && addItem()
+  }), /*#__PURE__*/React.createElement("input", {
+    className: "guest-inp",
+    type: "number",
+    min: "1",
+    value: newQty,
+    onChange: e => setNewQty(e.target.value),
+    style: {
+      width: '58px',
+      textAlign: 'center',
+      flex: 'none'
+    }
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "guest-add-btn",
+    onClick: addItem
+  }, "＋")), manualItems.map(g => /*#__PURE__*/React.createElement("div", {
+    key: g.id,
+    className: `guest-item${g.done ? ' done' : ''}`
+  }, /*#__PURE__*/React.createElement("div", {
+    className: `guest-check${g.done ? ' done' : ''}`,
+    onClick: () => toggle(g.id)
+  }, g.done ? '✓' : ''), /*#__PURE__*/React.createElement("div", {
+    className: "guest-name"
+  }, g.name), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'rgba(255,255,255,0.45)',
+      fontSize: '12px',
+      fontWeight: '700',
+      marginRight: '8px'
+    }
+  }, "×", g.qty), /*#__PURE__*/React.createElement("button", {
+    className: "guest-rm",
+    onClick: () => remove(g.id)
+  }, "×"))), manualItems.length === 0 && guestProds.length === 0 && /*#__PURE__*/React.createElement("div", {
+    className: "empty",
+    style: {
+      marginTop: '30px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "empty-ico"
+  }, "🎉"), /*#__PURE__*/React.createElement("div", {
+    className: "empty-t"
+  }, "Todo listo"), /*#__PURE__*/React.createElement("div", {
+    className: "empty-s"
+  }, "Añade productos o artículos extras")), doneN > 0 && /*#__PURE__*/React.createElement("button", {
+    className: "guest-clear",
+    onClick: clearDone
+  }, "🗑 Limpiar ", doneN, " completado", doneN > 1 ? 's' : ''));
 }
 
 /* ── Product Card ── */
@@ -818,25 +2499,40 @@ function PCard({
   onEdit,
   onDelete,
   onOpenComplete,
-  onForceCart
+  onForceCart,
+  onToggleGuests
 }) {
   const [menu, setMenu] = useState(false);
+  const menuRef = useRef(null);
   const low = product.quantity > 0 && product.quantity <= product.minThreshold;
   const zero = product.quantity === 0;
   const inCart = product.inCart;
+  const isGuest = product.forGuests;
+
+  // Close menu on outside click
   useEffect(() => {
     if (!menu) return;
-    const h = () => setMenu(false);
-    setTimeout(() => document.addEventListener('click', h), 0);
-    return () => document.removeEventListener('click', h);
+    const h = e => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenu(false);
+    };
+    document.addEventListener('mousedown', h);
+    document.addEventListener('touchstart', h);
+    return () => {
+      document.removeEventListener('mousedown', h);
+      document.removeEventListener('touchstart', h);
+    };
   }, [menu]);
   return /*#__PURE__*/React.createElement("div", {
-    className: `pc${inCart ? ' incart' : ''}`
+    className: `pc${inCart ? ' incart' : ''}${isGuest ? ' forguests' : ''}`
   }, inCart && /*#__PURE__*/React.createElement("div", {
     className: "pc-cart-ico",
-    onClick: onOpenComplete,
-    title: "Ver en carrito / Completar"
-  }, "🛒"), /*#__PURE__*/React.createElement("div", {
+    onClick: onOpenComplete
+  }, "🛒"), !inCart && isGuest && /*#__PURE__*/React.createElement("div", {
+    className: "pc-cart-ico",
+    style: {
+      cursor: 'default'
+    }
+  }, "👥"), /*#__PURE__*/React.createElement("div", {
     className: "pc-info"
   }, /*#__PURE__*/React.createElement("div", {
     className: "pc-name"
@@ -846,9 +2542,11 @@ function PCard({
     className: "pc-super"
   }, product.supermarket), /*#__PURE__*/React.createElement("span", {
     className: "pc-min"
-  }, "mín.", product.minThreshold), inCart && product.inCartBy && /*#__PURE__*/React.createElement("span", {
+  }, "mín.", product.minThreshold), product.price ? /*#__PURE__*/React.createElement("span", {
+    className: "pc-min"
+  }, " · ", product.price.toFixed(2), "€") : null, inCart && product.inCartBy ? /*#__PURE__*/React.createElement("span", {
     className: "pc-who"
-  }, "· ", product.inCartBy))), /*#__PURE__*/React.createElement("div", {
+  }, "· ", product.inCartBy) : null)), /*#__PURE__*/React.createElement("div", {
     className: "pc-ctrl"
   }, /*#__PURE__*/React.createElement("button", {
     className: "qbtn qbtn-m",
@@ -860,6 +2558,7 @@ function PCard({
     className: "qbtn qbtn-p",
     onClick: () => onUpdateQty(product.id, product.quantity + 1)
   }, "+")), /*#__PURE__*/React.createElement("div", {
+    ref: menuRef,
     style: {
       position: 'relative'
     }
@@ -870,8 +2569,7 @@ function PCard({
       setMenu(m => !m);
     }
   }, "⋮"), menu && /*#__PURE__*/React.createElement("div", {
-    className: "ctxm",
-    onClick: e => e.stopPropagation()
+    className: "ctxm"
   }, /*#__PURE__*/React.createElement("div", {
     className: "ctxi",
     onClick: () => {
@@ -891,6 +2589,12 @@ function PCard({
       setMenu(false);
     }
   }, "✅ Completar"), /*#__PURE__*/React.createElement("div", {
+    className: "ctxi",
+    onClick: () => {
+      onToggleGuests(product.id);
+      setMenu(false);
+    }
+  }, isGuest ? '🏠 Quitar de invitados' : '👥 Para invitados'), /*#__PURE__*/React.createElement("div", {
     className: "ctxi del",
     onClick: () => {
       onDelete(product.id);
@@ -910,7 +2614,10 @@ function ScSection({
   onEdit,
   onDelete,
   onOpenComplete,
-  onForceCart
+  onForceCart,
+  onToggleGuests,
+  onEditSc,
+  onDeleteSc
 }) {
   const cartN = products.filter(p => p.inCart).length;
   return /*#__PURE__*/React.createElement("div", {
@@ -922,7 +2629,16 @@ function ScSection({
     className: "sc-title"
   }, sc.name, /*#__PURE__*/React.createElement("span", {
     className: `sc-cnt${cartN > 0 ? ' cart' : ''}`
-  }, cartN > 0 ? `🛒${cartN}` : products.length)), /*#__PURE__*/React.createElement("span", {
+  }, cartN > 0 ? `🛒${cartN}` : products.length)), /*#__PURE__*/React.createElement("div", {
+    className: "sc-acts",
+    onClick: e => e.stopPropagation()
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "sc-act-btn",
+    onClick: onEditSc
+  }, "✏️"), /*#__PURE__*/React.createElement("button", {
+    className: "sc-act-btn",
+    onClick: onDeleteSc
+  }, "🗑")), /*#__PURE__*/React.createElement("span", {
     className: `sc-arrow${isOpen ? ' open' : ''}`
   }, "▶")), isOpen && /*#__PURE__*/React.createElement("div", {
     className: "sc-body"
@@ -939,7 +2655,8 @@ function ScSection({
     onEdit: onEdit,
     onDelete: onDelete,
     onOpenComplete: () => onOpenComplete(p),
-    onForceCart: onForceCart
+    onForceCart: onForceCart,
+    onToggleGuests: onToggleGuests
   })), /*#__PURE__*/React.createElement("div", {
     className: "sc-add",
     onClick: onAddProduct
@@ -960,8 +2677,12 @@ function InventoryView({
   onDelete,
   onOpenComplete,
   onForceCart,
-  onAddSc
+  onToggleGuests,
+  onAddSc,
+  onEditSc,
+  onDeleteSc
 }) {
+  const activeCat = categories.find(c => c.id === activeCatId);
   const scs = useMemo(() => subcategories.filter(s => s.categoryId === activeCatId).sort((a, b) => a.order - b.order), [subcategories, activeCatId]);
   const bysc = useMemo(() => {
     const m = {};
@@ -987,7 +2708,52 @@ function InventoryView({
   }, "Selecciona una categoría")));
   return /*#__PURE__*/React.createElement("div", {
     className: "scroll"
-  }, scs.map(sc => /*#__PURE__*/React.createElement(ScSection, {
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "inv-sc-hdr"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "inv-sc-lbl"
+  }, activeCat?.emoji, " ", activeCat?.name, " ", /*#__PURE__*/React.createElement("span", {
+    style: {
+      opacity: 0.5,
+      fontWeight: 600
+    }
+  }, "· ", scs.length, " subcategorías")), /*#__PURE__*/React.createElement("button", {
+    className: "inv-add-sc-btn",
+    onClick: () => onAddSc(activeCatId)
+  }, "＋ Subcategoría")), scs.length === 0 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: 'rgba(76,175,80,0.07)',
+      border: '1px dashed rgba(76,175,80,0.25)',
+      borderRadius: '12px',
+      padding: '20px',
+      textAlign: 'center',
+      margin: '0 0 10px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: '28px',
+      marginBottom: '8px'
+    }
+  }, "📂"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'var(--g-pale)',
+      fontSize: '14px',
+      fontWeight: '700',
+      marginBottom: '4px'
+    }
+  }, "Categoría vacía"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'rgba(255,255,255,0.4)',
+      fontSize: '12px',
+      marginBottom: '14px'
+    }
+  }, "Crea una subcategoría para empezar a añadir productos"), /*#__PURE__*/React.createElement("button", {
+    className: "inv-add-sc-btn",
+    style: {
+      display: 'inline-block'
+    },
+    onClick: () => onAddSc(activeCatId)
+  }, "＋ Crear primera subcategoría")), scs.map(sc => /*#__PURE__*/React.createElement(ScSection, {
     key: sc.id,
     sc: sc,
     products: bysc[sc.id] || [],
@@ -998,8 +2764,11 @@ function InventoryView({
     onEdit: onEdit,
     onDelete: onDelete,
     onOpenComplete: onOpenComplete,
-    onForceCart: onForceCart
-  })), /*#__PURE__*/React.createElement("div", {
+    onForceCart: onForceCart,
+    onToggleGuests: onToggleGuests,
+    onEditSc: () => onEditSc(sc),
+    onDeleteSc: () => onDeleteSc(sc)
+  })), scs.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "add-sc-btn",
     onClick: () => onAddSc(activeCatId)
   }, "＋ Nueva subcategoría"));
@@ -1013,7 +2782,10 @@ function CartView({
   view,
   setView,
   onComplete,
-  onRemove
+  onRemove,
+  onUrgent,
+  onInvoice,
+  onScanTicket
 }) {
   const byStore = useMemo(() => {
     const m = {};
@@ -1041,7 +2813,13 @@ function CartView({
     className: "ci-bread"
   }, crumb(p)), p.inCartBy && /*#__PURE__*/React.createElement("div", {
     className: "ci-who"
-  }, "Añadido por ", p.inCartBy)), p.supermarket && view === 'all' && /*#__PURE__*/React.createElement("span", {
+  }, "Añadido por ", p.inCartBy), p.price && /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'var(--orange-l)',
+      fontSize: '11px',
+      marginTop: '2px'
+    }
+  }, "~", p.price.toFixed(2), "€/ud.")), p.supermarket && view === 'all' && /*#__PURE__*/React.createElement("span", {
     className: "ci-super"
   }, p.supermarket), /*#__PURE__*/React.createElement("div", {
     className: "ci-acts"
@@ -1074,7 +2852,22 @@ function CartView({
     className: "empty-t"
   }, "¡Despensa al completo!"), /*#__PURE__*/React.createElement("div", {
     className: "empty-s"
-  }, "El carrito está vacío")) : view === 'all' ? cartItems.map(p => /*#__PURE__*/React.createElement(Item, {
+  }, "El carrito está vacío")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: '8px',
+      padding: '0 14px 10px'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "cart-action-btn",
+    onClick: onUrgent
+  }, "⚡ Urgente"), /*#__PURE__*/React.createElement("button", {
+    className: "cart-action-btn",
+    onClick: onInvoice
+  }, "💰 Factura"), /*#__PURE__*/React.createElement("button", {
+    className: "cart-action-btn",
+    onClick: onScanTicket
+  }, "📷 Ticket")), view === 'all' ? cartItems.map(p => /*#__PURE__*/React.createElement(Item, {
     key: p.id,
     p: p
   })) : byStore.map(([store, items]) => /*#__PURE__*/React.createElement("div", {
@@ -1084,10 +2877,10 @@ function CartView({
   }, "📍 ", store), items.map(p => /*#__PURE__*/React.createElement(Item, {
     key: p.id,
     p: p
-  })))));
+  }))))));
 }
 
-/* ── Welcome Screen ── */
+/* ── Welcome ── */
 function Welcome({
   onDone
 }) {
@@ -1137,32 +2930,44 @@ function Welcome({
    ════════════════════════════════════════════════════════════ */
 function App() {
   const [user, setUser] = useState(() => getUserLS());
+  const [settings, setSettings] = useState(() => getSettingsLS());
   const [ready, setReady] = useState(false);
   const [cats, setCats] = useState([]);
   const [scs, setScs] = useState([]);
   const [prods, setProds] = useState([]);
+  const [history, setHistory] = useState([]);
+  const [invoices, setInvoices] = useState([]);
   const [activeCat, setActiveCat] = useState(null);
-  const [mainView, setMainView] = useState('inv'); // 'inv' | 'cart'
-  const [cartView, setCartView] = useState('all'); // 'all' | 'by'
+  const [mainView, setMainView] = useState('inv');
+  const [cartView, setCartView] = useState('all');
   const [openScs, setOpenScs] = useState(new Set());
   const [toasts, setToasts] = useState([]);
-
-  // Modals state
+  const [urgentMode, setUrgentMode] = useState(false);
   const [mAddCat, setMAddCat] = useState(false);
-  const [mAddSc, setMAddSc] = useState(null); // catId
-  const [mAddProd, setMAddProd] = useState(null); // sc obj
-  const [mEditProd, setMEditProd] = useState(null); // prod obj
-  const [mComplete, setMComplete] = useState(null); // prod obj
-  const [mConfirm, setMConfirm] = useState(null); // { msg, fn }
-
+  const [mManageCats, setMManageCats] = useState(false);
+  const [mEditCat, setMEditCat] = useState(null);
+  const [mAddSc, setMAddSc] = useState(null);
+  const [mEditSc, setMEditSc] = useState(null);
+  const [mAddProd, setMAddProd] = useState(null);
+  const [mEditProd, setMEditProd] = useState(null);
+  const [mComplete, setMComplete] = useState(null);
+  const [mConfirm, setMConfirm] = useState(null);
+  const [mSearch, setMSearch] = useState(false);
+  const [mSettings, setMSettings] = useState(false);
+  const [mInvoice, setMInvoice] = useState(false);
+  const [mTicketScan, setMTicketScan] = useState(false);
   const userRef = useRef(user);
   const prevCartRef = useRef(new Set());
   const catInitRef = useRef(false);
+  const backupRef = useRef(false);
   useEffect(() => {
     userRef.current = user;
   }, [user]);
+  useEffect(() => {
+    applySettings(settings);
+  }, [settings]);
 
-  /* ── Firebase init ── */
+  /* Firebase listeners */
   useEffect(() => {
     if (!user) return;
     let alive = true;
@@ -1190,15 +2995,24 @@ function App() {
           id,
           ...v
         }));
-        // Notify if other user added to cart
         list.forEach(p => {
-          if (p.inCart && !prevCartRef.current.has(p.id) && p.inCartBy && p.inCartBy !== userRef.current?.name) {
-            toast(`🛒 ${p.inCartBy} añadió "${p.name}" al carrito`);
-          }
+          if (p.inCart && !prevCartRef.current.has(p.id) && p.inCartBy && p.inCartBy !== userRef.current?.name) toast(`🛒 ${p.inCartBy} añadió "${p.name}" al carrito`);
         });
         prevCartRef.current = new Set(list.filter(p => p.inCart).map(p => p.id));
         setProds(list);
         setReady(true);
+      });
+      db.ref('market/history').on('value', snap => {
+        setHistory(Object.entries(snap.val() || {}).map(([id, v]) => ({
+          id,
+          ...v
+        })));
+      });
+      db.ref('market/invoices').on('value', snap => {
+        setInvoices(Object.entries(snap.val() || {}).map(([id, v]) => ({
+          id,
+          ...v
+        })));
       });
     }).catch(err => {
       console.error(err);
@@ -1206,13 +3020,15 @@ function App() {
     });
     return () => {
       alive = false;
-      db.ref('market/categories').off();
-      db.ref('market/subcategories').off();
-      db.ref('market/products').off();
+      ['categories', 'subcategories', 'products', 'history', 'invoices'].forEach(k => db.ref(`market/${k}`).off());
     };
   }, [user]);
-
-  /* ── Toast helper ── */
+  useEffect(() => {
+    if (ready && cats.length && !backupRef.current) {
+      backupRef.current = true;
+      autoWeeklyBackup(cats, scs, prods);
+    }
+  }, [ready, cats.length]);
   const toast = useCallback((msg, type = 'info') => {
     const id = Date.now() + Math.random();
     setToasts(p => [...p, {
@@ -1223,7 +3039,7 @@ function App() {
     setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 3500);
   }, []);
 
-  /* ── Update quantity ── */
+  /* Quantity */
   const handleQty = useCallback((pid, newQty) => {
     const qty = Math.max(0, newQty);
     const prod = prods.find(p => p.id === pid);
@@ -1246,8 +3062,6 @@ function App() {
     }
     db.ref().update(upd);
   }, [prods, toast]);
-
-  /* ── Force to cart (manual) ── */
   const handleForceCart = useCallback(pid => {
     const prod = prods.find(p => p.id === pid);
     if (!prod || prod.inCart) return;
@@ -1259,22 +3073,35 @@ function App() {
     toast(`🛒 "${prod.name}" añadido al carrito`, 'wrn');
   }, [prods, toast]);
 
-  /* ── Complete purchase ── */
+  /* Complete purchase */
   const handleComplete = useCallback((pid, qty) => {
     const prod = prods.find(p => p.id === pid);
-    db.ref().update({
+    if (!prod) return;
+    const upd = {
       [`market/products/${pid}/quantity`]: qty,
       [`market/products/${pid}/inCart`]: false,
       [`market/products/${pid}/inCartBy`]: null,
       [`market/products/${pid}/inCartAt`]: null,
       [`market/products/${pid}/lastUpdatedBy`]: userRef.current?.name || '',
       [`market/products/${pid}/lastUpdatedAt`]: Date.now()
-    });
+    };
+    const hid = db.ref('market/history').push().key;
+    upd[`market/history/${hid}`] = {
+      productId: pid,
+      productName: prod.name,
+      categoryId: prod.categoryId,
+      subcategoryId: prod.subcategoryId,
+      quantity: qty,
+      price: prod.price || null,
+      totalCost: prod.price ? parseFloat((prod.price * qty).toFixed(2)) : null,
+      supermarket: prod.supermarket || '',
+      purchasedBy: userRef.current?.name || '',
+      purchasedAt: Date.now()
+    };
+    db.ref().update(upd);
     setMComplete(null);
-    toast(`✅ "${prod?.name}" en despensa (${qty} uds.)`, 'ok');
+    toast(`✅ "${prod.name}" en despensa (${qty} uds.)`, 'ok');
   }, [prods, toast]);
-
-  /* ── Remove from cart ── */
   const handleRemoveCart = useCallback(pid => {
     db.ref().update({
       [`market/products/${pid}/inCart`]: false,
@@ -1282,7 +3109,16 @@ function App() {
     });
   }, []);
 
-  /* ── Add category ── */
+  /* Toggle for guests */
+  const handleToggleGuests = useCallback(pid => {
+    const prod = prods.find(p => p.id === pid);
+    if (!prod) return;
+    const next = !prod.forGuests;
+    db.ref(`market/products/${pid}/forGuests`).set(next || null);
+    toast(next ? '👥 Marcado para invitados' : '🏠 Devuelto a despensa', 'ok');
+  }, [prods, toast]);
+
+  /* Categories */
   const handleAddCat = useCallback((name, emoji) => {
     const id = db.ref('market/categories').push().key;
     db.ref(`market/categories/${id}`).set({
@@ -1291,10 +3127,51 @@ function App() {
       order: cats.length
     });
     setMAddCat(false);
-    toast(`✅ Categoría "${name}" creada`, 'ok');
+    setActiveCat(id); // FIX: auto-select new category
+    setMainView('inv'); // FIX: ensure we're in inventory view
+    toast(`✅ "${name}" creada — ya puedes añadir subcategorías ↓`, 'ok');
   }, [cats, toast]);
+  const handleEditCat = useCallback((catId, name, emoji) => {
+    db.ref().update({
+      [`market/categories/${catId}/name`]: name,
+      [`market/categories/${catId}/emoji`]: emoji
+    });
+    setMEditCat(null);
+    toast('✅ Categoría actualizada', 'ok');
+  }, [toast]);
+  const handleDeleteCat = useCallback(cat => {
+    setMConfirm({
+      title: 'Eliminar categoría',
+      msg: `¿Eliminar "${cat.emoji} ${cat.name}"?\n\nSe eliminarán TODAS sus subcategorías y productos. No se puede deshacer.`,
+      fn: () => {
+        const upd = {};
+        upd[`market/categories/${cat.id}`] = null;
+        scs.filter(s => s.categoryId === cat.id).forEach(s => {
+          upd[`market/subcategories/${s.id}`] = null;
+        });
+        prods.filter(p => p.categoryId === cat.id).forEach(p => {
+          upd[`market/products/${p.id}`] = null;
+        });
+        db.ref().update(upd);
+        if (activeCat === cat.id) setActiveCat(cats.filter(c => c.id !== cat.id)[0]?.id || null);
+        setMConfirm(null);
+        setMManageCats(false);
+        toast(`🗑 "${cat.name}" eliminada`);
+      }
+    });
+  }, [cats, scs, prods, activeCat, toast]);
+  const handleReorderCat = useCallback((catId, dir) => {
+    const sorted = [...cats].sort((a, b) => a.order - b.order);
+    const idx = sorted.findIndex(c => c.id === catId);
+    const si = dir === 'up' ? idx - 1 : idx + 1;
+    if (si < 0 || si >= sorted.length) return;
+    db.ref().update({
+      [`market/categories/${sorted[idx].id}/order`]: sorted[si].order,
+      [`market/categories/${sorted[si].id}/order`]: sorted[idx].order
+    });
+  }, [cats]);
 
-  /* ── Add subcategory ── */
+  /* Subcategories */
   const handleAddSc = useCallback((name, catId) => {
     const order = scs.filter(s => s.categoryId === catId).length;
     const id = db.ref('market/subcategories').push().key;
@@ -1311,25 +3188,41 @@ function App() {
     });
     toast(`✅ Subcategoría "${name}" creada`, 'ok');
   }, [scs, toast]);
+  const handleEditSc = useCallback((scId, name) => {
+    db.ref(`market/subcategories/${scId}/name`).set(name);
+    setMEditSc(null);
+    toast('✅ Subcategoría renombrada', 'ok');
+  }, [toast]);
+  const handleDeleteSc = useCallback(sc => {
+    setMConfirm({
+      title: 'Eliminar subcategoría',
+      msg: `¿Eliminar "${sc.name}"?\n\nSe eliminarán también todos sus productos.`,
+      fn: () => {
+        const upd = {};
+        upd[`market/subcategories/${sc.id}`] = null;
+        prods.filter(p => p.subcategoryId === sc.id).forEach(p => {
+          upd[`market/products/${p.id}`] = null;
+        });
+        db.ref().update(upd);
+        setMConfirm(null);
+        toast(`🗑 "${sc.name}" eliminada`);
+      }
+    });
+  }, [prods, toast]);
 
-  /* ── Add product ── */
+  /* Products */
   const handleAddProd = useCallback(data => {
-    const {
-      name,
-      minThreshold,
-      supermarket,
-      subcategoryId
-    } = data;
-    const sc = scs.find(s => s.id === subcategoryId);
+    const sc = scs.find(s => s.id === data.subcategoryId);
     if (!sc) return;
     const id = db.ref('market/products').push().key;
     db.ref(`market/products/${id}`).set({
-      name,
-      subcategoryId,
+      name: data.name,
+      subcategoryId: data.subcategoryId,
       categoryId: sc.categoryId,
       quantity: 0,
-      minThreshold,
-      supermarket: supermarket || '',
+      minThreshold: data.minThreshold,
+      supermarket: data.supermarket || '',
+      price: data.price || null,
       inCart: false,
       inCartBy: null,
       inCartAt: null,
@@ -1337,28 +3230,26 @@ function App() {
       lastUpdatedAt: Date.now()
     });
     setMAddProd(null);
-    toast(`✅ "${name}" añadido`, 'ok');
+    toast(`✅ "${data.name}" añadido`, 'ok');
   }, [scs, toast]);
-
-  /* ── Edit product ── */
   const handleEditProd = useCallback(data => {
     const id = mEditProd.id;
     db.ref().update({
       [`market/products/${id}/name`]: data.name,
       [`market/products/${id}/minThreshold`]: data.minThreshold,
       [`market/products/${id}/supermarket`]: data.supermarket || '',
+      [`market/products/${id}/price`]: data.price || null,
       [`market/products/${id}/lastUpdatedBy`]: userRef.current?.name || '',
       [`market/products/${id}/lastUpdatedAt`]: Date.now()
     });
     setMEditProd(null);
     toast('✅ Producto actualizado', 'ok');
   }, [mEditProd, toast]);
-
-  /* ── Delete product ── */
   const handleDeleteProd = useCallback(pid => {
     const prod = prods.find(p => p.id === pid);
     setMConfirm({
-      msg: `¿Eliminar "${prod?.name}"? No se puede deshacer.`,
+      title: '¿Eliminar producto?',
+      msg: `¿Eliminar "${prod?.name}"?\nNo se puede deshacer.`,
       fn: () => {
         db.ref(`market/products/${pid}`).remove();
         setMConfirm(null);
@@ -1366,23 +3257,91 @@ function App() {
       }
     });
   }, [prods, toast]);
+
+  /* Invoice */
+  const handleAddInvoice = useCallback(data => {
+    const id = db.ref('market/invoices').push().key;
+    db.ref(`market/invoices/${id}`).set({
+      amount: data.amount,
+      store: data.store || '',
+      note: data.note || '',
+      date: data.date || Date.now(),
+      addedBy: userRef.current?.name || ''
+    });
+    setMInvoice(false);
+    toast(`💰 Factura de ${data.amount.toFixed(2)}€ registrada`, 'ok');
+  }, [toast]);
+
+  /* Ticket scan complete */
+  const handleTicketComplete = useCallback(scanResult => {
+    const matched = scanResult.matched?.filter(i => i.cartProduct) || [];
+    const upd = {};
+    const now = Date.now();
+    matched.forEach(item => {
+      const p = item.cartProduct;
+      const qty = item.cantidad || 1;
+      const unitPrice = item.precioUnitario || (item.precioTotal ? item.precioTotal / qty : null);
+      upd[`market/products/${p.id}/quantity`] = qty;
+      upd[`market/products/${p.id}/inCart`] = false;
+      upd[`market/products/${p.id}/inCartBy`] = null;
+      upd[`market/products/${p.id}/inCartAt`] = null;
+      upd[`market/products/${p.id}/lastUpdatedBy`] = userRef.current?.name || '';
+      upd[`market/products/${p.id}/lastUpdatedAt`] = now;
+      if (unitPrice) upd[`market/products/${p.id}/price`] = parseFloat(unitPrice.toFixed(2));
+      const hid = db.ref('market/history').push().key;
+      upd[`market/history/${hid}`] = {
+        productId: p.id,
+        productName: p.name,
+        categoryId: p.categoryId,
+        subcategoryId: p.subcategoryId,
+        quantity: qty,
+        price: unitPrice ? parseFloat(unitPrice.toFixed(2)) : null,
+        totalCost: item.precioTotal ? parseFloat(item.precioTotal) : null,
+        supermarket: scanResult.tienda || p.supermarket || '',
+        purchasedBy: userRef.current?.name || '',
+        purchasedAt: now
+      };
+    });
+    if (scanResult.total) {
+      const iid = db.ref('market/invoices').push().key;
+      upd[`market/invoices/${iid}`] = {
+        amount: parseFloat(scanResult.total),
+        store: scanResult.tienda || '',
+        note: `Ticket escaneado · ${matched.length} productos`,
+        date: now,
+        addedBy: userRef.current?.name || ''
+      };
+    }
+    db.ref().update(upd);
+    setMTicketScan(false);
+    toast(`✅ ${matched.length} productos completados desde el ticket`, 'ok');
+  }, [toast]);
+
+  /* Settings */
+  const handleSaveSettings = useCallback((newSettings, newUser) => {
+    setSettings(newSettings);
+    saveSettingsLS(newSettings);
+    applySettings(newSettings);
+    if (newUser.name !== user.name) {
+      setUser(newUser);
+      saveUserLS(newUser);
+    }
+    setMSettings(false);
+    toast('✅ Ajustes guardados', 'ok');
+  }, [user, toast]);
   const cartItems = useMemo(() => prods.filter(p => p.inCart), [prods]);
   const cartN = cartItems.length;
+  const apiKey = useMemo(() => getApiKeyLS(), [mSettings]); // refresh when settings closed
 
-  /* ── Render ── */
   const Bg = () => /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "bg-grad"
-  }), /*#__PURE__*/React.createElement("div", {
+  }), settings.bgOn !== false && /*#__PURE__*/React.createElement("div", {
     className: "bg-img"
   }));
-
-  /* Ocultar el pre-loader nativo en el primer render de React */
   useEffect(() => {
     const el = document.getElementById('pre-load');
     if (el) el.classList.add('done');
   }, []);
-
-  /* Si Firebase no pudo iniciarse, mostrar error claro */
   if (!db) return /*#__PURE__*/React.createElement("div", {
     className: "app"
   }, /*#__PURE__*/React.createElement(Bg, null), /*#__PURE__*/React.createElement("div", {
@@ -1409,19 +3368,11 @@ function App() {
       maxWidth: '300px',
       lineHeight: '1.5'
     }
-  }, _fbError || 'Error desconocido'), /*#__PURE__*/React.createElement("div", {
-    style: {
-      color: 'rgba(255,255,255,0.4)',
-      fontSize: '12px',
-      marginTop: '8px'
-    }
-  }, "Comprueba que el Realtime Database está activado en Firebase Console y que la databaseURL es correcta.")));
+  }, _fbError || 'Error desconocido')));
   if (!user) return /*#__PURE__*/React.createElement("div", {
     className: "app"
   }, /*#__PURE__*/React.createElement(Bg, null), /*#__PURE__*/React.createElement(Welcome, {
-    onDone: u => {
-      setUser(u);
-    }
+    onDone: u => setUser(u)
   }));
   if (!ready) return /*#__PURE__*/React.createElement("div", {
     className: "app"
@@ -1433,8 +3384,22 @@ function App() {
     className: "ldg-txt"
   }, "Cargando despensa…")));
   return /*#__PURE__*/React.createElement("div", {
-    className: "app"
-  }, /*#__PURE__*/React.createElement(Bg, null), /*#__PURE__*/React.createElement("div", {
+    className: `app${settings.lightMode ? ' light-mode' : ''}`
+  }, /*#__PURE__*/React.createElement(Bg, null), urgentMode && /*#__PURE__*/React.createElement(UrgentView, {
+    cartItems: cartItems,
+    onComplete: p => {
+      setMComplete(p);
+      setUrgentMode(false);
+    },
+    onRemove: handleRemoveCart,
+    onClose: () => setUrgentMode(false)
+  }), mSearch && /*#__PURE__*/React.createElement(SearchOverlay, {
+    products: prods,
+    categories: cats,
+    subcategories: scs,
+    onClose: () => setMSearch(false),
+    onUpdateQty: handleQty
+  }), /*#__PURE__*/React.createElement("div", {
     className: "hdr"
   }, /*#__PURE__*/React.createElement("div", {
     className: "hdr-left"
@@ -1447,11 +3412,12 @@ function App() {
   }, "Hola, ", user.name, " 👋"))), /*#__PURE__*/React.createElement("div", {
     className: "hdr-right"
   }, /*#__PURE__*/React.createElement("div", {
-    className: `hdr-btn${mainView === 'cart' ? ' on' : ''}`,
-    onClick: () => setMainView(v => v === 'cart' ? 'inv' : 'cart')
-  }, "🛒", cartN > 0 && /*#__PURE__*/React.createElement("span", {
-    className: "bdg"
-  }, cartN)))), mainView === 'inv' && /*#__PURE__*/React.createElement("div", {
+    className: "hdr-btn",
+    onClick: () => setMSearch(true)
+  }, "🔍"), /*#__PURE__*/React.createElement("div", {
+    className: "hdr-btn",
+    onClick: () => setMSettings(true)
+  }, "⚙️"))), mainView === 'inv' && /*#__PURE__*/React.createElement("div", {
     className: "cat-nav"
   }, /*#__PURE__*/React.createElement("div", {
     className: "cat-nav-inner"
@@ -1461,8 +3427,15 @@ function App() {
     onClick: () => setActiveCat(c.id)
   }, /*#__PURE__*/React.createElement("span", null, c.emoji), /*#__PURE__*/React.createElement("span", null, c.name))), /*#__PURE__*/React.createElement("button", {
     className: "cat-tab cat-tab-add",
+    style: {
+      fontSize: '16px'
+    },
+    title: "Gestionar",
+    onClick: () => setMManageCats(true)
+  }, "⚙"), /*#__PURE__*/React.createElement("button", {
+    className: "cat-tab cat-tab-add",
     onClick: () => setMAddCat(true)
-  }, "＋"))), mainView === 'inv' ? /*#__PURE__*/React.createElement(InventoryView, {
+  }, "＋"))), mainView === 'inv' && /*#__PURE__*/React.createElement(InventoryView, {
     categories: cats,
     subcategories: scs,
     products: prods,
@@ -1479,15 +3452,30 @@ function App() {
     onDelete: handleDeleteProd,
     onOpenComplete: setMComplete,
     onForceCart: handleForceCart,
-    onAddSc: setMAddSc
-  }) : /*#__PURE__*/React.createElement(CartView, {
+    onToggleGuests: handleToggleGuests,
+    onAddSc: setMAddSc,
+    onEditSc: sc => setMEditSc(sc),
+    onDeleteSc: sc => handleDeleteSc(sc)
+  }), mainView === 'cart' && /*#__PURE__*/React.createElement(CartView, {
     cartItems: cartItems,
     categories: cats,
     subcategories: scs,
     view: cartView,
     setView: setCartView,
     onComplete: setMComplete,
-    onRemove: handleRemoveCart
+    onRemove: handleRemoveCart,
+    onUrgent: () => setUrgentMode(true),
+    onInvoice: () => setMInvoice(true),
+    onScanTicket: () => setMTicketScan(true)
+  }), mainView === 'hist' && /*#__PURE__*/React.createElement(HistoryView, {
+    history: history,
+    categories: cats,
+    invoices: invoices
+  }), mainView === 'guests' && /*#__PURE__*/React.createElement(GuestView, {
+    prods: prods,
+    cats: cats,
+    scs: scs,
+    onUpdateQty: handleQty
   }), /*#__PURE__*/React.createElement("div", {
     className: "bnav"
   }, /*#__PURE__*/React.createElement("div", {
@@ -1507,16 +3495,44 @@ function App() {
       top: '-1px',
       right: '-5px'
     }
-  }, cartN)), /*#__PURE__*/React.createElement("span", null, "Carrito"))), /*#__PURE__*/React.createElement(Toasts, {
+  }, cartN)), /*#__PURE__*/React.createElement("span", null, "Carrito")), /*#__PURE__*/React.createElement("div", {
+    className: `bnav-btn${mainView === 'hist' ? ' on' : ''}`,
+    onClick: () => setMainView('hist')
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bnav-ico"
+  }, "📋"), /*#__PURE__*/React.createElement("span", null, "Historial")), /*#__PURE__*/React.createElement("div", {
+    className: `bnav-btn${mainView === 'guests' ? ' on' : ''}`,
+    onClick: () => setMainView('guests')
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bnav-ico"
+  }, "👥"), /*#__PURE__*/React.createElement("span", null, "Invitados"))), /*#__PURE__*/React.createElement(Toasts, {
     list: toasts
   }), mAddCat && /*#__PURE__*/React.createElement(AddCatModal, {
     onSave: handleAddCat,
     onClose: () => setMAddCat(false)
+  }), mManageCats && /*#__PURE__*/React.createElement(ManageCatsModal, {
+    cats: cats,
+    onEdit: cat => setMEditCat(cat),
+    onDelete: handleDeleteCat,
+    onReorder: handleReorderCat,
+    onAdd: () => {
+      setMManageCats(false);
+      setMAddCat(true);
+    },
+    onClose: () => setMManageCats(false)
+  }), mEditCat && /*#__PURE__*/React.createElement(EditCatModal, {
+    cat: mEditCat,
+    onSave: handleEditCat,
+    onClose: () => setMEditCat(null)
   }), mAddSc !== null && /*#__PURE__*/React.createElement(AddScModal, {
     categories: cats,
     defaultCatId: mAddSc,
     onSave: handleAddSc,
     onClose: () => setMAddSc(null)
+  }), mEditSc && /*#__PURE__*/React.createElement(EditScModal, {
+    sc: mEditSc,
+    onSave: handleEditSc,
+    onClose: () => setMEditSc(null)
   }), mAddProd !== null && /*#__PURE__*/React.createElement(ProductModal, {
     subcategory: mAddProd,
     categories: cats,
@@ -1534,17 +3550,31 @@ function App() {
     onComplete: handleComplete,
     onClose: () => setMComplete(null)
   }), mConfirm !== null && /*#__PURE__*/React.createElement(ConfirmModal, {
+    title: mConfirm.title || '¿Eliminar?',
     message: mConfirm.msg,
     onOk: mConfirm.fn,
     onClose: () => setMConfirm(null)
+  }), mSettings && /*#__PURE__*/React.createElement(SettingsModal, {
+    user: user,
+    settings: settings,
+    cats: cats,
+    scs: scs,
+    prods: prods,
+    onSave: handleSaveSettings,
+    onClose: () => setMSettings(false)
+  }), mInvoice && /*#__PURE__*/React.createElement(InvoiceModal, {
+    cartItems: cartItems,
+    onSave: handleAddInvoice,
+    onClose: () => setMInvoice(false)
+  }), mTicketScan && /*#__PURE__*/React.createElement(TicketScanModal, {
+    cartItems: cartItems,
+    apiKey: apiKey,
+    onComplete: handleTicketComplete,
+    onClose: () => setMTicketScan(false)
   }));
 }
-
-/* Register SW */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.warn));
 }
 ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(App, null));
-</script>
-</body>
-</html>
+</script></body></html>
