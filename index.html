@@ -347,7 +347,15 @@
     }
   </style>
 <style>
-  /* ══ DESPENSA v2.2 ══ */
+  /* ══ DESPENSA v2.3 — FIX: stacking context bug ══ */
+  /* .bg-img is position:fixed with z-index:0, which (per CSS stacking rules)
+     paints AFTER plain static-flow content. .sc cards were saved by their
+     own backdrop-filter (auto-creates a stacking context), but .ci, .hist-item,
+     .guest-item, .srch-item etc had no such protection and were invisible
+     underneath the background photo. Fix: give .scroll its own stacking
+     context so everything inside it paints above .bg-img. */
+  .scroll{position:relative;z-index:1;}
+
   .sc-hdr{gap:6px;}.sc-acts{display:flex;align-items:center;gap:2px;}
   .sc-act-btn{background:none;border:none;color:var(--w30);font-size:14px;cursor:pointer;padding:4px 6px;border-radius:7px;transition:all 0.15s;}
   .sc-act-btn:active{background:var(--w15);color:var(--w85);transform:scale(0.92);}
@@ -2489,23 +2497,49 @@ function PCard({
   onToggleGuests
 }) {
   const [menu, setMenu] = useState(false);
-  const menuRef = useRef(null);
+  const [menuPos, setMenuPos] = useState(null);
+  const kebabRef = useRef(null);
+  const portalRef = useRef(null);
   const low = product.quantity > 0 && product.quantity <= product.minThreshold;
   const zero = product.quantity === 0;
   const inCart = product.inCart;
   const isGuest = product.forGuests;
+  const openMenu = () => {
+    const r = kebabRef.current?.getBoundingClientRect();
+    if (!r) {
+      setMenu(m => !m);
+      return;
+    }
+    const MENU_H = 190,
+      MENU_W = 170,
+      MARGIN = 8;
+    const spaceBelow = window.innerHeight - r.bottom;
+    const openUp = spaceBelow < MENU_H + MARGIN;
+    setMenuPos({
+      top: openUp ? null : r.bottom + 4,
+      bottom: openUp ? window.innerHeight - r.top + 4 : null,
+      right: Math.max(MARGIN, window.innerWidth - r.right),
+      width: MENU_W
+    });
+    setMenu(m => !m);
+  };
 
-  // Close menu on outside click
+  // Close menu on outside click / scroll (portal-aware: check both kebab wrapper and portal node)
   useEffect(() => {
     if (!menu) return;
     const h = e => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) setMenu(false);
+      if (kebabRef.current?.contains(e.target)) return;
+      if (portalRef.current?.contains(e.target)) return;
+      setMenu(false);
     };
+    const onScroll = () => setMenu(false);
     document.addEventListener('mousedown', h);
     document.addEventListener('touchstart', h);
+    window.addEventListener('scroll', onScroll, true);
     return () => {
       document.removeEventListener('mousedown', h);
       document.removeEventListener('touchstart', h);
+      window.removeEventListener('scroll', onScroll, true);
     };
   }, [menu]);
   return /*#__PURE__*/React.createElement("div", {
@@ -2543,19 +2577,23 @@ function PCard({
   }, product.quantity), /*#__PURE__*/React.createElement("button", {
     className: "qbtn qbtn-p",
     onClick: () => onUpdateQty(product.id, product.quantity + 1)
-  }, "+")), /*#__PURE__*/React.createElement("div", {
-    ref: menuRef,
-    style: {
-      position: 'relative'
-    }
-  }, /*#__PURE__*/React.createElement("button", {
+  }, "+")), /*#__PURE__*/React.createElement("button", {
+    ref: kebabRef,
     className: "kb",
     onClick: e => {
       e.stopPropagation();
-      setMenu(m => !m);
+      openMenu();
     }
-  }, "⋮"), menu && /*#__PURE__*/React.createElement("div", {
-    className: "ctxm"
+  }, "⋮"), menu && menuPos && ReactDOM.createPortal(/*#__PURE__*/React.createElement("div", {
+    ref: portalRef,
+    className: "ctxm ctxm-portal",
+    style: {
+      position: 'fixed',
+      top: menuPos.top !== null ? menuPos.top + 'px' : 'auto',
+      bottom: menuPos.bottom !== null ? menuPos.bottom + 'px' : 'auto',
+      right: menuPos.right + 'px',
+      width: menuPos.width + 'px'
+    }
   }, /*#__PURE__*/React.createElement("div", {
     className: "ctxi",
     onClick: () => {
@@ -2586,7 +2624,7 @@ function PCard({
       onDelete(product.id);
       setMenu(false);
     }
-  }, "🗑 Eliminar"))));
+  }, "🗑 Eliminar")), document.body));
 }
 
 /* ── Subcategory Section ── */
@@ -3617,4 +3655,5 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.warn));
 }
 ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(App, null));
+
 </script></body></html>
